@@ -9,7 +9,7 @@ namespace GodsWill_ASCIIRPG.Model.Armors
 {
     class Leather : Armor
     {
-        public Leather(string name)
+        public Leather(string name = "Leather", Coord position = new Coord())
             : base(name,
                   Armor.DefaultSymbol,
                   Color.SaddleBrown,
@@ -20,7 +20,8 @@ namespace GodsWill_ASCIIRPG.Model.Armors
                   _ArmorType.Light_Armor,
                   description: "An armor built in boiled leather",
                   cost: 2,
-                  weight: 5)
+                  weight: 5,
+                  position: position)
 
         {
 

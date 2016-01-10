@@ -2,7 +2,10 @@
 
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
+using GodsWill_ASCIIRPG.Model.Armors;
 using GodsWill_ASCIIRPG.Model.SceneryItems;
+using GodsWill_ASCIIRPG.Model.Shields;
+using GodsWill_ASCIIRPG.Model.Weapons;
 using GodsWill_ASCIIRPG.View;
 using System;
 using System.Collections.Generic;
@@ -71,6 +74,9 @@ namespace GodsWill_ASCIIRPG
                 mapBuilder.AddAtom(new Wall(new Coord() { X = 12, Y = 10 }));
                 mapBuilder.AddViewer(mapViewer);
                 mapBuilder.PlayerInitialPosition = new Coord() { X = 1, Y = 1 };
+                mapBuilder.AddAtom(new LongSword(position: new Coord() { X = 7, Y = 4 }));
+                mapBuilder.AddAtom(new Leather(position: new Coord() { X = 7, Y = 3 }));
+                mapBuilder.AddAtom(new WoodenShield(position: Coord.Random(mapBuilder.Width, mapBuilder.Height)));
 #else
                 mapBuilder.LoadFromFile("");
 #endif

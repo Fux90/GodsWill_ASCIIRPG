@@ -68,6 +68,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                         controlledPg.Move(Direction.East);
                         break;
                     #endregion
+
+                    #region OBJECT_MANAGEMENT
+                    case ControllerCommand.Player_PickUp:
+                        controlledPg.PickUp();
+                        break;
+                    #endregion
+
                     case ControllerCommand.Player_ExitGame:
                         gameForm.Close();
                         break;
@@ -114,6 +121,11 @@ namespace GodsWill_ASCIIRPG.UIControls
                     break;
                 #endregion
 
+                #region OBJECT_HANDLING
+                case Keys.P:
+                    Notify(ControllerCommand.Player_PickUp);
+                    break;
+                #endregion
                 case Keys.Escape:
                     Notify(ControllerCommand.Player_ExitGame);
                     break;

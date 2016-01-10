@@ -38,6 +38,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             {
                 Color = who.Color,
             });
+            this.Refresh();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -54,7 +55,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             for (int ixR = startIndex; ixR < rows.Count; ixR++)
             {
                 pos.Y += FontSize;
-                g.DrawString(rows[ixR].Message,
+                g.DrawString(   rows[ixR].Message,
                                 rows[ixR].Font,
                                 rows[ixR].Brush,
                                 pos);

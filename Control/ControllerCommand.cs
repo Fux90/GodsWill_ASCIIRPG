@@ -12,5 +12,6 @@ namespace GodsWill_ASCIIRPG
         Player_MoveSouth,
         Player_MoveEast,
         Player_ExitGame,
+        Player_PickUp,
     }
 }

@@ -59,7 +59,8 @@ namespace GodsWill_ASCIIRPG
             }
             foreach (var atom in elements)
             {
-                map.Insert(atom);
+                //map.Insert(atom);
+                atom.InsertInMap(map, atom.Position);
             }
 
             return map;
@@ -143,6 +144,16 @@ namespace GodsWill_ASCIIRPG
             NotifyViewersOfRemoval(coord);
         }
 
+        public void RemoveFromBuffer(Atom a)
+        {
+            RemoveFromBufferAt(a.Position);
+        }
+
+        public void RemoveFromBufferAt(Coord coord)
+        {
+            buffer[coord] = new Floor(coord);
+        }
+
         public Atom UnderneathAtom(Coord pos)
         {
             return buffer[pos];
@@ -164,6 +175,13 @@ namespace GodsWill_ASCIIRPG
             buffer[newPosition] = table[newPosition];
             table[newPosition] = movedAtom;
             NotifyViewersOfMovement(prevPosition, newPosition);
+            var steppedAtom = buffer[newPosition];
+            if (steppedAtom.GetType().IsSubclassOf(typeof(Item)))
+            {
+                var item = ((Item)steppedAtom);
+                steppedAtom.NotifyListeners(item.ItemTypeName);
+                movedAtom.NotifyListeners(String.Format("Stepped on {0}", item.ItemTypeName));
+            }
         }
     }
 }

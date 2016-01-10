@@ -10,7 +10,7 @@ namespace GodsWill_ASCIIRPG.Model.Weapons
 {
     class LongSword : Weapon
     {
-        public LongSword(string name = null)
+        public LongSword(string name = "Long Sword", Coord position = new Coord())
             : base(name, 
                    DefaultSymbol, 
                    Color.DarkGray, 
@@ -21,8 +21,8 @@ namespace GodsWill_ASCIIRPG.Model.Weapons
                        }),
                    description: "A long sword",
                    cost: 10,
-                   weight: 2
-                   )
+                   weight: 2,
+                   position: position)
         {
 
         }

@@ -209,14 +209,31 @@ namespace GodsWill_ASCIIRPG
 
         public void PickUp()
         {
-            var candidate = this.Map.UnderneathAtom(this.Position);
-            if(candidate.IsPickable)
-            {
-                var type = candidate.GetType();
+            NotifyListeners("*kneels to pick up something*");
 
-                if(type == typeof(Item))
+            var candidate = this.Map.UnderneathAtom(this.Position);
+            var type = candidate.GetType();
+            if (candidate.IsPickable)
+            {
+                var itemType = typeof(Item);
+                if (type == itemType || type.IsSubclassOf(itemType))
                 {
-                    PickUp((Item)candidate);
+                    var item = (Item)candidate;
+                    PickUp(item);
+                    NotifyListeners(String.Format("Picked up {0}[{1}]",
+                                    item.Name,
+                                    item.ItemTypeName));
+                }
+            }
+            else
+            {
+                if(type == typeof(Floor))
+                {
+                    NotifyListeners("There's nothing here...");
+                }
+                else
+                {
+                    NotifyListeners("I can't pick up this...");
                 }
             }
         }
@@ -224,6 +241,7 @@ namespace GodsWill_ASCIIRPG
         private void PickUp(Item item)
         {
             this.Backpack.Add(item);
+            this.Map.RemoveFromBuffer(item);
         }
 
         public void WearArmor(Armor armor)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GodsWill_ASCIIRPG.Model.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,14 @@ namespace GodsWill_ASCIIRPG.Model
     {
         public int X;
         public int Y;
+
+        public static Coord Random(int width, int height)
+        {
+            int x = Dice.Throws(width + 1) - 1;
+            int y = Dice.Throws(height + 1) - 1;
+
+            return new Coord() { X = x, Y = y };
+        }
 
         public int SquaredDistanceFrom(Coord other)
         {

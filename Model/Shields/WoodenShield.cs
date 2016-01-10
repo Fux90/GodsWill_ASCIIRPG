@@ -9,7 +9,7 @@ namespace GodsWill_ASCIIRPG.Model.Shields
 {
     class WoodenShield : Shield
     {
-        public WoodenShield(string name = "Wooden Shield")
+        public WoodenShield(string name = "Wooden Shield", Coord position = new Coord())
             : base( name, 
                     Shield.DefaultSymbol, 
                     Color.Brown,
@@ -17,7 +17,8 @@ namespace GodsWill_ASCIIRPG.Model.Shields
                     0,
                     description: "A wooden small shield",
                     cost: 1,
-                    weight: 2)
+                    weight: 2,
+                    position: position)
         {
 
         }
