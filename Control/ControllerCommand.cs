@@ -13,5 +13,10 @@ namespace GodsWill_ASCIIRPG
         Player_MoveEast,
         Player_ExitGame,
         Player_PickUp,
+        Backpack_SelectNext,
+        Backpack_SelectPrevious,
+        Backpack_Close,
+        Backpack_Pick,
+        Backpack_Open,
     }
 }

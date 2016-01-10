@@ -67,6 +67,23 @@ namespace GodsWill_ASCIIRPG
             this.ArmorType = armorType;
         }
 
+        public override string FullDescription
+        {
+            get
+            {
+                var str = new StringBuilder();
+                str.AppendLine(String.Format("{0} [{1}]", Name, ItemTypeName));
+                str.AppendLine(String.Format("Cost: {0} Weight{1}",
+                                             Cost,
+                                             Weight));
+                str.AppendLine();
+                str.AppendLine(damageReduction.ToString());
+                str.AppendLine();
+                str.AppendLine(Description);
+                return str.ToString();
+            }
+        }
+
         public override string ToString()
         {
             var str = new StringBuilder();

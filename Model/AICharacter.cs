@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {	
-	class AICharacter : Character
+	abstract class AICharacter : Character
 	{
         public delegate int XPCalculationMethod(Character pg, Character monster);
 

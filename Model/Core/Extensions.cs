@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GodsWill_ASCIIRPG.Model.Core
 {
@@ -27,6 +28,22 @@ namespace GodsWill_ASCIIRPG.Model.Core
         public static string Clean(this string str)
         {
             return str.Replace("_", "");
+        }
+
+        public static Label DockFillLabel(  this System.Windows.Forms.Control control, 
+                                            string name, 
+                                            Color color)
+        {
+            return new Label()
+            {
+                Name = name,
+                AutoSize = false,
+                Font = control.Font,
+                ForeColor = color,
+                BackColor = control.BackColor,
+                Dock = DockStyle.Fill,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left,
+            };
         }
     }
 }

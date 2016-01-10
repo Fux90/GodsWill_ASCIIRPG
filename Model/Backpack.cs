@@ -55,6 +55,21 @@ namespace GodsWill_ASCIIRPG.Model
         {
             return new BackpackEnum(items.ToArray());
         }
+
+        public Item[] ToArray()
+        {
+            if (this.Count > 0)
+            {
+                var res = new Item[this.Count];
+                for (int i = 0; i < this.Count; i++)
+                {
+                    res[i] = this[i];
+                }
+                return res;
+            }
+
+            return new Item[] { };
+        }
     }
 
     public class BackpackEnum : IEnumerator

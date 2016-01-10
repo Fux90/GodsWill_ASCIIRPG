@@ -26,13 +26,14 @@ namespace GodsWill_ASCIIRPG
             this.Name = MyName;
 
             InitializeComponent();
-            
-            var backpackControl = new BackpackUserControl();
+
+            tblGameScreen = new TableLayoutPanel();
+
+            var backpackControl = new BackpackUserControl(tblGameScreen);
             var mapViewControl = new MapUserControl(this, backpackControl);
             var characterSheet = new CharacterSheetUserControl();
             var logConsole = new LogUserControl();
 
-            tblGameScreen = new TableLayoutPanel();
             tblGameScreen.Dock = DockStyle.Fill;
             tblGameScreen.RowStyles.Clear();
             tblGameScreen.RowStyles.Add(new RowStyle(SizeType.Percent, 0.75F));
@@ -56,7 +57,10 @@ namespace GodsWill_ASCIIRPG
             tblGameScreen.Controls.Add(logConsole, 0, 1);
             logConsole.Dock = DockStyle.Fill;
 
+            backpackControl.Hide();
+
             this.Controls.Add(tblGameScreen);
+            this.Controls.Add(backpackControl);
 
             this.Text = GameName;
 

@@ -44,21 +44,21 @@ namespace GodsWill_ASCIIRPG.UIControls
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics;
-            var numVisualizedRows = (int)Math.Floor(this.Height / FontSize);
+            var numVisualizedRows = (int)Math.Ceiling(this.Height / (FontSize + 2.0f));
             var startIndex = 0;
-            if (rows.Count > numVisualizedRows)
+            if (rows.Count >= numVisualizedRows)
             {
-                startIndex = rows.Count - numVisualizedRows;
+                startIndex = rows.Count - numVisualizedRows + 1;
             }
 
             var pos = new PointF(0.0f, 0.0f);
             for (int ixR = startIndex; ixR < rows.Count; ixR++)
             {
-                pos.Y += FontSize;
                 g.DrawString(   rows[ixR].Message,
                                 rows[ixR].Font,
                                 rows[ixR].Brush,
                                 pos);
+                pos.Y += FontSize;
             }
         }
     }

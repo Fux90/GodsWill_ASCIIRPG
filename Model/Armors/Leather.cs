@@ -16,6 +16,7 @@ namespace GodsWill_ASCIIRPG.Model.Armors
                   new Damage(
                       new Dictionary<DamageType, int>()
                       {
+                          { DamageType.Physical, 1 }
                       }),
                   _ArmorType.Light_Armor,
                   description: "An armor built in boiled leather",

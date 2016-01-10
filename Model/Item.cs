@@ -28,6 +28,8 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
+        public abstract string FullDescription { get; }
+
         public Item(string name = "Generic Item",
                     string symbol = "i",
                     Color color = new Color(),
@@ -44,6 +46,21 @@ namespace GodsWill_ASCIIRPG
             this.uses = uses;
 
             IsPickable = true;
+        }
+
+        public bool ConsumeUse()
+        {
+            if (uses > 0)
+            {
+                uses--;
+            }
+
+            return uses == 0;
+        }
+
+        public virtual void ActiveUse(Character user)
+        {
+            user.NotifyListeners("Mmm... It seems of no use");
         }
 
         public override void Interaction(Atom interactor)

@@ -193,12 +193,17 @@ namespace GodsWill_ASCIIRPG
 
                 otherCharachter.SufferDamage(actualDmg);
             }
-            var specialTpc = Dice.Throws(20) + this.stats.ModifierOfStat(StatsType.InnatePower);
-            if(specialTpc >= otherCharachter.CASpecial)
+            if (this.HandledWepon.HasSpecialAttack && this.HandledWepon.SpecialAttackActivated)
             {
-                this.HandledWepon.SpecialAttack(this, otherCharachter);
+                if (this.HandledWepon.Uses == -1 || this.HandledWepon.Uses > 0)
+                {
+                    var specialTpc = Dice.Throws(20) + this.stats.ModifierOfStat(StatsType.InnatePower);
+                    if (specialTpc >= otherCharachter.CASpecial)
+                    {
+                        this.HandledWepon.SpecialAttack(this, otherCharachter);
+                    }
+                }
             }
-
             if(otherCharachter.Dead)
             {
                 otherCharachter.Die(this);
@@ -207,7 +212,7 @@ namespace GodsWill_ASCIIRPG
 
         public abstract void Die(Character killer);
 
-        public void PickUp()
+        public bool PickUp()
         {
             NotifyListeners("*kneels to pick up something*");
 
@@ -223,6 +228,7 @@ namespace GodsWill_ASCIIRPG
                     NotifyListeners(String.Format("Picked up {0}[{1}]",
                                     item.Name,
                                     item.ItemTypeName));
+                    return true;
                 }
             }
             else
@@ -236,6 +242,8 @@ namespace GodsWill_ASCIIRPG
                     NotifyListeners("I can't pick up this...");
                 }
             }
+
+            return false;
         }
 
         private void PickUp(Item item)

@@ -55,16 +55,16 @@ namespace GodsWill_ASCIIRPG.UIControls
             tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 20.0f));// Weapon
 
             tblPanelNameAndLevel = CreateColumns(new float[] { 60.0f, 40.0f });
-            tblPanelNameAndLevel.Controls.Add(DockFillLabel(_lblName, Color.Red), 0, 0);
-            tblPanelNameAndLevel.Controls.Add(DockFillLabel(_lblLevel, Color.DarkOrchid), 1, 0);
+            tblPanelNameAndLevel.Controls.Add(this.DockFillLabel(_lblName, Color.Red), 0, 0);
+            tblPanelNameAndLevel.Controls.Add(this.DockFillLabel(_lblLevel, Color.DarkOrchid), 1, 0);
 
             tblPfAndHunger = CreateColumns(new float[] { 50.0f, 50.0f });
-            tblPfAndHunger.Controls.Add(DockFillLabel(_lblPf, Color.White), 0, 0);
-            tblPfAndHunger.Controls.Add(DockFillLabel(_lblHunger, Color.White), 1, 0);
+            tblPfAndHunger.Controls.Add(this.DockFillLabel(_lblPf, Color.White), 0, 0);
+            tblPfAndHunger.Controls.Add(this.DockFillLabel(_lblHunger, Color.White), 1, 0);
 
             tblCAs = CreateColumns(new float[] { 50.0f, 50.0f });
-            tblCAs.Controls.Add(DockFillLabel(_lblCA, Color.White), 0, 0);
-            tblCAs.Controls.Add(DockFillLabel(_lblCASpecial, Color.White), 1, 0);
+            tblCAs.Controls.Add(this.DockFillLabel(_lblCA, Color.White), 0, 0);
+            tblCAs.Controls.Add(this.DockFillLabel(_lblCASpecial, Color.White), 1, 0);
 
             var numStats = Stats.AllStats.Length;
             var numRows = numStats / 2;
@@ -76,22 +76,22 @@ namespace GodsWill_ASCIIRPG.UIControls
             {
                 var cols = CreateColumns(new float[] { 25.0f, 25.0f, 25.0f, 25.0f });
                 tblStats.Controls.Add(cols, 0, i);
-                cols.Controls.Add(DockFillLabel("lbl_c0r" + i.ToString(), Color.Blue), 0, 0);
-                cols.Controls.Add(DockFillLabel("lbl_c1r" + i.ToString(), Color.White), 1, 0);
-                cols.Controls.Add(DockFillLabel("lbl_c0r" + i.ToString(), Color.Blue), 2, 0);
-                cols.Controls.Add(DockFillLabel("lbl_c1r" + i.ToString(), Color.White), 3, 0);
+                cols.Controls.Add(this.DockFillLabel("lbl_c0r" + i.ToString(), Color.Blue), 0, 0);
+                cols.Controls.Add(this.DockFillLabel("lbl_c1r" + i.ToString(), Color.White), 1, 0);
+                cols.Controls.Add(this.DockFillLabel("lbl_c0r" + i.ToString(), Color.Blue), 2, 0);
+                cols.Controls.Add(this.DockFillLabel("lbl_c1r" + i.ToString(), Color.White), 3, 0);
                 cols.Margin = new Padding(0);
                 cols.Dock = DockStyle.Fill;
             }
             
             tblMainPanelLayout.Controls.Add(tblPanelNameAndLevel, 0, 0);
-            tblMainPanelLayout.Controls.Add(DockFillLabel(_lblXP, Color.White), 0, 1);
+            tblMainPanelLayout.Controls.Add(this.DockFillLabel(_lblXP, Color.White), 0, 1);
             tblMainPanelLayout.Controls.Add(tblPfAndHunger, 0, 2);
             tblMainPanelLayout.Controls.Add(tblCAs, 0, 3);
             tblMainPanelLayout.Controls.Add(tblStats, 0, 4);
-            tblMainPanelLayout.Controls.Add(DockFillLabel(_lblArmor, Color.DarkRed), 0, 5);
-            tblMainPanelLayout.Controls.Add(DockFillLabel(_lblShield, Color.Brown), 0, 6);
-            tblMainPanelLayout.Controls.Add(DockFillLabel(_lblWeapon, Color.Gray), 0, 7);
+            tblMainPanelLayout.Controls.Add(this.DockFillLabel(_lblArmor, Color.DarkRed), 0, 5);
+            tblMainPanelLayout.Controls.Add(this.DockFillLabel(_lblShield, Color.Brown), 0, 6);
+            tblMainPanelLayout.Controls.Add(this.DockFillLabel(_lblWeapon, Color.Gray), 0, 7);
 
             this.Controls.Add(tblMainPanelLayout);
 
@@ -100,19 +100,6 @@ namespace GodsWill_ASCIIRPG.UIControls
             tblPfAndHunger.Dock = DockStyle.Fill;
             tblCAs.Dock = DockStyle.Fill;
             tblStats.Dock = DockStyle.Fill;
-        }
-
-        private Label DockFillLabel(string name, Color color)
-        {
-            return new Label()
-            {
-                Name = name,
-                Font = this.Font,
-                ForeColor = color,
-                BackColor = this.BackColor,
-                Dock = DockStyle.Fill,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left,
-            };
         }
 
         private TableLayoutPanel CreateColumns(float[] percentages)

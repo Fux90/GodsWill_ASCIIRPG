@@ -71,7 +71,13 @@ namespace GodsWill_ASCIIRPG.UIControls
 
                     #region OBJECT_MANAGEMENT
                     case ControllerCommand.Player_PickUp:
-                        controlledPg.PickUp();
+                        if(controlledPg.PickUp())
+                        {
+                            //backpackController.Register(controlledPg.Backpack);
+                        }
+                        break;
+                    case ControllerCommand.Backpack_Open:
+                        backpackController.Notify(ControllerCommand.Backpack_Open);
                         break;
                     #endregion
 
@@ -124,6 +130,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                 #region OBJECT_HANDLING
                 case Keys.P:
                     Notify(ControllerCommand.Player_PickUp);
+                    break;
+                case Keys.I:
+                    Notify(ControllerCommand.Backpack_Open);
                     break;
                 #endregion
                 case Keys.Escape:
