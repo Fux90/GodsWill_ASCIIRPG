@@ -5,13 +5,80 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using GodsWill_ASCIIRPG.View;
+using GodsWill_ASCIIRPG.Model.Core;
 
 namespace GodsWill_ASCIIRPG
 {
+    public class PgCreator
+    {
+        #region PROPERTIES
+        public string Name { get; set; }
+        public Pg.Level Level { get; set; }
+        public int CurrentXp { get; set; }
+        public int NextXp { get; set; }
+        public int CurrentPf { get; set; }
+        public int MaxPf { get; set; }
+        public int Hunger { get; set; }
+        public Stats Stats { get; set; }
+        public Armor Armor { get; set; }
+        public Shield Shield { get; set; }
+        public Weapon Weapon { get; set; }
+        public Backpack Backpack { get; set; }
+        public string Symbol { get; private set; }
+        public Color Color { get; private set; }
+        #endregion
+
+        public PgCreator()
+        {
+            Name = RandomName();
+            Stats = new Stats(StatsBuilder.RandomStats());
+            var toughMod = Stats[StatsType.Toughness].ModifierOfStat();
+            Level = Pg.Level.Novice;
+            CurrentXp = 0;
+            NextXp = 1000;
+            CurrentPf = Pg.HpIncrease + toughMod;
+            MaxPf = Pg.HpIncrease + toughMod;
+            Hunger = Pg.HungerResistance * toughMod;
+            Armor = null;
+            Shield = null;
+            Weapon = null;
+            Backpack = new Backpack();
+            Symbol = "@";
+            Color = Color.White;
+        }
+        
+
+        private string RandomName()
+        {
+            return "Rogdar";
+        }
+
+        public Pg Create()
+        {
+            return new Pg(  Name,
+                            Level,
+                            CurrentXp,
+                            NextXp,
+                            CurrentPf ,
+                            MaxPf,
+                            Hunger,
+                            Stats,
+                            Armor,
+                            Shield,
+                            Weapon,
+                            Backpack,
+                            Symbol,
+                            Color);
+        }
+    }
 	public class Pg : Character
 	{
+        public const int HpIncrease = 10;
+        public const int HungerResistance = 3;
+
         public enum Level
         {
+            Novice,
             Cleric,
             Master,
             GrandMaster
@@ -24,13 +91,35 @@ namespace GodsWill_ASCIIRPG
         public int XP { get { return xp[0]; } private set { xp[0] = value; } }
         public int NextXP { get { return xp[1]; } private set { xp[1] = value; } }
 
-        public Pg()
-            : base( "Pg", 10, 10 , 10, new Stats(StatsBuilder.RandomStats()), null, null, null, new Backpack(), 
-                    "@", Color.White, "Player")
+        public Pg(  string name,
+                    Level level,
+                    int currentXp,
+                    int nextXp,
+                    int currentPf,
+                    int maxPf,
+                    int hunger,
+                    Stats stats,
+                    Armor armor,
+                    Shield shield,
+                    Weapon weapon,
+                    Backpack backpack,
+                    string symbol,
+                    Color color)
+            : base( name,
+                    currentPf,
+                    maxPf,
+                    hunger,
+                    stats,
+                    armor,
+                    shield,
+                    weapon,
+                    backpack,
+                    symbol,
+                    color)
         {
-            CurrentLevel = Level.Cleric;
+            CurrentLevel = level;
             maxLevel = Enum.GetValues(typeof(Level)).Length - 1;
-            xp = new int[2];
+            xp = new int[] { currentXp, nextXp };
         }
 
         public override void GainExperience(int xp)

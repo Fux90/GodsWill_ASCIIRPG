@@ -48,7 +48,7 @@ namespace GodsWill_ASCIIRPG
             public void InitialMenu(IAtomListener[] atomListeners,
                                     ISheetViewer[] sheetViews)
             {
-                currentPg = new Pg();
+                currentPg = new PgCreator().Create();
                 foreach (var listener in atomListeners)
                 {
                     currentPg.RegisterListener(listener);
