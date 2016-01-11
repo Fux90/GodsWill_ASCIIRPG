@@ -52,20 +52,22 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             if (controlledPg != null)
             {
+                var acted = false;
+
                 switch (cmd)
                 {
                     #region MOVEMENT
                     case ControllerCommand.Player_MoveNorth:
-                        controlledPg.Move(Direction.North);
+                        controlledPg.Move(Direction.North, out acted);
                         break;
                     case ControllerCommand.Player_MoveWest:
-                        controlledPg.Move(Direction.West);
+                        controlledPg.Move(Direction.West, out acted);
                         break;
                     case ControllerCommand.Player_MoveSouth:
-                        controlledPg.Move(Direction.South);
+                        controlledPg.Move(Direction.South, out acted);
                         break;
                     case ControllerCommand.Player_MoveEast:
-                        controlledPg.Move(Direction.East);
+                        controlledPg.Move(Direction.East, out acted);
                         break;
                     #endregion
 
@@ -84,6 +86,12 @@ namespace GodsWill_ASCIIRPG.UIControls
                     case ControllerCommand.Player_ExitGame:
                         gameForm.Close();
                         break;
+                }
+
+                if(acted)
+                {
+                    controlledPg.EffectOfTurn();
+                    // TODO AIs controls
                 }
             }
         }
@@ -117,7 +125,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                     Notify(ControllerCommand.Player_MoveNorth);
                     break;
                 case Keys.A:
-                    controlledPg.Move(Direction.West);
+                    Notify(ControllerCommand.Player_MoveWest);
                     break;
                 case Keys.S:
                     Notify(ControllerCommand.Player_MoveSouth);

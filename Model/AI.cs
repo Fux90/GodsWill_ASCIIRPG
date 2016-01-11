@@ -71,14 +71,14 @@ namespace GodsWill_ASCIIRPG
                     {
                         currentStatus = Status.Chasing;
                     }
-                    if(!ControlledCharacter.Move(currentDirection))
+                    if(!ControlledCharacter.Move(currentDirection, out acted))
                     {
                         // Change direction
                     }
                     break;
                 case Status.Chasing:
                     var direction = FindDirection(ControlledCharacter, Game.Current.CurrentPg);
-                    ControlledCharacter.Move(direction);
+                    ControlledCharacter.Move(direction, out acted);
                     break;
             }
         }
