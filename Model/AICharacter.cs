@@ -1,6 +1,7 @@
 using GodsWill_ASCIIRPG.Model;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -17,8 +18,37 @@ namespace GodsWill_ASCIIRPG
         public AI Intelligence { get { return intelligence; } }
         public int PerceptionDistance { get; protected set; }
 
-        public AICharacter(AI intelligence, int perceptionDistance, bool hostile = true)
-            : base("AI Character", 10, 10, 10, new Stats(StatsBuilder.RandomStats()), null, null, null, new Backpack())
+        public AICharacter( string name, 
+                            int currentPf,
+                            int maximumPf,
+                            int hunger,
+                            AI intelligence, 
+                            int perceptionDistance, 
+                            Stats? stats = null,
+                            Armor wornArmor = null,
+                            Shield embracedShield = null,
+                            Weapon handledWeapon = null,
+                            Backpack backpack = null,
+                            string symbol = "C",
+                            Color? color = null,
+                            string description = "A creature of the world", 
+                            Coord position = new Coord(),
+                            bool hostile = true)
+            : base( name, 
+                    currentPf,
+                    maximumPf,
+                    hunger,
+                    stats == null ? new Stats(StatsBuilder.RandomStats()) : (Stats)stats,
+                    wornArmor,
+                    embracedShield, 
+                    handledWeapon, 
+                    backpack == null ? new Backpack() : backpack,
+                    symbol,
+                    color == null 
+                        ? (hostile ? Color.Red : Color.Green)
+                        : (Color)color,
+                    description,
+                    position)
         {
             this.intelligence = intelligence;
             this.PerceptionDistance = perceptionDistance;

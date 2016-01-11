@@ -64,6 +64,7 @@
     <Compile Include="Main\Program.cs" />
     <Compile Include="Model\AI.cs" />
     <Compile Include="Model\AICharacter.cs" />
+    <Compile Include="Model\AICharacters\Orc.cs" />
     <Compile Include="Model\Armor.cs" />
     <Compile Include="Model\Armors\Leather.cs" />
     <Compile Include="Model\Atom.cs" />
