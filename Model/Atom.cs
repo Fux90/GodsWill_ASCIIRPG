@@ -7,11 +7,25 @@ using System.Text;
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.View;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG
 {
-	abstract public class Atom
+    [Serializable]
+	abstract public class Atom : ISerializable
 	{
+        #region SERIALIZATION_CONST_NAMES
+        private const string nameSerializableName = "name";
+        private const string symbolSerializableName = "symbol";
+        private const string colorSerializableName = "color";
+        private const string walkableSerializableName = "walkable";
+        private const string descriptionSerializableName = "description";
+        private const string positionSerializableName = "position";
+        private const string mapSerializableName = "map";
+        private const string listenersSerializableName = "listeners";
+        private const string isPickableSerializableName = "isPickable";
+        #endregion
+
         #region PRIVATE_MEMEBERS
         private string name;
         private string symbol;
@@ -50,6 +64,7 @@ namespace GodsWill_ASCIIRPG
             this.listeners = new List<IAtomListener>();
         }
 
+        #region METHODS
         public void InsertInMap(Map map, Coord newPos)
         {
             this.map = map;
@@ -72,5 +87,34 @@ namespace GodsWill_ASCIIRPG
         }
 
         public abstract void Interaction(Atom interactor);
-	}
+        #endregion
+
+        #region SERIALIZATION
+        public Atom(SerializationInfo info, StreamingContext context)
+        {
+            name = (string)info.GetValue(nameSerializableName, typeof(string));
+            symbol = (string)info.GetValue(symbolSerializableName, typeof(string));
+            color = (Color)info.GetValue(colorSerializableName, typeof(Color));
+            walkable = (bool)info.GetValue(walkableSerializableName, typeof(bool));
+            description = (string)info.GetValue(descriptionSerializableName, typeof(string));
+            position = (Coord)info.GetValue(positionSerializableName, typeof(Coord));
+            //map = (Map)info.GetValue(mapSerializableName, typeof(Map));
+            listeners = (List<IAtomListener>)info.GetValue(listenersSerializableName, typeof(List<IAtomListener>));
+            IsPickable = (bool)info.GetValue(isPickableSerializableName, typeof(bool));
+        }
+
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameSerializableName, name, typeof(string));
+            info.AddValue(symbolSerializableName, symbol, typeof(string));
+            info.AddValue(colorSerializableName, color, typeof(Color));
+            info.AddValue(walkableSerializableName, walkable, typeof(bool));
+            info.AddValue(descriptionSerializableName, description, typeof(string));
+            info.AddValue(positionSerializableName, position, typeof(Coord));
+            //info.AddValue(mapSerializableName, map, typeof(Map));
+            info.AddValue(listenersSerializableName, listeners, typeof(List<IAtomListener>));
+            info.AddValue(isPickableSerializableName, IsPickable, typeof(bool));
+        }
+        #endregion
+    }
 }

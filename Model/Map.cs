@@ -4,17 +4,25 @@ using System.Linq;
 using System.Text;
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace GodsWill_ASCIIRPG
 {
     class MapBuilder
     {
+        #region PRIVATE_MEMBERS
+        List<IMapViewer> views;
+        List<Atom> elements;
+        #endregion
+
+        #region PROPERTIES
         public string Name { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public Coord PlayerInitialPosition { get; set; }
-        List<IMapViewer> views;
-        List<Atom> elements;
+        #endregion
 
         public MapBuilder()
         {
@@ -26,9 +34,11 @@ namespace GodsWill_ASCIIRPG
             elements = new List<Atom>();
         }
 
-        public void LoadFromFile(string mapFilePath)
+        public Map LoadFromFile(string mapFilePath)
         {
-            //throw new NotImplementedException();
+            var formatter = new BinaryFormatter();
+            FileStream mapFile = new FileStream(mapFilePath, FileMode.Open);
+            return (Map)formatter.Deserialize(mapFile);
         } 
 
         public void AddViewer(IMapViewer viewer)
@@ -67,19 +77,32 @@ namespace GodsWill_ASCIIRPG
         }
     }
 
-    public class Map
+    [Serializable]
+    public class Map : ISerializable
     {
+        #region SERIALIZATION_CONST_NAMES
+        private const string nameSerializableName = "name";
+        private const string tableSerializableName = "table";
+        private const string bufferSerializableName = "buffer";
+        private const string viewsSerializableName = "views";
+        #endregion
+
+        #region PRIVATE_MEMBERS
         string name;
         Coord playerInitialPosition;
         BidimensionalArray<Atom> table;
         BidimensionalArray<Atom> buffer;
         List<IMapViewer> views;
+        #endregion
 
+        #region PROPERTIES
         public string Name { get { return name; } }
         public int Width { get { return table.Width; } }
         public int Height { get { return table.Height; } }
         public Coord PlayerInitialPosition { get { return playerInitialPosition; } }
+        #endregion
 
+        #region ITERATORS
         public Atom this[Coord coord]
         {
             get
@@ -87,6 +110,7 @@ namespace GodsWill_ASCIIRPG
                 return this.table[coord];
             }
         }
+        #endregion
 
         public Map( string name,
                     Coord playerInitialPosition,
@@ -99,14 +123,13 @@ namespace GodsWill_ASCIIRPG
             this.views = new List<IMapViewer>();
         }
 
+        #region METHODS
+
         public void RegisterViewer(IMapViewer viewer)
         {
             views.Add(viewer);
         }
 
-        /// <summary>
-        /// Da definire...
-        /// </summary>
         public void NotifyViewersOfMovement(Coord freedCell, Coord occupiedCell)
         {
             foreach (var viewer in views)
@@ -169,7 +192,7 @@ namespace GodsWill_ASCIIRPG
             return table[coord.X, coord.Y].Walkable;
         }
 
-        internal void MoveAtomTo(Atom movedAtom, Coord prevPosition, Coord newPosition)
+        public void MoveAtomTo(Atom movedAtom, Coord prevPosition, Coord newPosition)
         {
             table[prevPosition] = buffer[prevPosition];
             buffer[newPosition] = table[newPosition];
@@ -183,5 +206,25 @@ namespace GodsWill_ASCIIRPG
                 movedAtom.NotifyListeners(String.Format("Stepped on {0}", item.ItemTypeName));
             }
         }
+
+        #endregion
+
+        #region SERIALIZATION
+        public Map(SerializationInfo info, StreamingContext context)
+        {
+            name = (string)info.GetValue(nameSerializableName, typeof(string));
+            table = (BidimensionalArray<Atom>)info.GetValue(tableSerializableName, typeof(BidimensionalArray<Atom>));
+            buffer = (BidimensionalArray<Atom>)info.GetValue(bufferSerializableName, typeof(BidimensionalArray<Atom>));
+            views = (List<IMapViewer>)info.GetValue(viewsSerializableName, typeof(List<IMapViewer>));
+        }
+
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameSerializableName, name, typeof(string));
+            info.AddValue(tableSerializableName, table, typeof(BidimensionalArray<Atom>));
+            info.AddValue(bufferSerializableName, buffer, typeof(BidimensionalArray<Atom>));
+            info.AddValue(viewsSerializableName, views, typeof(List<IMapViewer>));
+        }
+        #endregion
     }
 }
