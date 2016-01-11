@@ -12,8 +12,8 @@ using System.Runtime.Serialization;
 namespace GodsWill_ASCIIRPG
 {
     [Serializable]
-	abstract public class Atom : ISerializable
-	{
+    abstract public class Atom : ISerializable
+    {
         #region SERIALIZATION_CONST_NAMES
         private const string nameSerializableName = "name";
         private const string symbolSerializableName = "symbol";
@@ -36,7 +36,7 @@ namespace GodsWill_ASCIIRPG
         private Map map;
         private List<IAtomListener> listeners;
         #endregion
-            
+
         #region PROPERTIES
         public string Name { get { return name; } }
         public string Symbol { get { return symbol; } }
@@ -46,6 +46,7 @@ namespace GodsWill_ASCIIRPG
         public Coord Position { get { return position; } protected set { position = value; } }
         public Map Map { get { return map; } }
         public bool IsPickable { get; protected set; }
+        public List<IAtomListener> Listeners { get { return new List<IAtomListener>( listeners ); } }
         #endregion
 
         public Atom(string name,
@@ -69,7 +70,12 @@ namespace GodsWill_ASCIIRPG
         {
             this.map = map;
             this.position = newPos;
-            NotifyListeners(String.Format("Entered {0}", map.Name));
+            var type = this.GetType();
+            var typePg = typeof(Pg);
+            if (type == typePg || type.IsSubclassOf(typePg))
+            {
+                NotifyListeners(String.Format("Entered {0}", map.Name));
+            }
             this.map.Insert(this);
         }
 

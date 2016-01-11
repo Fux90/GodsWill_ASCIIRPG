@@ -21,7 +21,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             InitializeComponent();
 
             this.DoubleBuffered = true;
-            this.BackColor = Color.Green;
+            this.BackColor = Color.Black;
             this.BorderStyle = BorderStyle.FixedSingle;
             rows = new List<LogRow>();
         }

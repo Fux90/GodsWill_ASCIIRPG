@@ -40,7 +40,7 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                return 10 + EmbracedShield.BonusCA + Stats[StatsType.Agility];
+                return 10 + EmbracedShield.BonusCA + Stats[StatsType.Agility].ModifierOfStat();
             }
         }
 
@@ -100,9 +100,21 @@ namespace GodsWill_ASCIIRPG
 
         public void SufferDamage(Damage dmg)
         {
+            var msg = new StringBuilder();
             var effectiveDmg = dmg - WornArmor.DamageReduction;
-            hp[(int)HpType.Current] -= effectiveDmg.TotalDamage;
+            var totalDmg = effectiveDmg.TotalDamage;
+            hp[(int)HpType.Current] -= totalDmg;
             CharacterSheets.ForEach((sheet) => sheet.NotifyHp(Hp, MaxHp));
+            msg.AppendFormat(   "Takes {0} damage{1} ", 
+                                totalDmg,
+                                totalDmg == 1 ? "" : "s");
+            var dmgString = effectiveDmg.ToHorString();
+            var show = dmgString.Length > 0;
+            msg.AppendFormat(   "{0}{1}{2}", 
+                                show ? "(" : "",
+                                dmgString, 
+                                show ? ")" : "");
+            NotifyListeners(msg.ToString());
         }
 
         public void HealDamage(Damage dmg)
@@ -193,32 +205,59 @@ namespace GodsWill_ASCIIRPG
             return moved;
         }
 
-        public void Attack(Character otherCharachter)
+        public void Attack(Character defenderCharachter)
         {
-            var tpc = Dice.Throws(20) + this.stats.ModifierOfStat(StatsType.Precision) + HandledWepon.BonusOnTPC;
-            if(tpc >= otherCharachter.CA)
+            var msg = new StringBuilder();
+
+            msg.AppendFormat("Tries to hit {0} with {1}: ", defenderCharachter.Name, HandledWepon.Name);
+            var tpc = Dice.Throws(20) + Stats[StatsType.Precision].ModifierOfStat() + HandledWepon.BonusOnTPC;
+            var defenderCA = defenderCharachter.CA;
+            if (tpc >= defenderCA)
             {
                 var physicalDmg = new Damage();
-                physicalDmg[DamageType.Physical] = this.stats[StatsType.Strength];
+                physicalDmg[DamageType.Physical] = this.stats[StatsType.Strength].ModifierOfStat();
 
                 var actualDmg = this.HandledWepon.Damage + physicalDmg;
 
-                otherCharachter.SufferDamage(actualDmg);
+                msg.AppendFormat("HIT! ({0} vs. {1})", tpc, defenderCA);
+                NotifyListeners(msg.ToString());
+                defenderCharachter.SufferDamage(actualDmg);
             }
+            else
+            {
+                msg.AppendFormat("MISSED... ({0} vs. {1})", tpc, defenderCA);
+                NotifyListeners(msg.ToString());
+            }
+            
+
+            msg.Clear();
             if (this.HandledWepon.HasSpecialAttack && this.HandledWepon.SpecialAttackActivated)
             {
                 if (this.HandledWepon.Uses == -1 || this.HandledWepon.Uses > 0)
                 {
-                    var specialTpc = Dice.Throws(20) + this.stats.ModifierOfStat(StatsType.InnatePower);
-                    if (specialTpc >= otherCharachter.CASpecial)
+                    var specialTpc = Dice.Throws(20) + Stats[StatsType.InnatePower].ModifierOfStat();
+                    var specialCA = defenderCharachter.CASpecial;
+
+                    msg.AppendFormat("Tries to use {0} special power: ", HandledWepon.Name);
+
+                    if (specialTpc >= specialCA)
                     {
-                        this.HandledWepon.SpecialAttack(this, otherCharachter);
+                        this.HandledWepon.SpecialAttack(this, defenderCharachter);
+                        msg.AppendFormat("HIT! ({0} vs. {1})", specialTpc, specialCA);
                     }
+                    else
+                    {
+                        msg.AppendFormat("MISSED... ({0} vs. {1})", specialTpc, specialCA);
+                    }
+
+                    NotifyListeners(msg.ToString());
                 }
             }
-            if(otherCharachter.Dead)
+
+            if(defenderCharachter.Dead)
             {
-                otherCharachter.Die(this);
+                NotifyListeners(String.Format("Kills {0}", defenderCharachter.Name));
+                defenderCharachter.Die(this);
             }
         }
 

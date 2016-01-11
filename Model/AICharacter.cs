@@ -142,6 +142,7 @@ namespace GodsWill_ASCIIRPG
             // Pg Xp, Gold, Items, etc...
             pg.GainExperience(AICharacter.XpCalculation(pg, this));
             // Remove from map
+            this.Map.Remove(this);
         }
     }
 }

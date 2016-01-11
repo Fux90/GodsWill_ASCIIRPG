@@ -70,6 +70,25 @@ namespace GodsWill_ASCIIRPG
             return new Damage(dmgs);
         }
 
+        public string ToHorString()
+        {
+            var str = new StringBuilder();
+            var sep = "";
+            foreach (var dmgType in dmgs.Keys)
+            {
+                var dmg = dmgs[dmgType];
+                if (dmg > 0)
+                {
+                    str.AppendFormat("{0}{1}[{2}]",
+                                        sep,
+                                        dmg,
+                                        dmgType);
+                    sep = "+";
+                }
+            }
+            return str.ToString();
+        }
+
         public override string ToString()
         {
             var str = new StringBuilder();
