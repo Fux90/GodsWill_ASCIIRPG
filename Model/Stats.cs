@@ -36,9 +36,21 @@ namespace GodsWill_ASCIIRPG
 
 	public struct Stats
 	{
-        int[] stats;
+        int[] _stats;
 
         public int this[StatsType stat] { get { return stats[(int)stat]; } }
+
+        private int[] stats
+        {
+            get
+            {
+                if(_stats == null)
+                {
+                    _stats = new int[Stats.AllStats.Length];
+                }
+                return _stats;
+            }
+        }
 
         public Stats(int[] stats)
         {
@@ -47,7 +59,7 @@ namespace GodsWill_ASCIIRPG
             {
                 throw new Exception(String.Format("Stats must be {0}", numOfStats));
             }
-            this.stats = (int[])stats.Clone();
+            this._stats = (int[])stats.Clone();
         }
 
         public static StatsType[] AllStats { get { return (StatsType[])Enum.GetValues(typeof(StatsType)); } }

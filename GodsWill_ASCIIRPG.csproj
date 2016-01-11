@@ -76,6 +76,7 @@
     <Compile Include="Model\Damage.cs" />
     <Compile Include="Model\DamageType.cs" />
     <Compile Include="Model\Direction.cs" />
+    <Compile Include="Model\Prerequisite.cs" />
     <Compile Include="Model\SceneryItems\Floor.cs" />
     <Compile Include="Model\Heal.cs" />
     <Compile Include="Model\Item.cs" />
