@@ -48,18 +48,14 @@ namespace GodsWill_ASCIIRPG
 
             }
 
-            public void InitialMenu(IAtomListener[] atomListeners,
-                                    ISheetViewer[] sheetViews)
+            public void InitialMenu(List<IAtomListener> atomListeners,
+                                    List<ISheetViewer> sheetViews,
+                                    List<IBackpackViewer> backpackViewers)
             {
                 currentPg = new PgCreator().Create();
-                foreach (var listener in atomListeners)
-                {
-                    currentPg.RegisterListener(listener);
-                }
-                foreach (var sheet in sheetViews)
-                {
-                    currentPg.RegisterSheet(sheet);
-                }
+                atomListeners.ForEach( listener => currentPg.RegisterListener(listener));
+                sheetViews.ForEach( sheet => currentPg.RegisterSheet(sheet));
+                backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterViewer(viewer));
             }
 
             public void GameInitialization( PgController pgController, IMapViewer mapViewer )

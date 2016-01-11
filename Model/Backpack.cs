@@ -10,6 +10,7 @@ namespace GodsWill_ASCIIRPG.Model
     public class Backpack : IEnumerable
     {
         List<Item> items;
+        List<IBackpackViewer> backPackViewers;
 
         public int Count
         {
@@ -27,16 +28,19 @@ namespace GodsWill_ASCIIRPG.Model
         public Backpack(List<Item> items = null)
         {
             this.items = items != null ? items : new List<Item>();
+            backPackViewers = new List<IBackpackViewer>();
         }
 
         public void Add(Item item)
         {
             this.items.Add(item);
+            NotifyAdd();
         }
 
         public Item Remove(Item item)
         {
             return RemoveAt(this.items.IndexOf(item));
+            NotifyAdd();
         }
 
         public Item RemoveAt(int index)
@@ -44,6 +48,17 @@ namespace GodsWill_ASCIIRPG.Model
             var removedObject = items[index];
             items.RemoveAt(index);
             return removedObject;
+        }
+
+        public void RegisterViewer(IBackpackViewer viewer)
+        {
+            backPackViewers.Add(viewer);
+            NotifyAdd();
+        }
+
+        public void NotifyAdd()
+        {
+            backPackViewers.ForEach( viewer => viewer.NotifyAdd(this.ToArray()) );
         }
 
         IEnumerator IEnumerable.GetEnumerator()

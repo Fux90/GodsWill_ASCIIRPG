@@ -1,4 +1,5 @@
 using GodsWill_ASCIIRPG.Model;
+using GodsWill_ASCIIRPG.Model.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,7 +8,37 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {	
-	abstract class AICharacter : Character
+    public abstract class AICharacterBuilder 
+    {
+        public string Name { get; set; }
+        public int? CurrentPf { get; set; }
+        public int? MaximumPf { get; set; }
+        public int? Hunger { get; set; }
+        public AI MyAI { get; set; }
+        public int? PerceptionDistance { get; set; }
+        public Stats? Stats { get; set; }
+        public Armor WornArmor { get; set; }
+        public Shield EmbracedShield { get; set; }
+        public Weapon HandledWeapon { get; set; }
+        public Backpack Backpack { get; set; }
+        public string Symbol { get; set; }
+        public Color? Color { get; set; }
+        public string Description { get; set; }
+        public Coord? Position { get; set; }
+        public bool? Hostile { get; set; }
+
+        public AICharacterBuilder() { }
+
+        protected abstract AICharacter RandomBuild(Pg.Level level);
+
+        public virtual AICharacter Build(Pg.Level level = Pg.Level.Novice)
+        {
+            var aiChar = RandomBuild(level);
+            return aiChar;
+        }
+    }
+
+	public abstract class AICharacter : Character
 	{
         public delegate int XPCalculationMethod(Character pg, Character monster);
 
@@ -17,6 +48,8 @@ namespace GodsWill_ASCIIRPG
         public bool Hostile { get { return hostile; } }
         public AI Intelligence { get { return intelligence; } }
         public int PerceptionDistance { get; protected set; }
+
+        public abstract AICharacterBuilder Builder { get; }
 
         public AICharacter( string name, 
                             int currentPf,
@@ -51,6 +84,7 @@ namespace GodsWill_ASCIIRPG
                     position)
         {
             this.intelligence = intelligence;
+            this.intelligence.ControlledCharacter = this;
             this.PerceptionDistance = perceptionDistance;
             this.hostile = hostile;
         }

@@ -27,6 +27,9 @@ namespace GodsWill_ASCIIRPG
 
         protected List<ISheetViewer> CharacterSheets { get; private set; }
 
+        public abstract Dice HealthDice { get; }
+        public abstract Dice HungerDice { get; }
+
         public int Hp { get { return hp[(int)HpType.Current]; } }
         public int MaxHp { get { return hp[(int)HpType.Max]; } }
         public int Hunger { get { return hunger; } }
@@ -53,6 +56,14 @@ namespace GodsWill_ASCIIRPG
         public Shield EmbracedShield { get { return embracedShield == null ? Shield.NoShield : embracedShield; } }
         public Weapon HandledWepon { get { return handledWeapon == null ? Weapon.UnarmedAttack : handledWeapon; } }
         public Backpack Backpack { get { return backpack; } }
+
+        public string RaceType
+        {
+            get
+            {
+                return this.GetType().Name.Clean();
+            }
+        }
 
         public Character(string name,
                          int currentPf,
@@ -81,7 +92,7 @@ namespace GodsWill_ASCIIRPG
 
             this.CharacterSheets = new List<ISheetViewer>();
         }
-
+ 
         public virtual void GainExperience(int xp)
         {
             

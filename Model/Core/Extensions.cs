@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -44,6 +45,18 @@ namespace GodsWill_ASCIIRPG.Model.Core
                 Dock = DockStyle.Fill,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left,
             };
+        }
+
+        public static T ValueIfNotNullOrElse<T>(this T element, T value)
+            where T : class
+        {
+            return element == null ? value : element;
+        }
+
+        public static T ValueIfNotNullOrElse<T>(this T? element, T value)
+            where T : struct
+        {
+            return element == null ? value : (T)element;
         }
     }
 }

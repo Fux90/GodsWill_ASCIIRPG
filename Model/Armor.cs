@@ -89,7 +89,7 @@ namespace GodsWill_ASCIIRPG
             var str = new StringBuilder();
             str.AppendLine(String.Format("{0}[{1}]",
                                          Name,
-                                         ItemTypeName.Clean()));
+                                         ItemTypeName));
             str.AppendLine(ArmorType.ToString().Clean());
             str.AppendLine(DamageReduction.ToString());
 

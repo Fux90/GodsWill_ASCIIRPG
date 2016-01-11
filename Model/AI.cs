@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
-	abstract class AI
+	public abstract class AI
 	{
         public delegate Direction FindDirectionMethod(AICharacter me, Pg pg);
 
@@ -17,17 +17,21 @@ namespace GodsWill_ASCIIRPG
         }
 
         private AICharacter controlledCharacter;
-        protected AICharacter ControlledCharacter
+        public AICharacter ControlledCharacter
         {
             get
             {
                 return controlledCharacter;
             }
+            set
+            {
+                controlledCharacter = value;
+            }
         }
 
-        public AI(AICharacter character)
+        public AI()
         {
-            this.controlledCharacter = character;
+            
         }
 
         public FindDirectionMethod FindDirection { get; protected set; }
@@ -43,13 +47,13 @@ namespace GodsWill_ASCIIRPG
         };
     }
 
-    class SimpleAI : AI
+    public class SimpleAI : AI
     {
         Status currentStatus;
         Direction currentDirection;
 
-        public SimpleAI(AICharacter character)
-            : base (character)
+        public SimpleAI()
+            : base ()
         {
             currentStatus = Status.Wandering;
             FindDirection = DirectionFindingAlgorithms.SimpleChase;

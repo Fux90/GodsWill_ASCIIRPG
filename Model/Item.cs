@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using GodsWill_ASCIIRPG.Model.Core;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -24,7 +25,7 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                return this.GetType().Name;
+                return this.GetType().Name.Clean();
             }
         }
 

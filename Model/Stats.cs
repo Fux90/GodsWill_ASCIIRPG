@@ -24,13 +24,27 @@ namespace GodsWill_ASCIIRPG
             var res = new int[stats.Length];
             for (int i = 0; i < res.Length; i++)
             {
-                res[i] = Dice.Throws(6, 4, (partial) =>
+                res[i] = Dice.Throws(6, nDice: 4, countingMethod: (partial) =>
                 {
                     return partial.Sum() - partial.Min();
                 });
             }
 
             return res;
+        }
+
+        public static int[] RandomStats(Dictionary<StatsType, int> modifiers)
+        {
+            var stats = RandomStats();
+            if (modifiers == null)
+            {
+                throw new Exception("Modifier can't be null");
+            }
+            foreach (var stat in modifiers.Keys)
+            {
+                stats[(int)stat] += modifiers[stat];
+            }
+            return stats;
         }
     }
 

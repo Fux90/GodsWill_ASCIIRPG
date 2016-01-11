@@ -82,7 +82,7 @@ namespace GodsWill_ASCIIRPG
             var str = new StringBuilder();
             str.AppendLine(String.Format("{0}[{1}]",
                                          Name,
-                                         ItemTypeName.Clean()));
+                                         ItemTypeName));
             str.AppendLine(String.Format("Bonus CA: {0}", BonusCA));
             str.AppendLine(String.Format("Bonus Special: {0}", BonusCA));
             return str.ToString();

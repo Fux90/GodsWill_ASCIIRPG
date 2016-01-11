@@ -36,9 +36,9 @@ namespace GodsWill_ASCIIRPG
             Level = Pg.Level.Novice;
             CurrentXp = 0;
             NextXp = 1000;
-            CurrentPf = Pg.HpIncrease + toughMod;
-            MaxPf = Pg.HpIncrease + toughMod;
-            Hunger = Pg.HungerResistance * toughMod;
+            CurrentPf = Pg.healthDice.Max + toughMod;
+            MaxPf = Pg.healthDice.Max + toughMod;
+            Hunger = Pg.hungerDice.Max * toughMod;
             Armor = null;
             Shield = null;
             Weapon = null;
@@ -70,12 +70,15 @@ namespace GodsWill_ASCIIRPG
                             Symbol,
                             Color);
         }
+
+        public Pg CreateFromFile()
+        {
+            throw new NotImplementedException();
+        }
     }
+
 	public class Pg : Character
 	{
-        public const int HpIncrease = 10;
-        public const int HungerResistance = 3;
-
         public enum Level
         {
             Novice,
@@ -84,12 +87,25 @@ namespace GodsWill_ASCIIRPG
             GrandMaster
         }
 
+        public static readonly Dice healthDice = new Dice(nFaces: 10);
+        public static readonly Dice hungerDice = new Dice(nFaces: 4);
+
         public Level CurrentLevel { get; private set; }
         private int maxLevel;
 
         private int[] xp;
         public int XP { get { return xp[0]; } private set { xp[0] = value; } }
         public int NextXP { get { return xp[1]; } private set { xp[1] = value; } }
+
+        public override Dice HealthDice
+        {
+            get { return healthDice; }
+        }
+
+        public override Dice HungerDice
+        {
+            get { return hungerDice; }
+        }
 
         public Pg(  string name,
                     Level level,

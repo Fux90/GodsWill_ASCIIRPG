@@ -65,8 +65,9 @@ namespace GodsWill_ASCIIRPG
             this.Text = GameName;
 
             Game.Current.Init();
-            Game.Current.InitialMenu(   new IAtomListener[] { logConsole },
-                                        new ISheetViewer[] { characterSheet });
+            Game.Current.InitialMenu(   new List<IAtomListener> { logConsole },
+                                        new List<ISheetViewer> { characterSheet },
+                                        new List<IBackpackViewer> { backpackControl });
             Game.Current.GameInitialization(mapViewControl, mapViewControl);
             //Game.Current.RunGame();
         }

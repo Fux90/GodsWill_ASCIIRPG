@@ -190,13 +190,20 @@ namespace GodsWill_ASCIIRPG.UIControls
         public void Register(Backpack backpack)
         {
             controlledBackpack = backpack;
-            itemList.Items = backpack.ToArray();
+            //itemList.Items = backpack.ToArray();
+            //updateDescription();
         }
 
         public void Unregister()
         {
             controlledBackpack = null;
             itemList.Items = null;
+        }
+
+        public void NotifyAdd(Item[] itemsInBackpack)
+        {
+            itemList.Items = itemsInBackpack;
+            updateDescription();
         }
 
         protected override void OnResize(EventArgs e)

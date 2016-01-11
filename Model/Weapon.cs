@@ -133,7 +133,7 @@ namespace GodsWill_ASCIIRPG
             var str = new StringBuilder();
             str.AppendLine(String.Format("{0}[{1}]",
                                          Name,
-                                         ItemTypeName.Clean()));
+                                         ItemTypeName));
             str.AppendLine(String.Format("Bonus: {0}", BonusOnTPC));
             str.AppendLine(Damage.ToString());
             return str.ToString();
