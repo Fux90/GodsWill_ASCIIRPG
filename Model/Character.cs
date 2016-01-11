@@ -135,7 +135,7 @@ namespace GodsWill_ASCIIRPG
             CharacterSheets.ForEach((sheet) => sheet.NotifyStat(stat, stats[stat]));
         }
 
-        public bool Move(Direction dir)
+        public virtual bool Move(Direction dir)
         {
             var candidateCoord = new Coord()
             {
@@ -176,6 +176,7 @@ namespace GodsWill_ASCIIRPG
             }
 
             var moved = false;
+            var acted = false;
 
             if (this.Map.CanMoveTo(candidateCoord))
             {

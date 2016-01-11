@@ -2,6 +2,7 @@
 
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
+using GodsWill_ASCIIRPG.Model.AICharacters;
 using GodsWill_ASCIIRPG.Model.Armors;
 using GodsWill_ASCIIRPG.Model.SceneryItems;
 using GodsWill_ASCIIRPG.Model.Shields;
@@ -73,6 +74,7 @@ namespace GodsWill_ASCIIRPG
                 mapBuilder.AddAtom(new LongSword(position: new Coord() { X = 7, Y = 4 }));
                 mapBuilder.AddAtom(new Leather(position: new Coord() { X = 7, Y = 3 }));
                 mapBuilder.AddAtom(new WoodenShield(position: Coord.Random(mapBuilder.Width, mapBuilder.Height)));
+                mapBuilder.AddAtom(AICharacter.DummyCharacter(typeof(Orc)).Builder.Build());
 #else
                 mapBuilder.LoadFromFile("");
 #endif

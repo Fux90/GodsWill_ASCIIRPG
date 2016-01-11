@@ -165,10 +165,20 @@ namespace GodsWill_ASCIIRPG
             throw new NotImplementedException();
         }
 
-        public void EffectOfTurn()
+        private void EffectOfTurn()
         {
             // Hunger, etc
             CharacterSheets.ForEach((sheet) => sheet.NotifyHunger(Hunger));
+        }
+
+        public override bool Move(Direction dir)
+        {
+            var moved = base.Move(dir);
+            if(moved)
+            {
+                EffectOfTurn();
+            }
+            return moved;
         }
 
         public override void Die(Character killer)

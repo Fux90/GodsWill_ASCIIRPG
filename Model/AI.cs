@@ -61,6 +61,8 @@ namespace GodsWill_ASCIIRPG
 
         public override void ExecuteAction()
         {
+            bool acted = false;
+
             switch(currentStatus)
             {
                 case Status.Wandering:

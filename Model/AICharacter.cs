@@ -49,7 +49,28 @@ namespace GodsWill_ASCIIRPG
         public AI Intelligence { get { return intelligence; } }
         public int PerceptionDistance { get; protected set; }
 
+        /// <summary>
+        /// Done in this way (and not static) to be forced to have such property
+        /// With reflection I will query all classes of monster, 
+        /// call Builder accordingly 
+        /// </summary>
         public abstract AICharacterBuilder Builder { get; }
+        /// <summary>
+        /// To call Builder
+        /// </summary>
+        public static AICharacter DummyCharacter(Type type){ return (AICharacter)Activator.CreateInstance(type); }
+
+        public AICharacter()
+            : base("", 0, 0, 0, new Stats(),
+                    null,
+                    null,
+                    null,
+                    new Backpack(),
+                    "",
+                    Color.White,
+                    "",
+                    new Coord())
+        { }
 
         public AICharacter( string name, 
                             int currentPf,

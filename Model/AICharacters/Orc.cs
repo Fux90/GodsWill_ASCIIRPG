@@ -13,7 +13,6 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
         protected override AICharacter RandomBuild(Pg.Level level)
         {
             var lvl = ((int)level);
-            var lvlMinus1 = lvl - 1;
 
             Name = Name.ValueIfNotNullOrElse("Orc");
             Stats = Stats.ValueIfNotNullOrElse(new GodsWill_ASCIIRPG.Stats(
@@ -25,13 +24,14 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                                                             { StatsType.Mental, -2},
                                                             { StatsType.InnatePower, -2},
                                                         })));
+            var toughMod = ((Stats)Stats)[StatsType.Toughness].ModifierOfStat();
             MaximumPf = CurrentPf.ValueIfNotNullOrElse(Orc.healthDice.Max
-                                                       + Dice.Throws(Orc.healthDice, lvlMinus1) 
-                                                       + lvl * ((Stats)Stats)[StatsType.Toughness]);
-            CurrentPf = MaximumPf.ValueIfNotNullOrElse((int)CurrentPf);
-            Hunger.ValueIfNotNullOrElse((Orc.hungerDice.Max
-                                        + Dice.Throws(Orc.hungerDice, lvlMinus1))
-                                        * ((Stats)Stats)[StatsType.Toughness]);
+                                                       + Dice.Throws(Orc.healthDice, lvl) 
+                                                       + lvl * toughMod);
+            CurrentPf = MaximumPf.ValueIfNotNullOrElse((int)MaximumPf);
+            Hunger = Hunger.ValueIfNotNullOrElse((Orc.hungerDice.Max
+                                        + Dice.Throws(Orc.hungerDice, lvl))
+                                        * toughMod);
             MyAI = MyAI.ValueIfNotNullOrElse(new SimpleAI());
             PerceptionDistance = PerceptionDistance.ValueIfNotNullOrElse(5);
             //WornArmor - Can be null
@@ -65,12 +65,18 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
         }
     }
 
+    [Prerequisite(MinimumLevel = Pg.Level.Novice)]
     public class Orc : AICharacter
     {
         public static readonly Dice healthDice = new Dice(nFaces: 8);
         public static readonly Dice hungerDice = new Dice(nFaces: 4);
 
-        [Prerequisite(MinimumLevel = Pg.Level.Novice)]
+        public Orc()
+            : base()
+        {
+
+        }
+
         public Orc( string name,
                     int currentPf,
                     int maximumPf,
