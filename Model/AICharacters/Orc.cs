@@ -40,7 +40,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
             Backpack = Backpack.ValueIfNotNullOrElse(new Backpack());
             Symbol = Symbol.ValueIfNotNullOrElse("o");
             Color = Color.ValueIfNotNullOrElse(System.Drawing.Color.DarkOliveGreen);
-            Description = Description.ValueIfNotNullOrElse("A human tall c");
+            Description = Description.ValueIfNotNullOrElse("A greenish, smelly human-like creature. Strong, but usually not very smart.");
             Position = Position.ValueIfNotNullOrElse(new Coord());
             Hostile = Hostile.ValueIfNotNullOrElse(true);
 

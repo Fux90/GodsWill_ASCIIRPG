@@ -39,6 +39,8 @@ namespace GodsWill_ASCIIRPG.UIControls
         }
         public bool ValidIndex { get; private set; }
 
+        public bool Opened { get; private set; }
+
         public BackpackUserControl(TableLayoutPanel gamePanel)
         {
             InitializeComponent();
@@ -111,13 +113,16 @@ namespace GodsWill_ASCIIRPG.UIControls
                         this.Hide();
                         gamePanel.Show();
                         FocusOnMap();
+                        Opened = false;
                         break;
                     case ControllerCommand.Backpack_Pick:
                         ValidIndex = true;
                         this.Hide();
                         FocusOnMap();
+                        Opened = false;
                         break;
                     case ControllerCommand.Backpack_Open:
+                        Opened = true;
                         gamePanel.Hide();
                         this.Show();
                         itemList.Items = controlledBackpack.ToArray();

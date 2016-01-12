@@ -343,24 +343,37 @@ namespace GodsWill_ASCIIRPG
             CharacterSheets.ForEach((sheet) => sheet.NotifyShield(EmbracedShield));
         }
 
-        public void HandleWeapon(Weapon weapon)
+        public void HandleWeapon(Item weapon)
         {
-            if (!HandledWepon.IsUnarmed)
+            var canHandle = weapon.GetType().IsSubclassOf(typeof(Weapon));
+            
+            if (canHandle)
             {
-                this.Backpack.Add(handledWeapon);
+                UnhandleCurrent();
+                handledWeapon = (Weapon)this.Backpack.Remove(weapon);
+                NotifyListeners(String.Format("Handles {0}", HandledWepon.Name));
+                CharacterSheets.ForEach((sheet) => sheet.NotifyWeapon(HandledWepon));
             }
-            handledWeapon = (Weapon)this.Backpack.Remove(weapon);
+            else
+            {
+                NotifyListeners(String.Format("Can't handle {0}", weapon.Name));
+            }
+        }
+
+        public void UnhandleWeapon()
+        {
+            UnhandleCurrent();
+            handledWeapon = null;
             CharacterSheets.ForEach((sheet) => sheet.NotifyWeapon(HandledWepon));
         }
 
-        public void UnhandleWeapon(Weapon weapon)
+        private void UnhandleCurrent()
         {
             if (!HandledWepon.IsUnarmed)
             {
+                NotifyListeners(String.Format("Sheat {0}", HandledWepon.Name));
                 this.Backpack.Add(handledWeapon);
             }
-            handledWeapon = null;
-            CharacterSheets.ForEach((sheet) => sheet.NotifyWeapon(HandledWepon));
         }
 
         public virtual void RegisterSheet(ISheetViewer sheet)

@@ -11,6 +11,8 @@ namespace GodsWill_ASCIIRPG.Model.Core
 {
     public static class Extensions
     {
+        public delegate void GeneralAction();
+
         public static PointF Offset(this PointF pt1, float dX = 0, float dY = 0)
         {
             return new PointF(pt1.X + dX, pt1.Y + dY);
@@ -57,6 +59,22 @@ namespace GodsWill_ASCIIRPG.Model.Core
             where T : struct
         {
             return element == null ? value : (T)element;
+        }
+
+        public static void WaitForRefocus(this System.Windows.Forms.Control ctrl)
+        {
+            ctrl.WaitForRefocusThenDo(() => { });
+        }
+
+        public static void WaitForRefocusThenDo(this System.Windows.Forms.Control ctrl, GeneralAction action)
+        {
+            EventHandler waitBackpackClose = null;
+            waitBackpackClose = (sender, e) =>
+            {
+                action();
+                ctrl.Enter -= waitBackpackClose;
+            };
+            ctrl.Enter += waitBackpackClose;
         }
     }
 }

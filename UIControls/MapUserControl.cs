@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
+using GodsWill_ASCIIRPG.Model.Core;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
@@ -81,6 +82,19 @@ namespace GodsWill_ASCIIRPG.UIControls
                     case ControllerCommand.Backpack_Open:
                         backpackController.Notify(ControllerCommand.Backpack_Open);
                         break;
+                    case ControllerCommand.Player_HandleWeapon:
+                        backpackController.Notify(ControllerCommand.Backpack_Open);
+                        this.WaitForRefocusThenDo(() =>
+                        {
+                            if (backpackController.ValidIndex)
+                            {
+                                controlledPg.HandleWeapon(controlledPg.Backpack[backpackController.SelectedIndex]);
+                            }
+                        });
+                        break;
+                    case ControllerCommand.Player_UnhandleWeapon:
+                        controlledPg.UnhandleWeapon();
+                        break;
                     #endregion
 
                     case ControllerCommand.Player_ExitGame:
@@ -142,7 +156,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                 case Keys.I:
                     Notify(ControllerCommand.Backpack_Open);
                     break;
+                case Keys.H:
+                    Notify(e.Control 
+                            ? ControllerCommand.Player_UnhandleWeapon
+                            : ControllerCommand.Player_HandleWeapon);
+                    break;
                 #endregion
+
                 case Keys.Escape:
                     Notify(ControllerCommand.Player_ExitGame);
                     break;
