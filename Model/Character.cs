@@ -303,44 +303,70 @@ namespace GodsWill_ASCIIRPG
             this.Map.RemoveFromBuffer(item);
         }
 
-        public void WearArmor(Armor armor)
+        public void WearArmor(Item armor)
         {
-            if(!WornArmor.IsSkin)
+            var canWear = armor.GetType().IsSubclassOf(typeof(Armor));
+            if (canWear)
             {
-                this.Backpack.Add(wornArmor);
+                RemoveCurrent();
+                NotifyListeners(String.Format("Put on {0}", armor.Name));
+                wornArmor = (Armor)this.Backpack.Remove(armor);
+                CharacterSheets.ForEach((sheet) => sheet.NotifyArmor(WornArmor));
             }
-            wornArmor = (Armor)this.Backpack.Remove(armor);
-            CharacterSheets.ForEach((sheet) => sheet.NotifyArmor(WornArmor));
+            else
+            {
+                NotifyListeners(String.Format("Can't put on {0}", armor.Name));
+            }
         }
 
         public void RemoveArmor()
         {
-            if (!WornArmor.IsSkin)
-            {
-                this.Backpack.Add(wornArmor);
-            }
+            RemoveCurrent();
             wornArmor = null;
             CharacterSheets.ForEach((sheet) => sheet.NotifyArmor(WornArmor));
         }
 
-        public void EmbraceShield(Shield shield)
+        private void RemoveCurrent()
         {
             if (!WornArmor.IsSkin)
             {
-                this.Backpack.Add(embracedShield);
+                NotifyListeners(String.Format("Put off {0}", WornArmor.Name));
+                this.Backpack.Add(wornArmor);
             }
-            embracedShield = (Shield)this.Backpack.Remove(shield);
-            CharacterSheets.ForEach((sheet) => sheet.NotifyShield(EmbracedShield));
+        }
+
+        public void EmbraceShield(Item shield)
+        {
+            var canEmbrace = shield.GetType().IsSubclassOf(typeof(Shield));
+            if (canEmbrace)
+            {
+                DisembraceCurrent();
+                embracedShield = (Shield)this.Backpack.Remove(shield);
+                NotifyListeners(String.Format("Embrace {0}", shield.Name));
+                CharacterSheets.ForEach((sheet) => sheet.NotifyShield(EmbracedShield));
+                CharacterSheets.ForEach((sheet) => sheet.NotifyDefences(CA, CASpecial));
+            }
+            else
+            {
+                NotifyListeners(String.Format("Can't embrace {0}", shield.Name));
+            }
         }
 
         public void DisembraceShield()
         {
-            if (!WornArmor.IsSkin)
-            {
-                this.Backpack.Add(embracedShield);
-            }
+            DisembraceCurrent();
             embracedShield = null;
             CharacterSheets.ForEach((sheet) => sheet.NotifyShield(EmbracedShield));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyDefences(CA, CASpecial));
+        }
+
+        private void DisembraceCurrent()
+        {
+            if (!EmbracedShield.IsSkin)
+            {
+                this.Backpack.Add(embracedShield);
+                NotifyListeners(String.Format("Put away {0}", EmbracedShield.Name));
+            }
         }
 
         public void HandleWeapon(Item weapon)

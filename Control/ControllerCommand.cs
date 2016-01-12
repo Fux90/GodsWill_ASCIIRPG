@@ -18,7 +18,11 @@ namespace GodsWill_ASCIIRPG
         Backpack_Close,
         Backpack_Pick,
         Backpack_Open,
-        Player_HandleWeapon,
+        Player_PutOn,
         Player_UnhandleWeapon,
+        Player_PutOff,
+        Player_HandleWeapon,
+        Player_EmbraceShield,
+        Player_PutAwayShield,
     }
 }

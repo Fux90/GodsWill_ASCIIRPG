@@ -95,6 +95,32 @@ namespace GodsWill_ASCIIRPG.UIControls
                     case ControllerCommand.Player_UnhandleWeapon:
                         controlledPg.UnhandleWeapon();
                         break;
+                    case ControllerCommand.Player_PutOn:
+                        backpackController.Notify(ControllerCommand.Backpack_Open);
+                        this.WaitForRefocusThenDo(() =>
+                        {
+                            if (backpackController.ValidIndex)
+                            {
+                                controlledPg.WearArmor(controlledPg.Backpack[backpackController.SelectedIndex]);
+                            }
+                        });
+                        break;
+                    case ControllerCommand.Player_PutOff:
+                        controlledPg.RemoveArmor();
+                        break;
+                    case ControllerCommand.Player_EmbraceShield:
+                        backpackController.Notify(ControllerCommand.Backpack_Open);
+                        this.WaitForRefocusThenDo(() =>
+                        {
+                            if (backpackController.ValidIndex)
+                            {
+                                controlledPg.EmbraceShield(controlledPg.Backpack[backpackController.SelectedIndex]);
+                            }
+                        });
+                        break;
+                    case ControllerCommand.Player_PutAwayShield:
+                        controlledPg.DisembraceShield();
+                        break;
                     #endregion
 
                     case ControllerCommand.Player_ExitGame:
@@ -150,16 +176,26 @@ namespace GodsWill_ASCIIRPG.UIControls
                 #endregion
 
                 #region OBJECT_HANDLING
-                case Keys.P:
+                case Keys.G:
                     Notify(ControllerCommand.Player_PickUp);
                     break;
                 case Keys.I:
                     Notify(ControllerCommand.Backpack_Open);
                     break;
                 case Keys.H:
-                    Notify(e.Control 
+                    Notify(e.Control
                             ? ControllerCommand.Player_UnhandleWeapon
                             : ControllerCommand.Player_HandleWeapon);
+                    break;
+                case Keys.P:
+                    Notify(e.Control
+                            ? ControllerCommand.Player_PutOff
+                            : ControllerCommand.Player_PutOn);
+                    break;
+                case Keys.B:
+                    Notify(e.Control
+                            ? ControllerCommand.Player_PutAwayShield
+                            : ControllerCommand.Player_EmbraceShield);
                     break;
                 #endregion
 

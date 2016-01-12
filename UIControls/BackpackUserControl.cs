@@ -142,6 +142,10 @@ namespace GodsWill_ASCIIRPG.UIControls
             {
                 lblDescription.Text = controlledBackpack[ix].FullDescription;
             }
+            else
+            {
+                lblDescription.Text = "";
+            }
         }
 
         private void FocusOnMap()
@@ -190,6 +194,12 @@ namespace GodsWill_ASCIIRPG.UIControls
                     Notify(ControllerCommand.Backpack_Close);
                     break;
             }
+        }
+
+        protected override void OnEnter(EventArgs e)
+        {
+            updateDescription();
+            base.OnEnter(e);
         }
 
         public void Register(Backpack backpack)
