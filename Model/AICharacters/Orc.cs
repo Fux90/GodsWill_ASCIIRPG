@@ -33,6 +33,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                                         + Dice.Throws(Orc.hungerDice, lvl))
                                         * toughMod);
             MyAI = MyAI.ValueIfNotNullOrElse(new SimpleAI());
+            MySensingMethod = MySensingMethod.ValueIfNotNullOrElse(AI.SensingAlgorythms.AllAround);
             PerceptionDistance = PerceptionDistance.ValueIfNotNullOrElse(5);
             //WornArmor - Can be null
             //EmbracedShield - Can be null
@@ -49,6 +50,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                                 (int)MaximumPf,
                                 (int)Hunger,
                                 MyAI,
+                                MySensingMethod,
                                 (int)PerceptionDistance,
                                 (Stats)Stats,
                                 WornArmor,
@@ -82,6 +84,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                     int maximumPf,
                     int hunger,
                     AI intelligence,
+                    AI.SensingMethod sensingMethod,
                     int perceptionDistance,
                     Stats stats,
                     Armor wornArmor,
@@ -99,6 +102,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                     hunger,
                     intelligence,
                     perceptionDistance,
+                    sensingMethod,
                     stats,
                     wornArmor,
                     embracedShield,

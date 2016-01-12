@@ -15,6 +15,7 @@ namespace GodsWill_ASCIIRPG
         public int? MaximumPf { get; set; }
         public int? Hunger { get; set; }
         public AI MyAI { get; set; }
+        public AI.SensingMethod MySensingMethod { get; set; }
         public int? PerceptionDistance { get; set; }
         public Stats? Stats { get; set; }
         public Armor WornArmor { get; set; }
@@ -87,7 +88,8 @@ namespace GodsWill_ASCIIRPG
                             int maximumPf,
                             int hunger,
                             AI intelligence, 
-                            int perceptionDistance, 
+                            int perceptionDistance,
+                            AI.SensingMethod sensingMethod = null,
                             Stats? stats = null,
                             Armor wornArmor = null,
                             Shield embracedShield = null,
@@ -115,6 +117,7 @@ namespace GodsWill_ASCIIRPG
                     position)
         {
             this.intelligence = intelligence;
+            this.SensePg = sensingMethod == null ? AI.SensingAlgorythms.AllAround : sensingMethod;
             this.intelligence.ControlledCharacter = this;
             this.PerceptionDistance = perceptionDistance;
             this.hostile = hostile;
@@ -146,10 +149,11 @@ namespace GodsWill_ASCIIRPG
             return false;
         }
 
-        public virtual bool SensePg(Pg pg)
-        {
-            return pg.Position.SquaredDistanceFrom(this.Position) < SquaredPerceptionDistance;
-        }
+        //public virtual bool SensePg(Pg pg)
+        //{
+        //    return pg.Position.SquaredDistanceFrom(this.Position) < SquaredPerceptionDistance;
+        //}
+        public AI.SensingMethod SensePg { get; protected set; }
 
         public override void Die(Character pg)
         {

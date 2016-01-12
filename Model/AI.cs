@@ -1,4 +1,5 @@
 using GodsWill_ASCIIRPG.Main;
+using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,73 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
+
+
 	public abstract class AI
 	{
+        public static class DirectionFindingAlgorithms
+        {
+            public static AI.FindDirectionMethod SimpleChase = (me, pg) =>
+            {
+                return Direction.North;
+            };
+        }
+
+        public static class RandomDirectionChangeAlgorithms
+        {
+            public static AI.RandomDirectionChangeMethod AlwaysAhead = (currDir, p) =>
+            {
+                return currDir;
+            };
+
+            public static AI.RandomDirectionChangeMethod RandomAtPerc = (currDir, paces) =>
+            {
+                return Dice.Throws(100) <= paces ? currDir.RandomDifferentFromThis() : currDir;
+            };
+
+            public static AI.RandomDirectionChangeMethod TurnBackAtPerc = (currDir, paces) =>
+            {
+                return Dice.Throws(100) <= paces ? currDir.TurnBack() : currDir;
+            };
+        }
+
+        public static class SensingAlgorythms
+        {
+            public static AI.SensingMethod AllAround
+            {
+                get
+                {
+                    return (me, other) => other.Position.SquaredDistanceFrom(me.Position) < me.SquaredPerceptionDistance;
+                }
+            }
+
+            public static AI.SensingMethod LineOfSight
+            {
+                get
+                {
+                    return (me, other) =>
+                    {
+                        if (other.Position.SquaredDistanceFrom(me.Position) < me.SquaredPerceptionDistance)
+                        {
+                            var sightLine = new Line(me.Position, other.Position);
+                            foreach (Coord pt in sightLine)
+                            {
+                                if (me.Map[pt].BlockVision) return false;
+                            }
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    };
+                }
+            }
+        }
+
         public delegate Direction FindDirectionMethod(AICharacter me, Pg pg);
         public delegate Direction RandomDirectionChangeMethod(Direction currentDirection, int perc = 100);
+        public delegate bool SensingMethod(AICharacter me, Character otherCharacter);
 
         protected enum Status
         {
@@ -35,39 +99,14 @@ namespace GodsWill_ASCIIRPG
         {
             FindDirection = DirectionFindingAlgorithms.SimpleChase;
             RandomDirectionChange = RandomDirectionChangeAlgorithms.AlwaysAhead;
+            
         }
 
         public FindDirectionMethod FindDirection { get; protected set; }
         public RandomDirectionChangeMethod RandomDirectionChange { get; protected set; }
-
+        
         public abstract void ExecuteAction();
 	}
-
-    static class DirectionFindingAlgorithms
-    {
-        public static AI.FindDirectionMethod SimpleChase = (me, pg) =>
-        {
-            return Direction.North;
-        };
-    }
-
-    static class RandomDirectionChangeAlgorithms
-    {
-        public static AI.RandomDirectionChangeMethod AlwaysAhead = (currDir, p) =>
-        {
-            return currDir;
-        };
-
-        public static AI.RandomDirectionChangeMethod RandomAtPerc = (currDir, paces) =>
-        {
-            return Dice.Throws(100) <= paces ? currDir.RandomDifferentFromThis() : currDir;
-        };
-
-        public static AI.RandomDirectionChangeMethod TurnBackAtPerc = (currDir, paces) =>
-        {
-            return Dice.Throws(100) <= paces ? currDir.TurnBack() : currDir;
-        };
-    }
 
     public class SimpleAI : AI
     {
@@ -90,7 +129,7 @@ namespace GodsWill_ASCIIRPG
             {
                 case Status.Wandering:
                     // Movement in last direction
-                    if(ControlledCharacter.SensePg(Game.Current.CurrentPg))
+                    if(ControlledCharacter.SensePg(ControlledCharacter, Game.Current.CurrentPg))
                     {
                         currentStatus = Status.Chasing;
                         ControlledCharacter.Talk();
