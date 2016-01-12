@@ -92,6 +92,7 @@ namespace GodsWill_ASCIIRPG
         Coord playerInitialPosition;
         BidimensionalArray<Atom> table;
         BidimensionalArray<Atom> buffer;
+        BidimensionalArray<bool> explored;
         List<IMapViewer> views;
         #endregion
 

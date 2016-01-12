@@ -97,6 +97,8 @@ namespace GodsWill_ASCIIRPG
         public int XP { get { return xp[0]; } private set { xp[0] = value; } }
         public int NextXP { get { return xp[1]; } private set { xp[1] = value; } }
 
+        private int explorationRadius;
+
         public override Dice HealthDice
         {
             get { return healthDice; }

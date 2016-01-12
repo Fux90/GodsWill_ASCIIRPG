@@ -134,8 +134,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 if(acted)
                 {
                     controlledPg.EffectOfTurn();
-
-                    //Notify(ControllerCommand.AI_Turn);
+                    Notify(ControllerCommand.AI_Turn);
                 }
             }
         }
