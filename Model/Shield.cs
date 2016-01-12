@@ -19,8 +19,7 @@ namespace GodsWill_ASCIIRPG
                       Shield.DefaultSymbol,
                       Color.White,
                       0,
-                      0,
-                      false)
+                      0)
             {
                 IsSkin = true;
             }
@@ -47,13 +46,12 @@ namespace GodsWill_ASCIIRPG
                     Color color,
                     int bonusCA,
                     int bonusSpecialCA,
-                    bool walkable = true,
                     string description = "Base shield of the game",
                     Coord position = new Coord(),
                     int cost = 0,
                     int weight = 1,
                     int uses = Item._UnlimitedUses)
-            : base(name, symbol, color, true, description, position, cost, weight, uses)
+            : base(name, symbol, color, true, false, description, position, cost, weight, uses)
         {
             this.bonusCA = bonusCA;
             this.bonusSpecialCA = bonusSpecialCA;

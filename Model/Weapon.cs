@@ -87,7 +87,7 @@ namespace GodsWill_ASCIIRPG
                         int cost = 0,
                         int weight = 1,
                         int uses = Item._UnlimitedUses)
-            : base(name, symbol, color, true, description, position, cost, weight, uses)
+            : base(name, symbol, color, true, false, description, position, cost, weight, uses)
         {
             this.damage = damage;
             this.specialAttack = specialAttack;

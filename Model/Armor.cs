@@ -27,8 +27,7 @@ namespace GodsWill_ASCIIRPG
                       Armor.DefaultSymbol,
                       Color.White,
                       new Damage(),
-                      _ArmorType.No_Armor,
-                      false)
+                      _ArmorType.No_Armor)
             {
                 IsSkin = true;
             }
@@ -55,13 +54,12 @@ namespace GodsWill_ASCIIRPG
                     Color color,
                     Damage damageReduction,
                     _ArmorType armorType,
-                    bool walkable = true,
                     string description = "Base armor of the game",
                     Coord position = new Coord(),
                     int cost = 0,
                     int weight = 1,
                     int uses = Item._UnlimitedUses)
-            : base(name, symbol, color, true, description, position, cost, weight, uses)
+            : base(name, symbol, color, true, false, description, position, cost, weight, uses)
         {
             this.damageReduction = damageReduction;
             this.ArmorType = armorType;

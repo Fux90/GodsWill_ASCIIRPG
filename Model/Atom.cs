@@ -31,6 +31,7 @@ namespace GodsWill_ASCIIRPG
         private string symbol;
         private Color color;
         private bool walkable;
+        private bool blockVision;
         private string description;
         private Coord position;
         private Map map;
@@ -42,6 +43,7 @@ namespace GodsWill_ASCIIRPG
         public string Symbol { get { return symbol; } }
         public Color Color { get { return color; } }
         public bool Walkable { get { return walkable; } }
+        public bool BlockVision { get { return blockVision; } }
         public string Description { get { return description; } }
         public Coord Position { get { return position; } protected set { position = value; } }
         public Map Map { get { return map; } }
@@ -53,6 +55,7 @@ namespace GodsWill_ASCIIRPG
                     string symbol,
                     Color color,
                     bool walkable,
+                    bool blockVision,
                     string description = "Base element of the game",
                     Coord position = new Coord())
         {
@@ -60,6 +63,7 @@ namespace GodsWill_ASCIIRPG
             this.symbol = symbol;
             this.color = color;
             this.walkable = walkable;
+            this.blockVision = blockVision;
             this.description = description;
             this.position = position;
             this.listeners = new List<IAtomListener>();

@@ -15,6 +15,7 @@ namespace GodsWill_ASCIIRPG.Model.SceneryItems
                    "█", 
                    Color.LightGray, 
                    false, 
+                   true,
                    "A rock wall",
                    position)
         {

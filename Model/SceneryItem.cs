@@ -13,9 +13,10 @@ namespace GodsWill_ASCIIRPG
                             string symbol = "*",
                             Color color = new Color(),
                             bool walkable = true,
+                            bool blockVision = false,
                             string description = "Base scenario element of the game",
                             Coord position = new Coord())
-            : base(name, symbol, color, walkable, description, position)
+            : base(name, symbol, color, walkable, blockVision, description, position)
         {
 
         }

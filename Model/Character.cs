@@ -78,7 +78,7 @@ namespace GodsWill_ASCIIRPG
                          Color color = new Color(),
                          string description = "A character of the game",
                          Coord position = new Coord())
-            : base(name, symbol, color, false, description, position)
+            : base(name, symbol, color, false, false, description, position)
         {
             this.hp = new int[] { currentPf, maximumPf };
             this.hunger = hunger;

@@ -35,12 +35,13 @@ namespace GodsWill_ASCIIRPG
                     string symbol = "i",
                     Color color = new Color(),
                     bool walkable = true,
+                    bool blockVision = false,
                     string description = "Base element of the game",
                     Coord position = new Coord(),
                     int cost = 0,
                     int weight = 0,
                     int uses = _UnlimitedUses)
-            : base(name, symbol, color, walkable, description, position)
+            : base(name, symbol, color, walkable, blockVision, description, position)
         {
             this.cost = cost;
             this.weight = weight;

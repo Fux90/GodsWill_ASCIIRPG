@@ -14,6 +14,7 @@ namespace GodsWill_ASCIIRPG.Model
                    ".", 
                    Color.White, 
                    true, 
+                   false,
                    "A walkable tile",
                    position)
         {
