@@ -26,6 +26,7 @@ namespace GodsWill_ASCIIRPG
         public Backpack Backpack { get; set; }
         public string Symbol { get; private set; }
         public Color Color { get; private set; }
+        public God God { get; set; }
         #endregion
 
         public PgCreator()
@@ -45,6 +46,7 @@ namespace GodsWill_ASCIIRPG
             Backpack = new Backpack();
             Symbol = "@";
             Color = Color.White;
+            God = null;
         }
         
 
@@ -67,6 +69,7 @@ namespace GodsWill_ASCIIRPG
                             Shield,
                             Weapon,
                             Backpack,
+                            God,
                             Symbol,
                             Color);
         }
@@ -121,6 +124,7 @@ namespace GodsWill_ASCIIRPG
                     Shield shield,
                     Weapon weapon,
                     Backpack backpack,
+                    God god,
                     string symbol,
                     Color color)
             : base( name,
@@ -132,6 +136,7 @@ namespace GodsWill_ASCIIRPG
                     shield,
                     weapon,
                     backpack,
+                    god,
                     symbol,
                     color)
         {
@@ -167,8 +172,9 @@ namespace GodsWill_ASCIIRPG
             throw new NotImplementedException();
         }
 
-        public void EffectOfTurn()
+        public override void EffectOfTurn()
         {
+            base.EffectOfTurn();
             // Hunger, etc
             CharacterSheets.ForEach((sheet) => sheet.NotifyHunger(Hunger));
         }
@@ -202,6 +208,11 @@ namespace GodsWill_ASCIIRPG
             return false;
         }
 
+        public override void RegisterTemporaryMod(TemporaryModifier mod)
+        {
+            base.RegisterTemporaryMod(mod);
+            NotifyAll();
+        }
         public override void RegisterSheet(ISheetViewer sheet)
         {
             base.RegisterSheet(sheet);

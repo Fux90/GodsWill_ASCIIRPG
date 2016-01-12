@@ -40,7 +40,11 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                return 10 + EmbracedShield.BonusCA + Stats[StatsType.Agility].ModifierOfStat();
+                return 10 
+                        + EmbracedShield.BonusCA 
+                        + Stats[StatsType.Agility].ModifierOfStat()
+                        + TempModifiers.GetBonus<int>(  TemporaryModifier.ModFor.CA,
+                                                        (a,b) => a + b);
             }
         }
 
@@ -48,7 +52,11 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                return 10 + EmbracedShield.BonusSpecialCA + Stats[StatsType.Mental];
+                return 10 
+                        + EmbracedShield.BonusSpecialCA 
+                        + Stats[StatsType.Mental]
+                        + TempModifiers.GetBonus<int>(TemporaryModifier.ModFor.CASpecial,
+                                                        (a, b) => a + b);
             }
         }
 
@@ -57,6 +65,8 @@ namespace GodsWill_ASCIIRPG
         public Weapon HandledWepon { get { return handledWeapon == null ? Weapon.UnarmedAttack : handledWeapon; } }
         public Backpack Backpack { get { return backpack; } }
 
+        public TemporaryModifierCollection TempModifiers { get; private set; }
+
         public string RaceType
         {
             get
@@ -64,6 +74,8 @@ namespace GodsWill_ASCIIRPG
                 return this.GetType().Name.Clean();
             }
         }
+
+        public God God { get; private set; }
 
         public Character(string name,
                          int currentPf,
@@ -74,6 +86,7 @@ namespace GodsWill_ASCIIRPG
                          Shield embracedShield,
                          Weapon handledWeapon,
                          Backpack backpack,
+                         God god,
                          string symbol = "C",
                          Color color = new Color(),
                          string description = "A character of the game",
@@ -90,7 +103,11 @@ namespace GodsWill_ASCIIRPG
             this.handledWeapon = handledWeapon;
             this.backpack = backpack;
 
+            this.God = god;
+
             this.CharacterSheets = new List<ISheetViewer>();
+
+            this.TempModifiers = new TemporaryModifierCollection();
         }
  
         public virtual void GainExperience(int xp)
@@ -401,6 +418,69 @@ namespace GodsWill_ASCIIRPG
                 NotifyListeners(String.Format("Sheat {0}", HandledWepon.Name));
                 this.Backpack.Add(handledWeapon);
             }
+        }
+
+        public void Pray(out bool acted)
+        {
+            acted = true;
+
+            if(God != null)
+            {
+                NotifyListeners(String.Format("*kneels to pray*"));
+                TemporaryModifier mod;
+                God.PrayResult res;
+                if ((res = God.HearPray(out mod)) != God.PrayResult.None)
+                {
+                    var msg = new StringBuilder(String.Format("{0} hears you", God.Name));
+
+                    switch (res)
+                    {
+                        case God.PrayResult.Bad:
+                            msg.Append("but he's very mad at you...");
+                            break;
+                        case God.PrayResult.Good:
+                            msg.Append("and he decided to grant you his favours");
+                            break;
+                        case God.PrayResult.VeryGood:
+                            msg.Append("and blesses you as his holy champion");
+                            break;
+                    }
+
+                    NotifyListeners(msg.ToString());
+                    //TempModifiers.AddTemporaryModifier(mod);
+                    RegisterTemporaryMod(mod);
+                }
+                else
+                {
+                    NotifyListeners(String.Format("{0} is deaf to your requests", God.Name));
+                }
+            }
+            else
+            {
+                NotifyListeners("*Tries to pray*");
+                NotifyListeners("But no god will come to help you");
+                acted = false;
+            }
+        }
+
+        public virtual void EffectOfTurn()
+        {
+            var expiredMods = 0;
+            if((TempModifiers.PassedTurn()) > 0)
+            {
+                NotifyListeners(String.Format("{0} modifier{1} {2} expired",
+                                              expiredMods,
+                                              expiredMods == 1 ? "" : "s",
+                                              expiredMods == 1 ? "has" : "have"));
+            }
+        }
+
+        public virtual void RegisterTemporaryMod(TemporaryModifier mod)
+        {
+            TempModifiers.AddTemporaryModifier(mod);
+            NotifyListeners(String.Format("Received mod {0} [x{1} Turns]", 
+                            mod.ToString(),
+                            mod.TimeToLive));
         }
 
         public virtual void RegisterSheet(ISheetViewer sheet)

@@ -204,7 +204,10 @@ namespace GodsWill_ASCIIRPG
             {
                 var item = ((Item)steppedAtom);
                 steppedAtom.NotifyListeners(item.ItemTypeName);
-                movedAtom.NotifyListeners(String.Format("Stepped on {0}", item.ItemTypeName));
+                if (movedAtom.GetType().IsSubclassOf(typeof(Pg)))
+                {
+                    movedAtom.NotifyListeners(String.Format("Stepped on {0}", item.ItemTypeName));
+                }
             }
         }
 

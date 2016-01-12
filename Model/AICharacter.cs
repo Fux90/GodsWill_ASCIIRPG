@@ -11,6 +11,7 @@ namespace GodsWill_ASCIIRPG
     public abstract class AICharacterBuilder 
     {
         public string Name { get; set; }
+        public God God { get; set; }
         public int? CurrentPf { get; set; }
         public int? MaximumPf { get; set; }
         public int? Hunger { get; set; }
@@ -77,6 +78,7 @@ namespace GodsWill_ASCIIRPG
                     null,
                     null,
                     new Backpack(),
+                    null,
                     "",
                     Color.White,
                     "",
@@ -95,6 +97,7 @@ namespace GodsWill_ASCIIRPG
                             Shield embracedShield = null,
                             Weapon handledWeapon = null,
                             Backpack backpack = null,
+                            God god = null,
                             string symbol = "C",
                             Color? color = null,
                             string description = "A creature of the world", 
@@ -109,6 +112,7 @@ namespace GodsWill_ASCIIRPG
                     embracedShield, 
                     handledWeapon, 
                     backpack == null ? new Backpack() : backpack,
+                    god,
                     symbol,
                     color == null 
                         ? (hostile ? Color.Red : Color.Green)

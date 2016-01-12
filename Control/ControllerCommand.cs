@@ -25,5 +25,6 @@ namespace GodsWill_ASCIIRPG
         Player_EmbraceShield,
         Player_PutAwayShield,
         AI_Turn,
+        Player_Pray,
     }
 }

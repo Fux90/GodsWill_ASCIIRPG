@@ -1,4 +1,4 @@
-﻿#define DEBUG_LINE
+﻿//#define DEBUG_LINE
 
 using System;
 using System.Collections.Generic;
@@ -120,6 +120,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                     #endregion
 
+                    #region DEITY
+                    case ControllerCommand.Player_Pray:
+                        controlledPg.Pray(out acted);
+                        
+                        break; 
+                    #endregion
+
                     #region AIs
                     case ControllerCommand.AI_Turn:
                         aiCharacters.ForEach(aiChar => aiChar.AI.ExecuteAction());
@@ -208,6 +215,12 @@ namespace GodsWill_ASCIIRPG.UIControls
                     this.NotifyMovement(controlledPg.Position, controlledPg.Position);
                     break;
 #endif
+                #region DEITY
+                case Keys.K:
+                    Notify(ControllerCommand.Player_Pray);
+                    break;
+                #endregion
+
                 case Keys.Escape:
                     Notify(ControllerCommand.Player_ExitGame);
                     break;

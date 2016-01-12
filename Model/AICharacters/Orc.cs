@@ -15,6 +15,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
             var lvl = ((int)level);
 
             Name = Name.ValueIfNotNullOrElse("Orc");
+            // God - can be null
             Stats = Stats.ValueIfNotNullOrElse(new GodsWill_ASCIIRPG.Stats(
                                                     StatsBuilder.RandomStats(
                                                         new Dictionary<StatsType, int>()
@@ -57,6 +58,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                                 EmbracedShield,
                                 HandledWeapon,
                                 Backpack,
+                                God,
                                 Symbol,
                                 (System.Drawing.Color)Color,
                                 Description,
@@ -91,6 +93,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                     Shield embracedShield,
                     Weapon handledWeapon,
                     Backpack backpack,
+                    God god,
                     string symbol,
                     Color color,
                     string description,
@@ -108,6 +111,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                     embracedShield,
                     handledWeapon,
                     backpack,
+                    god,
                     symbol,
                     color,
                     description,

@@ -52,7 +52,7 @@ namespace GodsWill_ASCIIRPG
                                     List<ISheetViewer> sheetViews,
                                     List<IBackpackViewer> backpackViewers)
             {
-                currentPg = new PgCreator().Create();
+                currentPg = new PgCreator() { God = Gods.Ares }.Create();
                 atomListeners.ForEach( listener => currentPg.RegisterListener(listener));
                 sheetViews.ForEach( sheet => currentPg.RegisterSheet(sheet));
                 backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterViewer(viewer));

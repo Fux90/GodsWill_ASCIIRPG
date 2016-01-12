@@ -106,8 +106,20 @@ namespace GodsWill_ASCIIRPG
         public FindDirectionMethod FindDirection { get; protected set; }
         public RandomDirectionChangeMethod RandomDirectionChange { get; protected set; }
         
-        public abstract void ExecuteAction();
-	}
+        public abstract void ActionDescription(out bool moved, out bool acted);
+        public void ExecuteAction()
+        {
+            bool acted;
+            bool moved;
+
+            ActionDescription(out moved, out acted);
+
+            if (acted)
+            {
+                ControlledCharacter.EffectOfTurn();
+            }
+        }
+    }
 
     public class SimpleAI : AI
     {
@@ -121,9 +133,11 @@ namespace GodsWill_ASCIIRPG
             RandomDirectionChange = RandomDirectionChangeAlgorithms.RandomAtPerc;
         }
 
-        public override void ExecuteAction()
+        public override void ActionDescription( out bool moved,
+                                                out bool acted)
         {
-            bool acted = false;
+            moved = false;
+            acted = false;
 
             switch(currentStatus)
             {
@@ -135,7 +149,7 @@ namespace GodsWill_ASCIIRPG
                         ControlledCharacter.Talk();
                     }
                     currentDirection = RandomDirectionChange(currentDirection, 5);
-                    if(!ControlledCharacter.Move(currentDirection, out acted))
+                    if(!(moved = ControlledCharacter.Move(currentDirection, out acted)))
                     {
                         // Change direction
                         currentDirection = currentDirection.RandomDifferentFromThis();
@@ -143,7 +157,7 @@ namespace GodsWill_ASCIIRPG
                     break;
                 case Status.Chasing:
                     var direction = FindDirection(ControlledCharacter, Game.Current.CurrentPg);
-                    ControlledCharacter.Move(direction, out acted);
+                    moved = ControlledCharacter.Move(direction, out acted);
                     break;
             }
         }

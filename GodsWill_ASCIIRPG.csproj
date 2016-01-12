@@ -77,6 +77,7 @@
     <Compile Include="Model\Damage.cs" />
     <Compile Include="Model\DamageType.cs" />
     <Compile Include="Model\Direction.cs" />
+    <Compile Include="Model\God.cs" />
     <Compile Include="Model\Line.cs" />
     <Compile Include="Model\Prerequisite.cs" />
     <Compile Include="Model\SceneryItems\Floor.cs" />
@@ -91,6 +92,8 @@
     <Compile Include="Model\Shield.cs" />
     <Compile Include="Model\Shields\WoodenShield.cs" />
     <Compile Include="Model\Stats.cs" />
+    <Compile Include="Model\TemporaryBonus\DivineModifier.cs" />
+    <Compile Include="Model\TemporaryModifier.cs" />
     <Compile Include="Model\Weapon.cs" />
     <Compile Include="Model\Weapons\LongSword.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
