@@ -8,7 +8,7 @@ namespace GodsWill_ASCIIRPG
 	public interface Controller<T>
 	{
         void Register(T model);
-        void Unregister();
+        void Unregister(T element);
         void Notify(ControllerCommand cmd);
 	}
 }

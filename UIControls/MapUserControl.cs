@@ -13,11 +13,13 @@ using GodsWill_ASCIIRPG.Model.Core;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
-    public partial class MapUserControl : UserControl, PgController, IMapViewer
+    public partial class MapUserControl : UserControl, PgController, AIController, IMapViewer
     {
         const float charSize = 10.0f;
 
         Pg controlledPg;
+        List<AICharacter> aiCharacters;
+
         BackpackController backpackController;
         //MapController mapController;
         GameForm gameForm;
@@ -29,6 +31,8 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.DoubleBuffered = true;
             this.BackColor = Color.Black;
             this.Font = new Font(FontFamily.GenericMonospace, charSize);
+
+            this.aiCharacters = new List<AICharacter>();
             this.backpackController = backpackController;
             this.gameForm = gameForm;
         }
@@ -40,14 +44,6 @@ namespace GodsWill_ASCIIRPG.UIControls
                 return backpackController;
             }
         }
-
-        //public MapController MapController
-        //{
-        //    get
-        //    {
-        //        return mapController;
-        //    }
-        //}
 
         public void Notify(ControllerCommand cmd)
         {
@@ -74,10 +70,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
                     #region OBJECT_MANAGEMENT
                     case ControllerCommand.Player_PickUp:
-                        if(controlledPg.PickUp())
-                        {
-                            //backpackController.Register(controlledPg.Backpack);
-                        }
+                        controlledPg.PickUp();
                         break;
                     case ControllerCommand.Backpack_Open:
                         backpackController.Notify(ControllerCommand.Backpack_Open);
@@ -123,6 +116,12 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                     #endregion
 
+                    #region AIs
+                    case ControllerCommand.AI_Turn:
+                        aiCharacters.ForEach(aiChar => aiChar.AI.ExecuteAction());
+                        break;
+                    #endregion
+
                     case ControllerCommand.Player_ExitGame:
                         gameForm.Close();
                         break;
@@ -131,7 +130,8 @@ namespace GodsWill_ASCIIRPG.UIControls
                 if(acted)
                 {
                     controlledPg.EffectOfTurn();
-                    // TODO AIs controls
+
+                    Notify(ControllerCommand.AI_Turn);
                 }
             }
         }
@@ -141,7 +141,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             controlledPg = pg;
         }
 
-        public void Unregister()
+        public void Unregister(Pg pg)
         {
             controlledPg = null;
         }
@@ -226,6 +226,16 @@ namespace GodsWill_ASCIIRPG.UIControls
                                     new PointF(xPos, yPos));  
                 }
             }
+        }
+
+        public void Register(AICharacter character)
+        {
+            aiCharacters.Add(character);
+        }
+
+        public void Unregister(AICharacter character)
+        {
+            aiCharacters.Remove(character);
         }
     }
 }

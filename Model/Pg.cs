@@ -179,7 +179,7 @@ namespace GodsWill_ASCIIRPG
             // Back to main menu
         }
 
-        public override void Interaction(Atom interactor)
+        public override bool Interaction(Atom interactor)
         {
             if (interactor.GetType() == typeof(AICharacter))
             {
@@ -187,12 +187,17 @@ namespace GodsWill_ASCIIRPG
                 if(aiChar.Hostile)
                 {
                     this.Attack(aiChar);
+
+                    return true;
                 }
                 else
                 {
                     // Talk?
+                    return true;
                 }
             }
+
+            return false;
         }
 
         public override void RegisterSheet(ISheetViewer sheet)

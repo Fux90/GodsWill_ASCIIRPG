@@ -9,9 +9,6 @@ namespace GodsWill_ASCIIRPG.Control
 {
     public interface BackpackController : Controller<Backpack>
     {
-        void Notify(ControllerCommand cmd);
-        void Register(Backpack backpack);
-        void Unregister();
         int SelectedIndex { get; }
         bool ValidIndex { get; }
         bool Opened { get; }

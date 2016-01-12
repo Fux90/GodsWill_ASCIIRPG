@@ -70,7 +70,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
     {
         public static readonly Dice healthDice = new Dice(nFaces: 8);
         public static readonly Dice hungerDice = new Dice(nFaces: 4);
-
+        
         public Orc()
             : base()
         {
@@ -129,6 +129,19 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
             {
                 return new OrcBuilder();
             }
+        }
+
+        public override void Talk()
+        {
+            var msgs = new string[]
+            {
+                "*ROAR*",
+                "I KILL YOU",
+                String.Format("{0} smash you", Name),
+            };
+            var msg = Dice.Throws(msgs.Length) - 1;
+            
+            NotifyListeners(msgs[msg]);
         }
     }
 }

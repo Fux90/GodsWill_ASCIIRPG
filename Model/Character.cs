@@ -196,10 +196,11 @@ namespace GodsWill_ASCIIRPG
                 this.Position = candidateCoord;
 
                 moved = true;
+                acted = true;
             }
             else
             {
-                this.Map[candidateCoord].Interaction(this);
+                acted = this.Map[candidateCoord].Interaction(this);
             }
             
             return moved;

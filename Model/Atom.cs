@@ -92,7 +92,7 @@ namespace GodsWill_ASCIIRPG
             listeners.Add(listener);
         }
 
-        public abstract void Interaction(Atom interactor);
+        public abstract bool Interaction(Atom interactor);
         #endregion
 
         #region SERIALIZATION

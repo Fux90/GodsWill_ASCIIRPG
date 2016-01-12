@@ -25,7 +25,7 @@ namespace GodsWill_ASCIIRPG
             controlledMap = map;
         }
 
-        public void Unregister()
+        public void Unregister(Map map)
         {
             controlledMap = null;
         }

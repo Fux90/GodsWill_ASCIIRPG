@@ -70,8 +70,9 @@ namespace GodsWill_ASCIIRPG
                     if(ControlledCharacter.SensePg(Game.Current.CurrentPg))
                     {
                         currentStatus = Status.Chasing;
+                        ControlledCharacter.Talk();
                     }
-                    if(!ControlledCharacter.Move(currentDirection, out acted))
+                    else if(!ControlledCharacter.Move(currentDirection, out acted))
                     {
                         // Change direction
                     }

@@ -7,6 +7,8 @@ namespace GodsWill_ASCIIRPG
 {
 	public class Damage
 	{
+        private const int minimumDamage = 1;
+
         Dictionary<DamageType, int> dmgs;
 
         public int this[DamageType dmgType]
@@ -31,7 +33,7 @@ namespace GodsWill_ASCIIRPG
                 {
                     totDmg += dmg;
                 }
-                return totDmg;
+                return Math.Max(minimumDamage, totDmg);
             }
         }
 

@@ -21,7 +21,6 @@ namespace GodsWill_ASCIIRPG
 		{
             private static Game current;
             private Pg currentPg;
-            private GameEngine gameEngine;
 
             public static Game Current
             {
@@ -59,7 +58,9 @@ namespace GodsWill_ASCIIRPG
                 backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterViewer(viewer));
             }
 
-            public void GameInitialization( PgController pgController, IMapViewer mapViewer )
+            public void GameInitialization( PgController pgController, 
+                                            AIController aiController,
+                                            IMapViewer mapViewer )
             {
                 // Map generation
                 var mapBuilder = new MapBuilder();
@@ -77,6 +78,7 @@ namespace GodsWill_ASCIIRPG
                 var orc = AICharacter.DummyCharacter(typeof(Orc)).Builder.Build();
                 mapBuilder.AddAtom(orc);
                 currentPg.Listeners.ForEach(listener => orc.RegisterListener(listener));
+                aiController.Register(orc);
 #else
                 mapBuilder.LoadFromFile("");
 #endif
@@ -85,18 +87,7 @@ namespace GodsWill_ASCIIRPG
                 pgController.Register(CurrentPg);
                 pgController.BackpackController.Register(CurrentPg.Backpack);
 
-                AIController aiController = null;
                 CurrentPg.InsertInMap(map, map.PlayerInitialPosition);
-
-                // Collocamento giocatore
-                gameEngine = new GameEngine( map,
-                                             pgController,
-                                             aiController);
-            }
-
-            public void RunGame()
-            {
-                while (gameEngine.Turn()) ;
             }
 
             private Game()

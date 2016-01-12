@@ -209,7 +209,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             //updateDescription();
         }
 
-        public void Unregister()
+        public void Unregister(Backpack backpack)
         {
             controlledBackpack = null;
             itemList.Items = null;

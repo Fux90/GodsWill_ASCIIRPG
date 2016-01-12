@@ -20,12 +20,14 @@ namespace GodsWill_ASCIIRPG
 
         }
 
-        public override void Interaction(Atom interactor)
+        public override bool Interaction(Atom interactor)
         {
             if (interactor.GetType() == typeof(Pg))
             {
                 interactor.NotifyListeners(String.Format("It's a {0}", this.Name));
             }
+
+            return false;
         }
     }
 }

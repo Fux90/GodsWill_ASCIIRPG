@@ -60,7 +60,6 @@
       <DependentUpon>GameForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Main\Game.cs" />
-    <Compile Include="Main\GameEngine.cs" />
     <Compile Include="Main\Program.cs" />
     <Compile Include="Model\AI.cs" />
     <Compile Include="Model\AICharacter.cs" />

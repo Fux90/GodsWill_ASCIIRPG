@@ -46,9 +46,19 @@ namespace GodsWill_ASCIIRPG
         private AI intelligence;
         
         public bool Hostile { get { return hostile; } }
-        public AI Intelligence { get { return intelligence; } }
-        public int PerceptionDistance { get; protected set; }
-
+        public AI AI { get { return intelligence; } }
+        private int perceptionDistance;
+        private int squaredPerceptionDistance;
+        public int PerceptionDistance
+        {
+            get { return perceptionDistance; }
+            protected set
+            {
+                perceptionDistance = value;
+                squaredPerceptionDistance = perceptionDistance * perceptionDistance;
+            }
+        }
+        public int SquaredPerceptionDistance { get { return squaredPerceptionDistance; } }
         /// <summary>
         /// Done in this way (and not static) to be forced to have such property
         /// With reflection I will query all classes of monster, 
@@ -123,18 +133,22 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
-        public override void Interaction(Atom interactor)
+        public override bool Interaction(Atom interactor)
         {
             if(interactor.GetType() == typeof(Pg) && hostile)
             {
                 var pg = interactor as Pg;
                 pg.Attack(this);
+
+                return true;
             }
+
+            return false;
         }
 
         public virtual bool SensePg(Pg pg)
         {
-            return pg.Position.SquaredDistanceFrom(this.Position) < PerceptionDistance;
+            return pg.Position.SquaredDistanceFrom(this.Position) < SquaredPerceptionDistance;
         }
 
         public override void Die(Character pg)
@@ -143,6 +157,11 @@ namespace GodsWill_ASCIIRPG
             pg.GainExperience(AICharacter.XpCalculation(pg, this));
             // Remove from map
             this.Map.Remove(this);
+        }
+
+        public virtual void Talk()
+        {
+            NotifyListeners("*bla bla bla*");
         }
     }
 }

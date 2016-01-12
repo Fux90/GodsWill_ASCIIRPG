@@ -24,5 +24,6 @@ namespace GodsWill_ASCIIRPG
         Player_HandleWeapon,
         Player_EmbraceShield,
         Player_PutAwayShield,
+        AI_Turn,
     }
 }

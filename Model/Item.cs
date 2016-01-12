@@ -64,7 +64,7 @@ namespace GodsWill_ASCIIRPG
             user.NotifyListeners("Mmm... It seems of no use");
         }
 
-        public override void Interaction(Atom interactor)
+        public override bool Interaction(Atom interactor)
         {
             throw new NotImplementedException();
         }
