@@ -34,6 +34,8 @@ namespace GodsWill_ASCIIRPG.Model
                 err = err - dY;
                 if (err < 0) { y += ystep; err += dX; }
             }
+
+            pts.Reverse();
         }
 
         public IEnumerator GetEnumerator()

@@ -92,5 +92,23 @@ namespace GodsWill_ASCIIRPG.Model.Core
             var newDir = (numDirection2 + (int)dir) % numDirection;
             return (Direction)newDir;
         }
+
+        public static Direction DirectionFromOffset(this Coord ptFrom, Coord ptTo)
+        {
+            var ns = ptFrom - ptTo;
+            var codDir = Math.Sign(ns.X) * 10 + Math.Sign(ns.Y);
+            switch(codDir)
+            {
+                case 1: return Direction.North;
+                case -9: return Direction.NorthEast;
+                case -10: return Direction.East;
+                case -11: return Direction.SouthEast;
+                case -1: return Direction.South;
+                case 9: return Direction.SouthWest;
+                case 10: return Direction.West;
+                case 11: return Direction.NorthWest;
+                default: return Direction.North;
+            }
+        }
     }
 }

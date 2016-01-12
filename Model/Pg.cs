@@ -183,12 +183,12 @@ namespace GodsWill_ASCIIRPG
 
         public override bool Interaction(Atom interactor)
         {
-            if (interactor.GetType() == typeof(AICharacter))
+            if (interactor.GetType().IsSubclassOf(typeof(AICharacter)))
             {
                 var aiChar = (AICharacter)interactor;
                 if(aiChar.Hostile)
                 {
-                    this.Attack(aiChar);
+                    aiChar.Attack(this);
 
                     return true;
                 }

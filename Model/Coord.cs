@@ -32,5 +32,23 @@ namespace GodsWill_ASCIIRPG.Model
             var minusY = this.Y - other.Y;
             return minusX * minusX + minusY * minusY;
         }
+
+        public static Coord operator +(Coord pt1, Coord pt2)
+        {
+            return new Coord()
+            {
+                X = pt1.X + pt2.X,
+                Y = pt1.Y + pt2.Y,
+            };
+        }
+
+        public static Coord operator -(Coord pt1, Coord pt2)
+        {
+            return new Coord()
+            {
+                X = pt1.X - pt2.X,
+                Y = pt1.Y - pt2.Y,
+            };
+        }
     }
 }

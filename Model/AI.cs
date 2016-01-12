@@ -16,7 +16,8 @@ namespace GodsWill_ASCIIRPG
         {
             public static AI.FindDirectionMethod SimpleChase = (me, pg) =>
             {
-                return Direction.North;
+                var firstStepPos = new Line(me.Position, pg.Position)[1];
+                return me.Position.DirectionFromOffset(firstStepPos);
             };
         }
 
@@ -117,8 +118,7 @@ namespace GodsWill_ASCIIRPG
             : base ()
         {
             currentStatus = Status.Wandering;
-            //FindDirection = DirectionFindingAlgorithms.SimpleChase;
-            //RandomDirectionChange = RandomDirectionChangeAlgorithms.RandomAtPerc;
+            RandomDirectionChange = RandomDirectionChangeAlgorithms.RandomAtPerc;
         }
 
         public override void ExecuteAction()
@@ -134,7 +134,7 @@ namespace GodsWill_ASCIIRPG
                         currentStatus = Status.Chasing;
                         ControlledCharacter.Talk();
                     }
-                    currentDirection = RandomDirectionChange(currentDirection, 40);
+                    currentDirection = RandomDirectionChange(currentDirection, 5);
                     if(!ControlledCharacter.Move(currentDirection, out acted))
                     {
                         // Change direction
