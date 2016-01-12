@@ -163,7 +163,7 @@ namespace GodsWill_ASCIIRPG
         private void LevelUp()
         {
             CurrentLevel = (Level)Math.Min(maxLevel, 1 + (int)CurrentLevel);
-            CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(CurrentLevel));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(CurrentLevel, God));
             NextXP = ComputeNextXP();
         }
 
@@ -222,7 +222,7 @@ namespace GodsWill_ASCIIRPG
         private void NotifyAll()
         {
             CharacterSheets.ForEach((sheet) => sheet.NotifyName(this.Name));
-            CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(this.CurrentLevel));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(this.CurrentLevel, this.God));
             CharacterSheets.ForEach((sheet) => sheet.NotifyXp(this.XP, this.NextXP));
             CharacterSheets.ForEach((sheet) => sheet.NotifyHp(this.Hp, this.MaxHp));
             CharacterSheets.ForEach((sheet) => sheet.NotifyHunger(this.Hunger));

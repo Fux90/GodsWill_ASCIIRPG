@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GodsWill_ASCIIRPG.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace GodsWill_ASCIIRPG.View
     public interface ISheetViewer
     {
         void NotifyName(string name);
-        void NotifyLevel(Pg.Level level);
+        void NotifyLevel(Pg.Level level, God god);
         void NotifyXp(int currentXp, int nextXp);
         void NotifyHp(int currentHp, int maximumHp);
         void NotifyHunger(int hunger);

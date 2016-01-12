@@ -142,6 +142,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 {
                     controlledPg.EffectOfTurn();
                     Notify(ControllerCommand.AI_Turn);
+                    aiCharacters.RemoveAll(aiChar => aiChar.Dead);
                 }
             }
         }

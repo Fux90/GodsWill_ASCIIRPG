@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GodsWill_ASCIIRPG.View;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
@@ -156,9 +157,14 @@ namespace GodsWill_ASCIIRPG.UIControls
             setTextAndRefresh(tblPfAndHunger.Controls[_lblHunger], String.Format("Hunger: {0,3}", hunger));
         }
 
-        public void NotifyLevel(Pg.Level level)
+        public void NotifyLevel(Pg.Level level, God god)
         {
-            setTextAndRefresh(tblPanelNameAndLevel.Controls[_lblLevel], String.Format("[{0}]", level.ToString()));
+            setTextAndRefresh(  tblPanelNameAndLevel.Controls[_lblLevel], 
+                                String.Format("[{0}{1}]", 
+                                    level.ToString(), 
+                                    god != null
+                                    ? String.Format(" of {0}", god.Name)
+                                    : ""));
         }
 
         public void NotifyName(string name)
