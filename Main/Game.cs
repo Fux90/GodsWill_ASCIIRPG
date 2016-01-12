@@ -75,7 +75,9 @@ namespace GodsWill_ASCIIRPG
                 mapBuilder.AddAtom(new LongSword(position: new Coord() { X = 7, Y = 4 }));
                 mapBuilder.AddAtom(new Leather(position: new Coord() { X = 7, Y = 3 }));
                 mapBuilder.AddAtom(new WoodenShield(position: Coord.Random(mapBuilder.Width, mapBuilder.Height)));
-                var orc = AICharacter.DummyCharacter(typeof(Orc)).Builder.Build();
+                var orcBuilder = AICharacter.DummyCharacter(typeof(Orc)).Builder;
+                orcBuilder.Position = new Coord(10, 12);
+                var orc = orcBuilder.Build();
                 mapBuilder.AddAtom(orc);
                 currentPg.Listeners.ForEach(listener => orc.RegisterListener(listener));
                 aiController.Register(orc);

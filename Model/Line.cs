@@ -21,7 +21,7 @@ namespace GodsWill_ASCIIRPG.Model
             int x0 = ptA.X;
             int y0 = ptA.Y;
             int x1 = ptB.X;
-            int y1 = ptB.X;
+            int y1 = ptB.Y;
 
             bool steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
             if (steep) { Utilities.Swap<int>(ref x0, ref y0); Utilities.Swap<int>(ref x1, ref y1); }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define DEBUG_LINE
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -19,7 +21,9 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         Pg controlledPg;
         List<AICharacter> aiCharacters;
-
+#if DEBUG_LINE
+        Line line;
+#endif
         BackpackController backpackController;
         //MapController mapController;
         GameForm gameForm;
@@ -131,7 +135,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 {
                     controlledPg.EffectOfTurn();
 
-                    Notify(ControllerCommand.AI_Turn);
+                    //Notify(ControllerCommand.AI_Turn);
                 }
             }
         }
@@ -199,6 +203,12 @@ namespace GodsWill_ASCIIRPG.UIControls
                     break;
                 #endregion
 
+#if DEBUG_LINE
+                case Keys.L:
+                    line = new Line(controlledPg.Position, aiCharacters[0].Position);
+                    this.NotifyMovement(controlledPg.Position, controlledPg.Position);
+                    break;
+#endif
                 case Keys.Escape:
                     Notify(ControllerCommand.Player_ExitGame);
                     break;
@@ -226,6 +236,17 @@ namespace GodsWill_ASCIIRPG.UIControls
                                     new PointF(xPos, yPos));  
                 }
             }
+
+#if DEBUG_LINE
+            if (line != null)
+            {
+                foreach (Coord pt in line)
+                {
+                    var ptF = new PointF(pt.X * charSize, pt.Y * charSize);
+                    g.DrawString("*", this.Font, Brushes.Red, ptF);
+                }
+            }
+#endif
         }
 
         public void Register(AICharacter character)
