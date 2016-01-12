@@ -1,4 +1,5 @@
 using GodsWill_ASCIIRPG.Main;
+using GodsWill_ASCIIRPG.Model.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace GodsWill_ASCIIRPG
 	public abstract class AI
 	{
         public delegate Direction FindDirectionMethod(AICharacter me, Pg pg);
+        public delegate Direction RandomDirectionChangeMethod(Direction currentDirection, int perc = 100);
 
         protected enum Status
         {
@@ -31,10 +33,12 @@ namespace GodsWill_ASCIIRPG
 
         public AI()
         {
-            
+            FindDirection = DirectionFindingAlgorithms.SimpleChase;
+            RandomDirectionChange = RandomDirectionChangeAlgorithms.AlwaysAhead;
         }
 
         public FindDirectionMethod FindDirection { get; protected set; }
+        public RandomDirectionChangeMethod RandomDirectionChange { get; protected set; }
 
         public abstract void ExecuteAction();
 	}
@@ -47,6 +51,24 @@ namespace GodsWill_ASCIIRPG
         };
     }
 
+    static class RandomDirectionChangeAlgorithms
+    {
+        public static AI.RandomDirectionChangeMethod AlwaysAhead = (currDir, p) =>
+        {
+            return currDir;
+        };
+
+        public static AI.RandomDirectionChangeMethod RandomAtPerc = (currDir, paces) =>
+        {
+            return Dice.Throws(100) <= paces ? currDir.RandomDifferentFromThis() : currDir;
+        };
+
+        public static AI.RandomDirectionChangeMethod TurnBackAtPerc = (currDir, paces) =>
+        {
+            return Dice.Throws(100) <= paces ? currDir.TurnBack() : currDir;
+        };
+    }
+
     public class SimpleAI : AI
     {
         Status currentStatus;
@@ -56,7 +78,8 @@ namespace GodsWill_ASCIIRPG
             : base ()
         {
             currentStatus = Status.Wandering;
-            FindDirection = DirectionFindingAlgorithms.SimpleChase;
+            //FindDirection = DirectionFindingAlgorithms.SimpleChase;
+            //RandomDirectionChange = RandomDirectionChangeAlgorithms.RandomAtPerc;
         }
 
         public override void ExecuteAction()
@@ -72,9 +95,11 @@ namespace GodsWill_ASCIIRPG
                         currentStatus = Status.Chasing;
                         ControlledCharacter.Talk();
                     }
-                    else if(!ControlledCharacter.Move(currentDirection, out acted))
+                    currentDirection = RandomDirectionChange(currentDirection, 40);
+                    if(!ControlledCharacter.Move(currentDirection, out acted))
                     {
                         // Change direction
+                        currentDirection = currentDirection.RandomDifferentFromThis();
                     }
                     break;
                 case Status.Chasing:

@@ -76,5 +76,21 @@ namespace GodsWill_ASCIIRPG.Model.Core
             };
             ctrl.Enter += waitBackpackClose;
         }
+
+        public static Direction RandomDifferentFromThis(this Direction dir)
+        {
+            var numDirection = Enum.GetValues(typeof(Direction)).Length;
+            var newDir = (int)dir;
+            while ((newDir = (Dice.Throws(numDirection) - 1)) == (int)dir) ;
+            return (Direction)newDir;
+        }
+
+        public static Direction TurnBack(this Direction dir)
+        {
+            var numDirection = Enum.GetValues(typeof(Direction)).Length;
+            var numDirection2 = numDirection / 2;
+            var newDir = (numDirection2 + (int)dir) % numDirection;
+            return (Direction)newDir;
+        }
     }
 }
