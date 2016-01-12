@@ -9,8 +9,14 @@ namespace GodsWill_ASCIIRPG.Model
 {
     public struct Coord
     {
-        public int X;
-        public int Y;
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        public Coord(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
 
         public static Coord Random(int width, int height)
         {
