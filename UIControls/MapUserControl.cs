@@ -133,6 +133,15 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                     #endregion
 
+                    #region MSG_CONSOLE_HANDLING
+                    case ControllerCommand.Player_ScrollMsgsUp:
+                        controlledPg.ScrollUpMessages();
+                        break;
+                    case ControllerCommand.Player_ScrollMsgsDown:
+                        controlledPg.ScrollDownMessages();
+                        break;
+                    #endregion
+
                     case ControllerCommand.Player_ExitGame:
                         gameForm.Close();
                         break;
@@ -219,6 +228,15 @@ namespace GodsWill_ASCIIRPG.UIControls
                 #region DEITY
                 case Keys.K:
                     Notify(ControllerCommand.Player_Pray);
+                    break;
+                #endregion
+
+                #region MSG_CONSOLE_HANDLING
+                case Keys.PageUp:
+                    Notify(ControllerCommand.Player_ScrollMsgsUp);
+                    break;
+                case Keys.PageDown:
+                    Notify(ControllerCommand.Player_ScrollMsgsDown);
                     break;
                 #endregion
 

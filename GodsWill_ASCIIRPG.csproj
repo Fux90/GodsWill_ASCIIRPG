@@ -141,6 +141,7 @@
     </Compile>
     <Compile Include="View\IAtomListener.cs" />
     <Compile Include="View\IBackpackViewer.cs" />
+    <Compile Include="View\IScrollable.cs" />
     <Compile Include="View\ISheetViewer.cs" />
     <Compile Include="View\IMapViewer.cs" />
     <Compile Include="View\IMenuViewer.cs" />

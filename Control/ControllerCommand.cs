@@ -28,5 +28,7 @@ namespace GodsWill_ASCIIRPG
         Player_Pray,
         Backpack_SelectNextPage,
         Backpack_SelectPreviousPage,
+        Player_ScrollMsgsUp,
+        Player_ScrollMsgsDown,
     }
 }

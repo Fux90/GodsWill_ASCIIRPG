@@ -208,6 +208,20 @@ namespace GodsWill_ASCIIRPG
             return false;
         }
 
+        public void ScrollUpMessages()
+        {
+            var iScrollableType = typeof(IScrollable);
+            Listeners.Where(listener => iScrollableType.IsAssignableFrom(listener.GetType()))
+                    .ToList().ForEach(scrollable => ((IScrollable)scrollable).ScrollUp());
+        }
+
+        public void ScrollDownMessages()
+        {
+            var iScrollableType = typeof(IScrollable);
+            Listeners.Where(listener => iScrollableType.IsAssignableFrom(listener.GetType()))
+                    .ToList().ForEach(scrollable => ((IScrollable)scrollable).ScrollDown());
+        }
+
         public override void RegisterTemporaryMod(TemporaryModifier mod)
         {
             base.RegisterTemporaryMod(mod);

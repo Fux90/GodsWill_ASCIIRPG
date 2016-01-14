@@ -11,10 +11,13 @@ using GodsWill_ASCIIRPG.View;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
-    public partial class LogUserControl : UserControl, IAtomListener
+    public partial class LogUserControl : UserControl, IAtomListener, IScrollable
     {
         public const float FontSize = 10.0f;
         private List<LogRow> rows;
+        private int currentLastShown;
+
+        private int VisualizedRowCount { get { return (int)Math.Ceiling(this.Height / (FontSize + 2.0f)); } }
 
         public LogUserControl()
         {
@@ -24,12 +27,15 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.BackColor = Color.Black;
             this.BorderStyle = BorderStyle.FixedSingle;
             rows = new List<LogRow>();
+
+            currentLastShown = 0;
         }
 
-        public void AppendText(LogRow row)
-        {
-            rows.Add(row);
-        }
+        //public void AppendText(LogRow row)
+        //{
+        //    rows.Add(row);
+        //    currentLastShown++;
+        //}
 
         public void NotifyMessage(Atom who, string msg)
         {
@@ -38,17 +44,34 @@ namespace GodsWill_ASCIIRPG.UIControls
             {
                 Color = who.Color,
             });
+            currentLastShown++;
             this.Refresh();
+        }
+
+        public void ScrollUp()
+        {
+            currentLastShown = Math.Max(VisualizedRowCount - 1, currentLastShown - 1);
+            this.Invalidate();
+        }
+
+        public void ScrollDown()
+        {
+            currentLastShown = Math.Min(currentLastShown + 1, rows.Count);
+            this.Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics;
-            var numVisualizedRows = (int)Math.Ceiling(this.Height / (FontSize + 2.0f));
+            //var numVisualizedRows = (int)Math.Ceiling(this.Height / (FontSize + 2.0f));
+            var numVisualizedRows = VisualizedRowCount;
+
             var startIndex = 0;
-            if (rows.Count >= numVisualizedRows)
+            //if (rows.Count >= numVisualizedRows)
+            if (currentLastShown >= numVisualizedRows)
             {
-                startIndex = rows.Count - numVisualizedRows + 1;
+                //startIndex = rows.Count - numVisualizedRows + 1;
+                startIndex = currentLastShown - numVisualizedRows + 1;
             }
 
             var pos = new PointF(0.0f, 0.0f);
