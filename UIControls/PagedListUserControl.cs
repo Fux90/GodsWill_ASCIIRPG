@@ -16,7 +16,15 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         public int SelectedIndex { get; private set; }
         public int SelectedPage { get; private set; }
-        public int PagesCount { get { return (int)Math.Floor((float)items.Length / (float)RowsPerPage); } }
+        public int PagesCount
+        {
+            get
+            {
+                var pgCount = (int)Math.Ceiling((float)items.Length / (float)RowsPerPage);
+                SelectedPage = Math.Min(SelectedPage, pgCount - 1);
+                return pgCount;
+            }
+        }
         public int RowsPerPage { get { return (int)Math.Floor((float)this.Height / (float)this.FontHeight); } }
 
         public delegate string StringifyMethod(T element);
@@ -92,13 +100,16 @@ namespace GodsWill_ASCIIRPG.UIControls
                 var finalIndex = Math.Min(items.Length, indexToShow + RowsPerPage);
 
                 var pos = new PointF();
-                for (int r = 0; r < finalIndex; r++, indexToShow++)
+                for (int r = indexToShow; r < finalIndex; r++, indexToShow++)
                 {
                     if(SelectedIndex == indexToShow)
                     {
                         g.FillRectangle(Brushes.Blue, new RectangleF(pos, new SizeF(this.Width, FontHeight)));
                     }
-                    g.DrawString(Stringify(items[indexToShow]), Font, Brushes.White, pos);
+                    g.DrawString(   Stringify(items[indexToShow]), 
+                                    Font, 
+                                    Brushes.White, 
+                                    pos);
                     pos.Y += Font.Height;
                 }
             }

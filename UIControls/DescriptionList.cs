@@ -49,16 +49,16 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
         }
 
-        public Item[] Items
+        public List<Item> Items
         {
             get
             {
-                return itemList.Items;
+                return itemList.Items.ToList();
             }
 
             set
             {
-                itemList.Items = value;
+                itemList.Items = value.ToArray();
                 UpdateDescription();
             }
         }
@@ -96,7 +96,6 @@ namespace GodsWill_ASCIIRPG.UIControls
             tblListAndPages.RowStyles.Clear();
             tblListAndPages.RowStyles.Add(new RowStyle(SizeType.Percent, 100.0f));
             tblListAndPages.RowStyles.Add(new RowStyle(SizeType.Absolute, 30.0f)); // Page Indication
-            tblListAndPages.BackColor = Color.Orange;
 
             itemList = new PagedListUserControl<Item>();
             itemList.Padding = new Padding(PaddingValue);
@@ -196,6 +195,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                                 ? proportionalNewHeight
                                 : proportionalNewWidth),
                                 lblTitle.Font.Style);
+
+            UpdateDescription();
+
             ResumeLayout();
 
             base.OnResize(e);

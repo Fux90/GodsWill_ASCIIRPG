@@ -153,6 +153,7 @@ namespace GodsWill_ASCIIRPG
                     {
                         // Change direction
                         currentDirection = currentDirection.RandomDifferentFromThis();
+                        ControlledCharacter.Move(currentDirection, out acted);
                     }
                     break;
                 case Status.Chasing:

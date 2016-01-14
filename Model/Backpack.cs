@@ -85,6 +85,21 @@ namespace GodsWill_ASCIIRPG.Model
 
             return new Item[] { };
         }
+
+        public List<Item> ToList()
+        {
+            if (this.Count > 0)
+            {
+                var res = new List<Item>(this.Count);
+                for (int i = 0; i < this.Count; i++)
+                {
+                    res.Add(this[i]);
+                }
+                return res;
+            }
+
+            return new List<Item>();
+        }
     }
 
     public class BackpackEnum : IEnumerator
