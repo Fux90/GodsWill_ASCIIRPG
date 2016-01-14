@@ -26,5 +26,6 @@ namespace GodsWill_ASCIIRPG
         Player_PutAwayShield,
         AI_Turn,
         Player_Pray,
+        Backpack_SelectNextPage,
     }
 }

@@ -109,11 +109,17 @@
     <Compile Include="UIControls\CharacterSheetUserControl.Designer.cs">
       <DependentUpon>CharacterSheetUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UIControls\ListUserControl.cs">
+    <Compile Include="UIControls\DescriptionList.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UIControls\ListUserControl.Designer.cs">
-      <DependentUpon>ListUserControl.cs</DependentUpon>
+    <Compile Include="UIControls\DescriptionList.Designer.cs">
+      <DependentUpon>DescriptionList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UIControls\PagedListUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UIControls\PagedListUserControl.Designer.cs">
+      <DependentUpon>PagedListUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UIControls\LogUserControl.cs">
       <SubType>UserControl</SubType>
