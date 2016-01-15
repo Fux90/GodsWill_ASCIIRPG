@@ -70,6 +70,12 @@ namespace GodsWill_ASCIIRPG
                 mapBuilder.AddAtom(new Wall(new Coord() { X = 10, Y = 10 }));
                 mapBuilder.AddAtom(new Wall(new Coord() { X = 11, Y = 10 }));
                 mapBuilder.AddAtom(new Wall(new Coord() { X = 12, Y = 10 }));
+
+                mapBuilder.AddAtom(new Wall(new Coord() { X = 0, Y = 0 }));
+                mapBuilder.AddAtom(new Wall(new Coord() { X = 0, Y = mapBuilder.Height - 1 }));
+                mapBuilder.AddAtom(new Wall(new Coord() { X = mapBuilder.Width - 1, Y = 0 }));
+                mapBuilder.AddAtom(new Wall(new Coord() { X = mapBuilder.Width - 1, Y = mapBuilder.Height - 1 }));
+
                 mapBuilder.AddViewer(mapViewer);
                 mapBuilder.PlayerInitialPosition = new Coord() { X = 1, Y = 1 };
                 mapBuilder.AddAtom(new LongSword(position: new Coord() { X = 7, Y = 4 }));

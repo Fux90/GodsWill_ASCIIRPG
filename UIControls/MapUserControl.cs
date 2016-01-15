@@ -28,6 +28,41 @@ namespace GodsWill_ASCIIRPG.UIControls
         //MapController mapController;
         GameForm gameForm;
 
+        private int viewPortWidthInCells;
+        private int viewPortHeightInCells;
+
+        private int viewPortHeightInCells_2 { get { return viewPortHeightInCells / 2; } }
+        private int viewPortHeightInCells_4 { get { return viewPortHeightInCells / 4; } }
+        private int viewPortWidthInCells_2 { get { return viewPortWidthInCells / 2; } }
+        private int viewPortWidthInCells_4 { get { return viewPortWidthInCells / 4; } }
+
+        private Coord centerRegion;
+
+        private int RegionLeft
+        {
+            get { return (int)Math.Max(centerRegion.X - viewPortWidthInCells_2, 0); }
+        }
+        private int Regionright
+        {
+            get
+            {
+                return (int)Math.Max(   centerRegion.X + viewPortWidthInCells_2, 
+                                        controlledPg.Map.Width - 1);
+            }
+        }
+        private int RegionTop
+        {
+            get { return (int)Math.Max(centerRegion.Y - viewPortHeightInCells_2, 0); }
+        }
+
+        private int RegionBottom
+        {
+            get
+            {
+                return (int)Math.Max(   centerRegion.Y + viewPortHeightInCells_2, 
+                                        controlledPg.Map.Height - 1); }
+        }
+
         public MapUserControl(GameForm gameForm, BackpackController backpackController)
         {
             InitializeComponent();

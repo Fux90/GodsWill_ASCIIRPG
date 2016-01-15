@@ -24,6 +24,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                 var pgCount = (int)Math.Ceiling((float)items.Length / (float)rowsPerPage);
                 SelectedPage = Math.Min(SelectedPage, pgCount - 1);
                 var pgOfSelectedIx = (int)Math.Floor((float)SelectedIndex / (float)rowsPerPage);
+                /*
+                    On shrinking, select the last element in page
+                */
                 if(pgOfSelectedIx > SelectedPage)
                 {
                     SelectedIndex = Math.Max(0, (SelectedPage + 1) * rowsPerPage - 1);
