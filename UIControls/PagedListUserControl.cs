@@ -20,8 +20,14 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             get
             {
-                var pgCount = (int)Math.Ceiling((float)items.Length / (float)RowsPerPage);
+                var rowsPerPage = RowsPerPage;
+                var pgCount = (int)Math.Ceiling((float)items.Length / (float)rowsPerPage);
                 SelectedPage = Math.Min(SelectedPage, pgCount - 1);
+                var pgOfSelectedIx = (int)Math.Floor((float)SelectedIndex / (float)rowsPerPage);
+                if(pgOfSelectedIx > SelectedPage)
+                {
+                    SelectedIndex = Math.Max(0, (SelectedPage + 1) * rowsPerPage - 1);
+                }
                 return pgCount;
             }
         }
