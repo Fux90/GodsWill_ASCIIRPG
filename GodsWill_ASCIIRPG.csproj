@@ -53,6 +53,7 @@
     <Compile Include="Control\MapController.cs" />
     <Compile Include="Control\MenuController.cs" />
     <Compile Include="Control\PgController.cs" />
+    <Compile Include="Control\SelectorCursor.cs" />
     <Compile Include="Main\GameForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -67,6 +68,7 @@
     <Compile Include="Model\Armor.cs" />
     <Compile Include="Model\Armors\Leather.cs" />
     <Compile Include="Model\Atom.cs" />
+    <Compile Include="Model\AtomCollection.cs" />
     <Compile Include="Model\Backpack.cs" />
     <Compile Include="Model\Character.cs" />
     <Compile Include="Model\Coord.cs" />

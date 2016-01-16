@@ -48,7 +48,7 @@ namespace GodsWill_ASCIIRPG
         public Coord Position { get { return position; } protected set { position = value; } }
         public Map Map { get { return map; } }
         public bool IsPickable { get; protected set; }
-        public List<IAtomListener> Listeners { get { return new List<IAtomListener>( listeners ); } }
+        public List<IAtomListener> Listeners { get { return new List<IAtomListener>(listeners); } }
         #endregion
 
         public Atom(string name,
@@ -126,5 +126,72 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(isPickableSerializableName, IsPickable, typeof(bool));
         }
         #endregion
+    }
+
+    public abstract class MoveableAtom : Atom
+    {
+        public MoveableAtom()
+        {
+
+        }
+
+        public virtual bool Move(Direction dir, out bool acted)
+        {
+            var candidateCoord = new Coord()
+            {
+                X = this.Position.X,
+                Y = this.Position.Y
+            };
+
+            switch (dir)
+            {
+                case Direction.North:
+                    candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
+                    break;
+                case Direction.NorthEast:
+                    candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
+                    candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
+                    break;
+                case Direction.East:
+                    candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
+                    break;
+                case Direction.SouthEast:
+                    candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
+                    candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
+                    break;
+                case Direction.South:
+                    candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
+                    break;
+                case Direction.SouthWest:
+                    candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
+                    candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
+                    break;
+                case Direction.West:
+                    candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
+                    break;
+                case Direction.NorthWest:
+                    candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
+                    candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
+                    break;
+            }
+
+            var moved = false;
+            acted = false;
+
+            if (this.Map.CanMoveTo(candidateCoord))
+            {
+                this.Map.MoveAtomTo(this, this.Position, candidateCoord);
+                this.Position = candidateCoord;
+
+                moved = true;
+                acted = true;
+            }
+            else
+            {
+                acted = this.Map[candidateCoord].Interaction(this);
+            }
+
+            return moved;
+        }
     }
 }

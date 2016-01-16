@@ -92,6 +92,12 @@ namespace GodsWill_ASCIIRPG
     [Serializable]
     public class Map : ISerializable
     {
+        public enum LevelType
+        {
+            Normal,
+            Untangibles
+        }
+
         #region SERIALIZATION_CONST_NAMES
         private const string nameSerializableName = "name";
         private const string tableSerializableName = "table";
@@ -103,6 +109,7 @@ namespace GodsWill_ASCIIRPG
         string name;
         Coord playerInitialPosition;
         BidimensionalArray<Atom> table;
+        BidimensionalArray<AtomCollection> untangibles;
         BidimensionalArray<Atom> buffer;
         BidimensionalArray<bool> explored;
         List<IMapViewer> views;
@@ -123,6 +130,21 @@ namespace GodsWill_ASCIIRPG
                 return this.table[coord];
             }
         }
+
+        public Atom this[Coord coord, LevelType level]
+        {
+            get
+            {
+                switch(level)
+                {
+                    case LevelType.Untangibles:
+                        return this.untangibles[coord];
+                    case LevelType.Normal:
+                    default:
+                        return this.table[coord];
+                }
+            }
+        }
         #endregion
 
         public Map( string name,
@@ -133,6 +155,7 @@ namespace GodsWill_ASCIIRPG
             this.playerInitialPosition = playerInitialPosition;
             this.table = table;
             this.buffer = new BidimensionalArray<Atom>(table.Rows, table.Cols);
+            this.untangibles = new BidimensionalArray<AtomCollection>(table.Rows, table.Cols, () => new AtomCollection());
             this.views = new List<IMapViewer>();
         }
 

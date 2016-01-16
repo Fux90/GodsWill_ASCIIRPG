@@ -164,64 +164,64 @@ namespace GodsWill_ASCIIRPG
             CharacterSheets.ForEach((sheet) => sheet.NotifyStat(stat, stats[stat]));
         }
 
-        public virtual bool Move(Direction dir, out bool acted)
-        {
-            var candidateCoord = new Coord()
-            {
-                X = this.Position.X,
-                Y = this.Position.Y
-            };
+        //public virtual bool Move(Direction dir, out bool acted)
+        //{
+        //    var candidateCoord = new Coord()
+        //    {
+        //        X = this.Position.X,
+        //        Y = this.Position.Y
+        //    };
 
-            switch(dir)
-            {
-                case Direction.North:
-                    candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
-                    break;
-                case Direction.NorthEast:
-                    candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
-                    candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
-                    break;
-                case Direction.East:
-                    candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
-                    break;
-                case Direction.SouthEast:
-                    candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
-                    candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
-                    break;
-                case Direction.South:
-                    candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
-                    break;
-                case Direction.SouthWest:
-                    candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
-                    candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
-                    break;
-                case Direction.West:
-                    candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
-                    break;
-                case Direction.NorthWest:
-                    candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
-                    candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
-                    break;
-            }
+        //    switch(dir)
+        //    {
+        //        case Direction.North:
+        //            candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
+        //            break;
+        //        case Direction.NorthEast:
+        //            candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
+        //            candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
+        //            break;
+        //        case Direction.East:
+        //            candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
+        //            break;
+        //        case Direction.SouthEast:
+        //            candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
+        //            candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
+        //            break;
+        //        case Direction.South:
+        //            candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
+        //            break;
+        //        case Direction.SouthWest:
+        //            candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
+        //            candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
+        //            break;
+        //        case Direction.West:
+        //            candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
+        //            break;
+        //        case Direction.NorthWest:
+        //            candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
+        //            candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
+        //            break;
+        //    }
 
-            var moved = false;
-            acted = false;
+        //    var moved = false;
+        //    acted = false;
 
-            if (this.Map.CanMoveTo(candidateCoord))
-            {
-                this.Map.MoveAtomTo(this, this.Position, candidateCoord);
-                this.Position = candidateCoord;
+        //    if (this.Map.CanMoveTo(candidateCoord))
+        //    {
+        //        this.Map.MoveAtomTo(this, this.Position, candidateCoord);
+        //        this.Position = candidateCoord;
 
-                moved = true;
-                acted = true;
-            }
-            else
-            {
-                acted = this.Map[candidateCoord].Interaction(this);
-            }
+        //        moved = true;
+        //        acted = true;
+        //    }
+        //    else
+        //    {
+        //        acted = this.Map[candidateCoord].Interaction(this);
+        //    }
             
-            return moved;
-        }
+        //    return moved;
+        //}
 
         public void Attack(Character defenderCharachter)
         {

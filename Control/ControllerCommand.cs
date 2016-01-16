@@ -30,5 +30,12 @@ namespace GodsWill_ASCIIRPG
         Backpack_SelectPreviousPage,
         Player_ScrollMsgsUp,
         Player_ScrollMsgsDown,
+        Player_EnterSelectionMode,
+        Player_ExitSelectionModeWithoutSelection,
+        SelectionCursor_MoveNorth,
+        SelectionCursor_MoveEast,
+        SelectionCursor_MoveSouth,
+        SelectionCursor_MoveWest,
+        SelectionCursor_PickedCell,
     }
 }

@@ -9,6 +9,8 @@ namespace GodsWill_ASCIIRPG.Model.Core
 {
     public class BidimensionalArray<T>
     {
+        public delegate T Instantiator();
+
         T[,] content;
         int height;
         int width;
@@ -33,6 +35,18 @@ namespace GodsWill_ASCIIRPG.Model.Core
                 for (int c = 0; c < cols; c++)
                 {
                     content[r, c] = defaultValue;
+                }
+            }
+        }
+
+        public BidimensionalArray(int rows, int cols, Instantiator instantiator)
+        {
+            content = new T[rows, cols];
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    content[r, c] = instantiator();
                 }
             }
         }
