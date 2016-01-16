@@ -29,11 +29,11 @@ namespace GodsWill_ASCIIRPG
 
             tblGameScreen = new TableLayoutPanel();
 
-            var backpackControl = new BackpackUserControl(tblGameScreen);
-            var mapViewControl = new MapUserControl(this, backpackControl);
-            var characterSheet = new CharacterSheetUserControl();
-            var logConsole = new LogUserControl();
             var singleMsgConsole = new SingleMessageLogUserControl();
+            var backpackControl = new BackpackUserControl(tblGameScreen);
+            var mapViewControl = new MapUserControl(this, backpackControl, singleMsgConsole);
+            var characterSheet = new CharacterSheetUserControl();
+            var logConsole = new LogUserControl();            
 
             tblGameScreen.Dock = DockStyle.Fill;
             tblGameScreen.RowStyles.Clear();

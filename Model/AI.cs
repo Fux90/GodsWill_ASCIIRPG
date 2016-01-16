@@ -35,7 +35,7 @@ namespace GodsWill_ASCIIRPG
 
             public static AI.RandomDirectionChangeMethod TurnBackAtPerc = (currDir, paces) =>
             {
-                return Dice.Throws(100) <= paces ? currDir.TurnBack() : currDir;
+                return Dice.Throws(100) <= paces ? currDir.Opposite() : currDir;
             };
         }
 

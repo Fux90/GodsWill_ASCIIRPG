@@ -9,7 +9,7 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
-    public abstract class Character : Atom
+    public abstract class Character : MoveableAtom
     {
         protected enum HpType
         {
@@ -87,11 +87,12 @@ namespace GodsWill_ASCIIRPG
                          Weapon handledWeapon,
                          Backpack backpack,
                          God god,
+                         bool unblockable,
                          string symbol = "C",
                          Color color = new Color(),
                          string description = "A character of the game",
                          Coord position = new Coord())
-            : base(name, symbol, color, false, false, description, position)
+            : base(name, symbol, color, false, false, unblockable, description, position)
         {
             this.hp = new int[] { currentPf, maximumPf };
             this.hunger = hunger;

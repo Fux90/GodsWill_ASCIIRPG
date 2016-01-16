@@ -27,6 +27,8 @@ namespace GodsWill_ASCIIRPG
         public string Symbol { get; private set; }
         public Color Color { get; private set; }
         public God God { get; set; }
+        public bool Unblockable { get; set; }
+        public int PerceptionRange { get; set; }
         #endregion
 
         public PgCreator()
@@ -47,6 +49,8 @@ namespace GodsWill_ASCIIRPG
             Symbol = "@";
             Color = Color.White;
             God = null;
+            Unblockable = false;
+            PerceptionRange = 10;
         }
         
 
@@ -61,9 +65,11 @@ namespace GodsWill_ASCIIRPG
                             Level,
                             CurrentXp,
                             NextXp,
-                            CurrentPf ,
+                            CurrentPf,
                             MaxPf,
                             Hunger,
+                            PerceptionRange,
+                            Unblockable,
                             Stats,
                             Armor,
                             Shield,
@@ -112,6 +118,8 @@ namespace GodsWill_ASCIIRPG
             get { return hungerDice; }
         }
 
+        public int PerceptionRange { get; protected set; }
+
         public Pg(  string name,
                     Level level,
                     int currentXp,
@@ -119,6 +127,8 @@ namespace GodsWill_ASCIIRPG
                     int currentPf,
                     int maxPf,
                     int hunger,
+                    int perception,
+                    bool unblockable,
                     Stats stats,
                     Armor armor,
                     Shield shield,
@@ -137,12 +147,14 @@ namespace GodsWill_ASCIIRPG
                     weapon,
                     backpack,
                     god,
+                    unblockable,
                     symbol,
                     color)
         {
             CurrentLevel = level;
             maxLevel = Enum.GetValues(typeof(Level)).Length - 1;
             xp = new int[] { currentXp, nextXp };
+            this.PerceptionRange = perception;
         }
 
         public override void GainExperience(int xp)

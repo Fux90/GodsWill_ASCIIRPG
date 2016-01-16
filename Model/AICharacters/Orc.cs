@@ -112,6 +112,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                     handledWeapon,
                     backpack,
                     god,
+                    false,
                     symbol,
                     color,
                     description,

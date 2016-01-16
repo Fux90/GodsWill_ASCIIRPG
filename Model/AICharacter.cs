@@ -79,6 +79,7 @@ namespace GodsWill_ASCIIRPG
                     null,
                     new Backpack(),
                     null,
+                    true,
                     "",
                     Color.White,
                     "",
@@ -98,6 +99,7 @@ namespace GodsWill_ASCIIRPG
                             Weapon handledWeapon = null,
                             Backpack backpack = null,
                             God god = null,
+                            bool unblockable = false,
                             string symbol = "C",
                             Color? color = null,
                             string description = "A creature of the world", 
@@ -113,6 +115,7 @@ namespace GodsWill_ASCIIRPG
                     handledWeapon, 
                     backpack == null ? new Backpack() : backpack,
                     god,
+                    unblockable,
                     symbol,
                     color == null 
                         ? (hostile ? Color.Red : Color.Green)

@@ -85,7 +85,7 @@ namespace GodsWill_ASCIIRPG.Model.Core
             return (Direction)newDir;
         }
 
-        public static Direction TurnBack(this Direction dir)
+        public static Direction Opposite(this Direction dir)
         {
             var numDirection = Enum.GetValues(typeof(Direction)).Length;
             var numDirection2 = numDirection / 2;
