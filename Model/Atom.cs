@@ -49,6 +49,8 @@ namespace GodsWill_ASCIIRPG
         public Map Map { get { return map; } }
         public bool IsPickable { get; protected set; }
         public List<IAtomListener> Listeners { get { return new List<IAtomListener>(listeners); } }
+        public bool Physical { get { return this.GetType().GetCustomAttributes(typeof(Unphysical), true).Length == 0; } }
+        public bool Unphysical { get { return !Physical; } }
         #endregion
 
         public Atom(string name,
@@ -130,9 +132,25 @@ namespace GodsWill_ASCIIRPG
 
     public abstract class MoveableAtom : Atom
     {
-        public MoveableAtom()
-        {
+        public bool Unblockable { get; private set; }
 
+        public MoveableAtom(string name,
+                            string symbol,
+                            Color color,
+                            bool walkable,
+                            bool blockVision,
+                            bool unblockable,
+                            string description = "Base moveable element of the game",
+                            Coord position = new Coord())
+            : base( name,
+                    symbol,
+                    color,
+                    walkable,
+                    blockVision,
+                    description,
+                    position)
+        {
+            Unblockable = unblockable;
         }
 
         public virtual bool Move(Direction dir, out bool acted)
@@ -178,7 +196,9 @@ namespace GodsWill_ASCIIRPG
             var moved = false;
             acted = false;
 
-            if (this.Map.CanMoveTo(candidateCoord))
+            if (this.Unblockable
+                || this.Map.CanMoveTo(candidateCoord)
+                || this.IsNotBlockedFromType(this.Map[candidateCoord]))
             {
                 this.Map.MoveAtomTo(this, this.Position, candidateCoord);
                 this.Position = candidateCoord;
@@ -192,6 +212,12 @@ namespace GodsWill_ASCIIRPG
             }
 
             return moved;
+        }
+
+        public virtual bool IsNotBlockedFromType(Atom atom)
+        {
+            //var atomType = ...
+            return false;
         }
     }
 }

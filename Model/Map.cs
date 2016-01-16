@@ -184,10 +184,35 @@ namespace GodsWill_ASCIIRPG
 
         public void Insert(Atom a)
         {
-            if (CanMoveTo(a.Position))
+            if (a.Physical)
             {
-                buffer[a.Position] = table[a.Position];
-                table[a.Position] = a;
+                if (CanMoveTo(a.Position))
+                {
+                    buffer[a.Position] = table[a.Position];
+                    table[a.Position] = a;
+                }
+            }
+            else
+            {
+                untangibles[a.Position].Add(a);
+            }
+        }
+
+        public void Insert(MoveableAtom a)
+        {
+            if (a.Physical)
+            {
+                if (a.Unblockable 
+                    || CanMoveTo(a.Position)
+                    || a.IsNotBlockedFromType(table[a.Position]))
+                {
+                    buffer[a.Position] = table[a.Position];
+                    table[a.Position] = a;
+                }
+            }
+            else
+            {
+                untangibles[a.Position].Add(a);
             }
         }
 
@@ -230,15 +255,31 @@ namespace GodsWill_ASCIIRPG
 
         public void MoveAtomTo(Atom movedAtom, Coord prevPosition, Coord newPosition)
         {
-            table[prevPosition] = buffer[prevPosition];
-            buffer[newPosition] = table[newPosition];
-            table[newPosition] = movedAtom;
+            if (movedAtom.Physical)
+            {
+                table[prevPosition] = buffer[prevPosition];
+                buffer[newPosition] = table[newPosition];
+                table[newPosition] = movedAtom;
+            }
+            else
+            {
+                buffer[newPosition] = table[newPosition];
+                untangibles[prevPosition].Remove(movedAtom);
+                untangibles[newPosition].Add(movedAtom);
+            }
             NotifyViewersOfMovement(movedAtom, prevPosition, newPosition);
             var steppedAtom = buffer[newPosition];
             var steppedAtomType = steppedAtom.GetType();
             var movedAtomType = movedAtom.GetType();
 
-            if (steppedAtomType.IsSubclassOf(typeof(Item)))
+            if (movedAtomType == typeof(SelectorCursor))
+            {
+                var item = ((Item)steppedAtom);
+                var msg = String.Format("{0}", item.Description);
+
+                movedAtom.NotifyListeners(msg);
+            }
+            else if (steppedAtomType.IsSubclassOf(typeof(Item)))
             {
                 var item = ((Item)steppedAtom);
                 var msg = String.Format("Stepped on {0}", item.ItemTypeName);

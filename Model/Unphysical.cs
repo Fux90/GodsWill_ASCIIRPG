@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GodsWill_ASCIIRPG.Control
+namespace GodsWill_ASCIIRPG.Model
 {
-
-    public class SelectorCursor : MoveableAtom
+    [AttributeUsage(AttributeTargets.Class)]
+    class Unphysical : Attribute
     {
     }
 }
