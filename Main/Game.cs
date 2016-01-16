@@ -65,11 +65,11 @@ namespace GodsWill_ASCIIRPG
                 // Map generation
                 var mapBuilder = new MapBuilder();
 #if DEBUG_MAP
-                mapBuilder.Height = 20;
-                mapBuilder.Width = 20;
-                mapBuilder.AddAtom(new Wall(new Coord() { X = 10, Y = 10 }));
-                mapBuilder.AddAtom(new Wall(new Coord() { X = 11, Y = 10 }));
-                mapBuilder.AddAtom(new Wall(new Coord() { X = 12, Y = 10 }));
+                mapBuilder.Height = 30;
+                mapBuilder.Width = 19;
+                //mapBuilder.AddAtom(new Wall(new Coord() { X = 10, Y = 10 }));
+                //mapBuilder.AddAtom(new Wall(new Coord() { X = 11, Y = 10 }));
+                //mapBuilder.AddAtom(new Wall(new Coord() { X = 12, Y = 10 }));
 
                 mapBuilder.AddAtom(new Wall(new Coord() { X = 0, Y = 0 }));
                 mapBuilder.AddAtom(new Wall(new Coord() { X = 0, Y = mapBuilder.Height - 1 }));

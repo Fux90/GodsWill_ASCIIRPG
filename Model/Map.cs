@@ -131,11 +131,11 @@ namespace GodsWill_ASCIIRPG
             views.Add(viewer);
         }
 
-        public void NotifyViewersOfMovement(Coord freedCell, Coord occupiedCell)
+        public void NotifyViewersOfMovement(Atom movedAtom, Coord freedCell, Coord occupiedCell)
         {
             foreach (var viewer in views)
             {
-                viewer.NotifyMovement(freedCell, occupiedCell);
+                viewer.NotifyMovement(movedAtom, freedCell, occupiedCell);
             }
         }
 
@@ -190,7 +190,7 @@ namespace GodsWill_ASCIIRPG
 
         public bool CanMoveTo(Coord coord)
         {
-            return table[coord.X, coord.Y].Walkable;
+            return table[coord].Walkable;
         }
 
         public void MoveAtomTo(Atom movedAtom, Coord prevPosition, Coord newPosition)
@@ -198,7 +198,7 @@ namespace GodsWill_ASCIIRPG
             table[prevPosition] = buffer[prevPosition];
             buffer[newPosition] = table[newPosition];
             table[newPosition] = movedAtom;
-            NotifyViewersOfMovement(prevPosition, newPosition);
+            NotifyViewersOfMovement(movedAtom, prevPosition, newPosition);
             var steppedAtom = buffer[newPosition];
             if (steppedAtom.GetType().IsSubclassOf(typeof(Item)))
             {

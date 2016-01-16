@@ -15,8 +15,8 @@ namespace GodsWill_ASCIIRPG.Model.Core
 
         public int Height { get { return height; } }
         public int Width { get { return width; } }
-        public int Rows { get { return width; } }
-        public int Cols { get { return height; } }
+        public int Rows { get { return height; } }
+        public int Cols { get { return width; } }
 
         public BidimensionalArray(int rows, int cols)
         {
@@ -41,12 +41,12 @@ namespace GodsWill_ASCIIRPG.Model.Core
         {
             get
             {
-                return content[col, row];
+                return content[row, col];
             }
 
             set
             {
-                content[col, row] = value;
+                content[row, col] = value;
             }
         }
 

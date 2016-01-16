@@ -1,4 +1,8 @@
-﻿//#define DEBUG_LINE
+﻿//#define DRAW_ALL
+//#define DRAW_NO_SCROLL
+//#define DEBUG_LINE
+#define DEBUG_CENTERING
+#define DEBUG_CENTER_VIEWPORT
 
 using System;
 using System.Collections.Generic;
@@ -20,6 +24,8 @@ namespace GodsWill_ASCIIRPG.UIControls
         const float charSize = 10.0f;
 
         Pg controlledPg;
+        Atom currentAtomFollowedByViewport;
+
         List<AICharacter> aiCharacters;
 #if DEBUG_LINE
         Line line;
@@ -28,38 +34,63 @@ namespace GodsWill_ASCIIRPG.UIControls
         //MapController mapController;
         GameForm gameForm;
 
-        private int viewPortWidthInCells;
-        private int viewPortHeightInCells;
+        private int viewportWidthInCells
+        {
+            get { return (int)Math.Ceiling((float)this.Width / charSize); }
+        }
+        private int viewportHeightInCells
+        {
+            get { return (int)Math.Ceiling((float)this.Height / charSize); }
+        }
 
-        private int viewPortHeightInCells_2 { get { return viewPortHeightInCells / 2; } }
-        private int viewPortHeightInCells_4 { get { return viewPortHeightInCells / 4; } }
-        private int viewPortWidthInCells_2 { get { return viewPortWidthInCells / 2; } }
-        private int viewPortWidthInCells_4 { get { return viewPortWidthInCells / 4; } }
+        private float HalfWidth { get { return Width / 2.0f; } }
+        private float HalfHeight { get { return Height / 2.0f; } }
+
+        private int viewportHeightInCells_2 { get { return viewportHeightInCells / 2; } }
+        private int viewportHeightInCells_4 { get { return viewportHeightInCells / 4; } }
+        private int viewportWidthInCells_2 { get { return viewportWidthInCells / 2; } }
+        private int viewportWidthInCells_4 { get { return viewportWidthInCells / 4; } }
 
         private Coord centerRegion;
 
-        private int RegionLeft
-        {
-            get { return (int)Math.Max(centerRegion.X - viewPortWidthInCells_2, 0); }
-        }
-        private int Regionright
+        private int HorizontalMaxDistanceFromCenter
         {
             get
             {
-                return (int)Math.Max(   centerRegion.X + viewPortWidthInCells_2, 
+                return viewportWidthInCells_4;
+            }
+        }
+
+        private int VerticalMaxDistanceFromCenter
+        {
+            get
+            {
+                return viewportHeightInCells_4;
+            }
+        }
+
+        private int RegionLeft
+        {
+            get { return (int)Math.Max(centerRegion.X - viewportWidthInCells_2, 0); }
+        }
+        private int RegionRight
+        {
+            get
+            {
+                return (int)Math.Min(   RegionLeft + viewportWidthInCells, 
                                         controlledPg.Map.Width - 1);
             }
         }
         private int RegionTop
         {
-            get { return (int)Math.Max(centerRegion.Y - viewPortHeightInCells_2, 0); }
+            get { return (int)Math.Max(centerRegion.Y - viewportHeightInCells_2, 0); }
         }
 
         private int RegionBottom
         {
             get
             {
-                return (int)Math.Max(   centerRegion.Y + viewPortHeightInCells_2, 
+                return (int)Math.Min(   RegionTop + viewportHeightInCells, 
                                         controlledPg.Map.Height - 1); }
         }
 
@@ -74,6 +105,15 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.aiCharacters = new List<AICharacter>();
             this.backpackController = backpackController;
             this.gameForm = gameForm;
+        }
+
+        public void CenterOnPlayer()
+        {
+            if(controlledPg != null)
+            {
+                centerRegion = new Coord(controlledPg.Position);
+                currentAtomFollowedByViewport = controlledPg;
+            }
         }
 
         public BackpackController BackpackController
@@ -194,6 +234,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         public void Register(Pg pg)
         {
             controlledPg = pg;
+            CenterOnPlayer();
         }
 
         public void Unregister(Pg pg)
@@ -201,8 +242,25 @@ namespace GodsWill_ASCIIRPG.UIControls
             controlledPg = null;
         }
 
-        public void NotifyMovement(Coord freedCell, Coord occupiedCell)
+        public void NotifyMovement(Atom movedAtom, Coord freedCell, Coord occupiedCell)
         {
+            if(currentAtomFollowedByViewport != null
+                && currentAtomFollowedByViewport == movedAtom) // It should always been set
+            {
+                var diff = occupiedCell - centerRegion;
+                if(Math.Abs(diff.X) > HorizontalMaxDistanceFromCenter)
+                {
+                    centerRegion.X = diff.X > 0
+                        ? Math.Min(controlledPg.Map.Width - viewportWidthInCells_2 + 1, centerRegion.X + 1)
+                        : Math.Max(0, centerRegion.X - 1);
+                }
+                if (Math.Abs(diff.Y) > VerticalMaxDistanceFromCenter)
+                {
+                    centerRegion.Y = diff.Y > 0
+                        ? Math.Min(controlledPg.Map.Height - viewportHeightInCells_2 + 1, centerRegion.Y + 1)
+                        : Math.Max(0, centerRegion.Y - 1);
+                }
+            }
             this.Refresh();
         }
 
@@ -281,11 +339,18 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
         }
 
+        protected override void OnResize(EventArgs e)
+        {
+            this.Invalidate();
+            base.OnResize(e);
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics;
             var map = controlledPg.Map;
 
+#if DRAW_ALL
             for (int r = 0; r < map.Height; r++)
             {
                 var coord = new Coord() { Y = r };
@@ -302,7 +367,142 @@ namespace GodsWill_ASCIIRPG.UIControls
                                     new PointF(xPos, yPos));  
                 }
             }
+#elif DRAW_NO_SCROLL
+            #region NO_SCROLL
+            var firstCol = RegionLeft;
+            var lastCol = RegionRight;
+            var firstRow = RegionTop;
+            var lastRow = RegionBottom;
 
+            var w = viewportWidthInCells;
+            var h = viewportHeightInCells;
+
+            var numRows = map.Height;
+            var numCols = map.Width;
+
+            var offSetY = numRows <= h 
+                ? HalfHeight - (float)numRows / 2.0f * charSize 
+                : 0.0f;
+            var offSetX = numCols <= w 
+                ? HalfWidth - (float)numCols / 2.0f * charSize
+                : 0.0f;
+
+            for (int r = firstRow; r <= lastRow; r++)
+            {
+                var coord = new Coord() { Y = r };
+                var yPos = r * charSize + offSetY;
+
+                for (int c = firstCol; c <= lastCol; c++)
+                {
+                    coord.X = c;
+                    var xPos = c * charSize + offSetX;
+                    var atom = map[coord];
+                    g.DrawString(atom.Symbol.ToString(),
+                                    this.Font,
+                                    new SolidBrush(atom.Color),
+                                    new PointF(xPos, yPos));
+                }
+            }
+            #endregion
+#else
+            var firstCol = RegionLeft;
+            var lastCol = RegionRight;
+            var firstRow = RegionTop;
+            var lastRow = RegionBottom;
+
+            var w = viewportWidthInCells;
+            var h = viewportHeightInCells;
+
+            var numRows = map.Height;
+            var numCols = map.Width;
+
+            var offSetY = numRows <= h 
+                ? HalfHeight - (float)numRows / 2.0f * charSize 
+                : 0.0f;
+            var offSetX = numCols <= w 
+                ? HalfWidth - (float)numCols / 2.0f * charSize
+                : 0.0f;
+
+            int xCell = 0;
+            int yCell = 0;
+
+            for (int r = firstRow; r <= lastRow; r++, yCell++)
+            {
+                var coord = new Coord() { Y = r };
+                var yPos = yCell * charSize + offSetY;
+                xCell = 0;
+
+                for (int c = firstCol; c <= lastCol; c++, xCell++)
+                {
+                    coord.X = c;
+                    var xPos = xCell * charSize + offSetX;
+                    var atom = map[coord];
+                    g.DrawString(atom.Symbol.ToString(),
+                                    this.Font,
+                                    new SolidBrush(atom.Color),
+                                    new PointF(xPos, yPos));
+                }
+            }
+#endif
+#if DEBUG_CENTER_VIEWPORT
+            #region CENTER_VIEWPORT
+            var ptCenter = new PointF(  (centerRegion.X - firstCol) * charSize + offSetX,
+                                        (centerRegion.Y - firstRow) * charSize + offSetY);
+            g.DrawString("*", this.Font, Brushes.Orange, ptCenter);
+            #endregion
+#endif
+#if DEBUG_CENTERING
+            #region CENTERING
+            g.DrawLine(Pens.Blue, new Point(0, 0), new Point(Width, Height));
+            g.DrawLine(Pens.Blue, new Point(0, Height), new Point(Width, 0));
+            var r_mapW2 = map.Width % 2;
+            var r_mapH2 = map.Width % 2;
+            int[] posWs = null;
+            int[] posHs = null;
+            var w2 = (float)(map.Width - 1) / 2.0f;
+            var h2 = (float)(map.Height - 1) / 2.0f;
+            if (r_mapW2 == 0)
+            {
+                posWs = new int[]
+                {
+                    (int)Math.Floor(w2),
+                    (int)Math.Ceiling(w2),
+                };
+            }
+            else
+            {
+                posWs = new int[]
+                {
+                    (int)w2,
+                };
+            }
+            if (r_mapH2 == 0)
+            {
+                posHs = new int[]
+                {
+                    (int)Math.Floor(h2),
+                    (int)Math.Ceiling(h2),
+                };
+            }
+            else
+            {
+                posHs = new int[]
+                {
+                    (int)h2,
+                };
+            }
+
+            foreach (var posX in posWs)
+            {
+                foreach (var posY in posHs)
+                {
+                    var ptF = new PointF(   (posX - firstCol) * charSize + offSetX, 
+                                            (posY - firstRow) * charSize + offSetY);
+                    g.DrawString("*", this.Font, Brushes.Yellow, ptF);
+                }
+            }
+            #endregion
+#endif
 #if DEBUG_LINE
             if (line != null)
             {

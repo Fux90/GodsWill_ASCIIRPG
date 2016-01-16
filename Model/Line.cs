@@ -35,7 +35,10 @@ namespace GodsWill_ASCIIRPG.Model
                 if (err < 0) { y += ystep; err += dX; }
             }
 
-            pts.Reverse();
+            if (pts.Count > 0 && pts[0] != ptA)
+            {
+                pts.Reverse();
+            }
         }
 
         public IEnumerator GetEnumerator()

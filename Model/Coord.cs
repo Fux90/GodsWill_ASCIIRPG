@@ -18,6 +18,12 @@ namespace GodsWill_ASCIIRPG.Model
             Y = y;
         }
 
+        public Coord(Coord c)
+        {
+            X = c.X;
+            Y = c.Y;
+        }
+
         public static Coord Random(int width, int height)
         {
             int x = Dice.Throws(width + 1) - 1;
@@ -49,6 +55,16 @@ namespace GodsWill_ASCIIRPG.Model
                 X = pt1.X - pt2.X,
                 Y = pt1.Y - pt2.Y,
             };
+        }
+
+        public static bool operator ==(Coord pt1, Coord pt2)
+        {
+            return pt1.X == pt2.X && pt1.Y == pt2.Y;
+        }
+
+        public static bool operator !=(Coord pt1, Coord pt2)
+        {
+            return pt1.X != pt2.X || pt1.Y != pt2.Y;
         }
     }
 }

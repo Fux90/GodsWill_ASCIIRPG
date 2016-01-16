@@ -8,7 +8,7 @@ namespace GodsWill_ASCIIRPG
 {
     public interface IMapViewer : IViewer
     {
-        void NotifyMovement(Coord freedCell, Coord occupiedCell);
+        void NotifyMovement(Atom movedAtom, Coord freedCell, Coord occupiedCell);
         void NotifyRemoval(Coord freedCell);
     }
 }
