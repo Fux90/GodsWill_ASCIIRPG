@@ -66,5 +66,10 @@ namespace GodsWill_ASCIIRPG.Model
         {
             return pt1.X != pt2.X || pt1.Y != pt2.Y;
         }
+
+        public override string ToString()
+        {
+            return String.Format("[{0};{1}]", X, Y);
+        }
     }
 }

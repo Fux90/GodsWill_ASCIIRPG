@@ -218,7 +218,14 @@ namespace GodsWill_ASCIIRPG
 
         public void Remove(Atom a)
         {
-            RemoveAt(a.Position);
+            if (a.Physical)
+            {
+                RemoveAt(a.Position);
+            }
+            else
+            {
+                untangibles[a.Position].Remove(a);
+            }
         }
 
         public void RemoveAt(Coord coord)
@@ -255,27 +262,29 @@ namespace GodsWill_ASCIIRPG
 
         public void MoveAtomTo(Atom movedAtom, Coord prevPosition, Coord newPosition)
         {
+            Atom steppedAtom = null;
+
             if (movedAtom.Physical)
             {
                 table[prevPosition] = buffer[prevPosition];
                 buffer[newPosition] = table[newPosition];
                 table[newPosition] = movedAtom;
+                steppedAtom = buffer[newPosition];
             }
             else
             {
-                buffer[newPosition] = table[newPosition];
                 untangibles[prevPosition].Remove(movedAtom);
                 untangibles[newPosition].Add(movedAtom);
+                steppedAtom = table[newPosition]; ;
             }
             NotifyViewersOfMovement(movedAtom, prevPosition, newPosition);
-            var steppedAtom = buffer[newPosition];
+           
             var steppedAtomType = steppedAtom.GetType();
             var movedAtomType = movedAtom.GetType();
 
             if (movedAtomType == typeof(SelectorCursor))
             {
-                var item = ((Item)steppedAtom);
-                var msg = String.Format("{0}", item.Description);
+                var msg = String.Format("{0}", steppedAtom.Description);
 
                 movedAtom.NotifyListeners(msg);
             }
