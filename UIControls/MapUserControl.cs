@@ -16,13 +16,21 @@ using System.Windows.Forms;
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.View;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
     public partial class MapUserControl : UserControl, PgController, AIController, IMapViewer
     {
+        public enum Modes
+        {
+            Normal,
+            Selection
+        }
+        
         const float charSize = 10.0f;
 
+        private readonly SelectorCursor selectorCursor = new SelectorCursor(); 
         Pg controlledPg;
         Atom currentAtomFollowedByViewport;
 
@@ -85,7 +93,6 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             get { return (int)Math.Max(centerRegion.Y - viewportHeightInCells_2, 0); }
         }
-
         private int RegionBottom
         {
             get
@@ -94,7 +101,25 @@ namespace GodsWill_ASCIIRPG.UIControls
                                         controlledPg.Map.Height - 1); }
         }
 
-        public MapUserControl(GameForm gameForm, BackpackController backpackController)
+        private Modes mode;
+        private void EnterSelectionMode()
+        {
+            //selectorCursor.CenterOnPg(controlledPg);
+            selectorCursor.Show(controlledPg.Map, controlledPg, controlledPg.PerceptionRange);
+            mode = Modes.Selection;
+            this.Refresh();
+        }
+
+        private void ExitSelectionMode()
+        {
+            mode = Modes.Normal;
+            selectorCursor.Hide();
+            this.Refresh();
+        }
+
+        public MapUserControl(  GameForm gameForm, 
+                                BackpackController backpackController,
+                                IAtomListener selectorMsgListener)
         {
             InitializeComponent();
 
@@ -105,6 +130,8 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.aiCharacters = new List<AICharacter>();
             this.backpackController = backpackController;
             this.gameForm = gameForm;
+
+            this.selectorCursor.RegisterListener(selectorMsgListener);
         }
 
         public void CenterOnPlayer()
@@ -217,6 +244,31 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                     #endregion
 
+                    #region SELECTION
+                    case ControllerCommand.Player_EnterSelectionMode:
+                        EnterSelectionMode();
+                        break;
+                    case ControllerCommand.Player_ExitSelectionModeWithoutSelection:
+                        ExitSelectionMode();
+                        break;
+                    case ControllerCommand.SelectionCursor_MoveNorth:
+                        selectorCursor.Move(Direction.North, out acted);
+                        break;
+                    case ControllerCommand.SelectionCursor_MoveEast:
+                        selectorCursor.Move(Direction.East, out acted);
+                        break;
+                    case ControllerCommand.SelectionCursor_MoveSouth:
+                        selectorCursor.Move(Direction.South, out acted);
+                        break;
+                    case ControllerCommand.SelectionCursor_MoveWest:
+                        selectorCursor.Move(Direction.West, out acted);
+                        break;
+                    case ControllerCommand.SelectionCursor_PickedCell:
+                        MessageBox.Show("Selected cell " + selectorCursor.Position.ToString());
+                        ExitSelectionMode();
+                        break;
+                    #endregion
+
                     case ControllerCommand.Player_ExitGame:
                         gameForm.Close();
                         break;
@@ -271,46 +323,50 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            switch(e.KeyCode)
+            switch (mode)
             {
-                #region MOVEMENT
-                case Keys.W:
-                    Notify(ControllerCommand.Player_MoveNorth);
-                    break;
-                case Keys.A:
-                    Notify(ControllerCommand.Player_MoveWest);
-                    break;
-                case Keys.S:
-                    Notify(ControllerCommand.Player_MoveSouth);
-                    break;
-                case Keys.D:
-                    Notify(ControllerCommand.Player_MoveEast);
-                    break;
-                #endregion
+                case Modes.Normal:
+                {
+                    switch (e.KeyCode)
+                    {
+                        #region MOVEMENT
+                        case Keys.W:
+                            Notify(ControllerCommand.Player_MoveNorth);
+                            break;
+                        case Keys.A:
+                            Notify(ControllerCommand.Player_MoveWest);
+                            break;
+                        case Keys.S:
+                            Notify(ControllerCommand.Player_MoveSouth);
+                            break;
+                        case Keys.D:
+                            Notify(ControllerCommand.Player_MoveEast);
+                            break;
+                        #endregion
 
-                #region OBJECT_HANDLING
-                case Keys.G:
-                    Notify(ControllerCommand.Player_PickUp);
-                    break;
-                case Keys.I:
-                    Notify(ControllerCommand.Backpack_Open);
-                    break;
-                case Keys.H:
-                    Notify(e.Control
-                            ? ControllerCommand.Player_UnhandleWeapon
-                            : ControllerCommand.Player_HandleWeapon);
-                    break;
-                case Keys.P:
-                    Notify(e.Control
-                            ? ControllerCommand.Player_PutOff
-                            : ControllerCommand.Player_PutOn);
-                    break;
-                case Keys.B:
-                    Notify(e.Control
-                            ? ControllerCommand.Player_PutAwayShield
-                            : ControllerCommand.Player_EmbraceShield);
-                    break;
-                #endregion
+                        #region OBJECT_HANDLING
+                        case Keys.G:
+                            Notify(ControllerCommand.Player_PickUp);
+                            break;
+                        case Keys.I:
+                            Notify(ControllerCommand.Backpack_Open);
+                            break;
+                        case Keys.H:
+                            Notify(e.Control
+                                    ? ControllerCommand.Player_UnhandleWeapon
+                                    : ControllerCommand.Player_HandleWeapon);
+                            break;
+                        case Keys.P:
+                            Notify(e.Control
+                                    ? ControllerCommand.Player_PutOff
+                                    : ControllerCommand.Player_PutOn);
+                            break;
+                        case Keys.B:
+                            Notify(e.Control
+                                    ? ControllerCommand.Player_PutAwayShield
+                                    : ControllerCommand.Player_EmbraceShield);
+                            break;
+                        #endregion
 
 #if DEBUG_LINE
                 case Keys.L:
@@ -318,24 +374,60 @@ namespace GodsWill_ASCIIRPG.UIControls
                     this.NotifyMovement(controlledPg.Position, controlledPg.Position);
                     break;
 #endif
-                #region DEITY
-                case Keys.K:
-                    Notify(ControllerCommand.Player_Pray);
-                    break;
-                #endregion
+                        #region DEITY
+                        case Keys.K:
+                            Notify(ControllerCommand.Player_Pray);
+                            break;
+                        #endregion
 
-                #region MSG_CONSOLE_HANDLING
-                case Keys.PageUp:
-                    Notify(ControllerCommand.Player_ScrollMsgsUp);
-                    break;
-                case Keys.PageDown:
-                    Notify(ControllerCommand.Player_ScrollMsgsDown);
-                    break;
-                #endregion
+                        #region MSG_CONSOLE_HANDLING
+                        case Keys.PageUp:
+                            Notify(ControllerCommand.Player_ScrollMsgsUp);
+                            break;
+                        case Keys.PageDown:
+                            Notify(ControllerCommand.Player_ScrollMsgsDown);
+                            break;
+                        #endregion
 
-                case Keys.Escape:
-                    Notify(ControllerCommand.Player_ExitGame);
-                    break;
+                        case Keys.Escape:
+                            Notify(ControllerCommand.Player_ExitGame);
+                            break;
+
+                        case Keys.X:
+                            Notify(ControllerCommand.Player_EnterSelectionMode);
+                            break;
+                    }
+                }
+                break;
+
+                case Modes.Selection:
+                {
+                    switch (e.KeyCode)
+                    {
+                        #region CURSOR_MOVEMENT
+                        case Keys.W:
+                            Notify(ControllerCommand.SelectionCursor_MoveNorth);
+                            break;
+                        case Keys.A:
+                            Notify(ControllerCommand.SelectionCursor_MoveWest);
+                            break;
+                        case Keys.S:
+                            Notify(ControllerCommand.SelectionCursor_MoveSouth);
+                            break;
+                        case Keys.D:
+                            Notify(ControllerCommand.SelectionCursor_MoveEast);
+                            break;
+                            #endregion
+
+                        case Keys.Enter:
+                            Notify(ControllerCommand.SelectionCursor_PickedCell);
+                            break;
+                        case Keys.Escape:
+                            Notify(ControllerCommand.Player_ExitSelectionModeWithoutSelection);
+                            break;
+                    }    
+                }
+                break;
             }
         }
 
@@ -437,10 +529,15 @@ namespace GodsWill_ASCIIRPG.UIControls
                     coord.X = c;
                     var xPos = xCell * charSize + offSetX;
                     var atom = map[coord];
-                    g.DrawString(atom.Symbol.ToString(),
+                    g.DrawString(   atom.Symbol,
                                     this.Font,
                                     new SolidBrush(atom.Color),
                                     new PointF(xPos, yPos));
+                    var untangibles = (AtomCollection)map[coord, Map.LevelType.Untangibles];
+                    untangibles.ForEach(uAtom =>    g.DrawString(uAtom.Symbol,
+                                                    this.Font,
+                                                    new SolidBrush(uAtom.Color),
+                                                    new PointF(xPos, yPos)));
                 }
             }
 #endif
