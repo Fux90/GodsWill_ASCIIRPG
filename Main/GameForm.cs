@@ -33,10 +33,12 @@ namespace GodsWill_ASCIIRPG
             var mapViewControl = new MapUserControl(this, backpackControl);
             var characterSheet = new CharacterSheetUserControl();
             var logConsole = new LogUserControl();
+            var singleMsgConsole = new SingleMessageLogUserControl();
 
             tblGameScreen.Dock = DockStyle.Fill;
             tblGameScreen.RowStyles.Clear();
             tblGameScreen.RowStyles.Add(new RowStyle(SizeType.Percent, 0.75F));
+            tblGameScreen.RowStyles.Add(new RowStyle(SizeType.Absolute, 30.0f));
             tblGameScreen.RowStyles.Add(new RowStyle(SizeType.Percent, 0.25F));
             tblGameScreen.BackColor = Color.Beige;
 
@@ -45,6 +47,7 @@ namespace GodsWill_ASCIIRPG
             tblMapAndSheet.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0.60F));
             tblMapAndSheet.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0.40F));
             tblMapAndSheet.BackColor = Color.Beige;
+            tblMapAndSheet.Margin = new Padding(0);
 
             tblMapAndSheet.Controls.Add(mapViewControl, 0, 0);
             mapViewControl.Dock = DockStyle.Fill;
@@ -54,7 +57,10 @@ namespace GodsWill_ASCIIRPG
             tblGameScreen.Controls.Add(tblMapAndSheet, 0, 0);
             tblMapAndSheet.Dock = DockStyle.Fill;
 
-            tblGameScreen.Controls.Add(logConsole, 0, 1);
+            tblGameScreen.Controls.Add(singleMsgConsole, 0, 1);
+            singleMsgConsole.Dock = DockStyle.Fill;
+
+            tblGameScreen.Controls.Add(logConsole, 0, 2);
             logConsole.Dock = DockStyle.Fill;
 
             backpackControl.Hide();
@@ -68,7 +74,10 @@ namespace GodsWill_ASCIIRPG
             Game.Current.InitialMenu(   new List<IAtomListener> { logConsole },
                                         new List<ISheetViewer> { characterSheet },
                                         new List<IBackpackViewer> { backpackControl });
-            Game.Current.GameInitialization(mapViewControl, mapViewControl, mapViewControl);
+            Game.Current.GameInitialization(mapViewControl, 
+                                            mapViewControl, 
+                                            mapViewControl,
+                                            singleMsgConsole);
             //Game.Current.RunGame();
         }
 

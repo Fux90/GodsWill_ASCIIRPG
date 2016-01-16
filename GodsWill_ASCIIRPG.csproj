@@ -139,6 +139,12 @@
     <Compile Include="UIControls\MenuUserControl.Designer.cs">
       <DependentUpon>MenuUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="UIControls\SingleMessageLogUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UIControls\SingleMessageLogUserControl.Designer.cs">
+      <DependentUpon>SingleMessageLogUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\IAtomListener.cs" />
     <Compile Include="View\IBackpackViewer.cs" />
     <Compile Include="View\IScrollable.cs" />
@@ -157,6 +163,9 @@
     </Compile>
     <EmbeddedResource Include="UIControls\LogUserControl.resx">
       <DependentUpon>LogUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UIControls\SingleMessageLogUserControl.resx">
+      <DependentUpon>SingleMessageLogUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

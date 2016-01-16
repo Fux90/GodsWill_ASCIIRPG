@@ -110,5 +110,17 @@ namespace GodsWill_ASCIIRPG.Model.Core
                 default: return Direction.North;
             }
         }
+
+        public static bool SupportsSingleMsgListener(this Atom atom)
+        {
+            var result = false;
+            var supported = new List<Type>
+            {
+                typeof(Item)
+            };
+            var atomType = atom.GetType();
+            supported.ForEach(s => { result |= atomType.IsSubclassOf(s); });
+            return result;
+        }
     }
 }

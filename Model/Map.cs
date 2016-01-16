@@ -7,6 +7,7 @@ using GodsWill_ASCIIRPG.Model.Core;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using GodsWill_ASCIIRPG.View;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -14,6 +15,7 @@ namespace GodsWill_ASCIIRPG
     {
         #region PRIVATE_MEMBERS
         List<IMapViewer> views;
+        List<IAtomListener> singleMsgListeners;
         List<Atom> elements;
         #endregion
 
@@ -31,6 +33,7 @@ namespace GodsWill_ASCIIRPG
             Height = 1;
             PlayerInitialPosition = new Coord() { X = 1, Y = 1 };
             views = new List<IMapViewer>();
+            singleMsgListeners = new List<IAtomListener>();
             elements = new List<Atom>();
         }
 
@@ -44,6 +47,11 @@ namespace GodsWill_ASCIIRPG
         public void AddViewer(IMapViewer viewer)
         {
             views.Add(viewer);
+        }
+
+        public void AddSingleMessageListener(IAtomListener singleMsgListener)
+        {
+            this.singleMsgListeners.Add(singleMsgListener);
         }
 
         public void AddAtom(Atom a)
@@ -70,6 +78,10 @@ namespace GodsWill_ASCIIRPG
             foreach (var atom in elements)
             {
                 //map.Insert(atom);
+                if (singleMsgListeners!= null && atom.SupportsSingleMsgListener())
+                {
+                    singleMsgListeners.ForEach(l => atom.RegisterListener(l));
+                }
                 atom.InsertInMap(map, atom.Position);
             }
 
@@ -200,14 +212,25 @@ namespace GodsWill_ASCIIRPG
             table[newPosition] = movedAtom;
             NotifyViewersOfMovement(movedAtom, prevPosition, newPosition);
             var steppedAtom = buffer[newPosition];
-            if (steppedAtom.GetType().IsSubclassOf(typeof(Item)))
+            var steppedAtomType = steppedAtom.GetType();
+            var movedAtomType = movedAtom.GetType();
+
+            if (steppedAtomType.IsSubclassOf(typeof(Item)))
             {
                 var item = ((Item)steppedAtom);
-                steppedAtom.NotifyListeners(item.ItemTypeName);
-                if (movedAtom.GetType().IsSubclassOf(typeof(Pg)))
+                var msg = String.Format("Stepped on {0}", item.ItemTypeName);
+
+                var pgType = typeof(Pg);
+
+                if (movedAtomType == pgType || movedAtomType.IsSubclassOf(pgType))
                 {
-                    movedAtom.NotifyListeners(String.Format("Stepped on {0}", item.ItemTypeName));
+                    steppedAtom.NotifyListeners(msg);
+                    movedAtom.NotifyListeners(msg);
                 }
+            }
+            else
+            {
+                table[prevPosition].NotifyListeners("");
             }
         }
 

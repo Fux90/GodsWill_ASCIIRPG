@@ -60,7 +60,8 @@ namespace GodsWill_ASCIIRPG
 
             public void GameInitialization( PgController pgController, 
                                             AIController aiController,
-                                            IMapViewer mapViewer )
+                                            IMapViewer mapViewer,
+                                            IAtomListener singleMsgListener)
             {
                 // Map generation
                 var mapBuilder = new MapBuilder();
@@ -77,6 +78,8 @@ namespace GodsWill_ASCIIRPG
                 mapBuilder.AddAtom(new Wall(new Coord() { X = mapBuilder.Width - 1, Y = mapBuilder.Height - 1 }));
 
                 mapBuilder.AddViewer(mapViewer);
+                mapBuilder.AddSingleMessageListener(singleMsgListener);
+
                 mapBuilder.PlayerInitialPosition = new Coord() { X = 1, Y = 1 };
                 mapBuilder.AddAtom(new LongSword(position: new Coord() { X = 7, Y = 4 }));
                 mapBuilder.AddAtom(new Leather(position: new Coord() { X = 7, Y = 3 }));
