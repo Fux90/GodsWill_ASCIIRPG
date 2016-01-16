@@ -184,6 +184,33 @@ namespace GodsWill_ASCIIRPG
             throw new NotImplementedException();
         }
 
+        public void Explore()
+        {
+            var left = Math.Max(0, this.Position.X - PerceptionRange);
+            var right = Math.Min(this.Position.X + PerceptionRange, this.Map.Width);
+            var top = Math.Max(0, this.Position.Y - PerceptionRange);
+            var bottom = Math.Min(this.Position.Y + PerceptionRange, this.Map.Height);
+
+            var pos = new Coord();
+            for (int r = top; r < bottom; r++)
+            {
+                pos.Y = r; 
+                for (int c = left; c < right; c++)
+                {
+                    pos.X = c;
+                    if(this.Position.SquaredDistanceFrom(pos) < PerceptionRange)
+                    if(Map[pos].HasToBeInStraightSight)
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
+        }
+
         public override void EffectOfTurn()
         {
             base.EffectOfTurn();

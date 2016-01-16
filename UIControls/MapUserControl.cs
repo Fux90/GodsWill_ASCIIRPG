@@ -527,17 +527,20 @@ namespace GodsWill_ASCIIRPG.UIControls
                 for (int c = firstCol; c <= lastCol; c++, xCell++)
                 {
                     coord.X = c;
-                    var xPos = xCell * charSize + offSetX;
-                    var atom = map[coord];
-                    g.DrawString(   atom.Symbol,
-                                    this.Font,
-                                    new SolidBrush(atom.Color),
-                                    new PointF(xPos, yPos));
-                    var untangibles = (AtomCollection)map[coord, Map.LevelType.Untangibles];
-                    untangibles.ForEach(uAtom =>    g.DrawString(uAtom.Symbol,
-                                                    this.Font,
-                                                    new SolidBrush(uAtom.Color),
-                                                    new PointF(xPos, yPos)));
+                    if (map.IsCellExplored(coord))
+                    {
+                        var xPos = xCell * charSize + offSetX;
+                        var atom = map[coord];
+                        g.DrawString(atom.Symbol,
+                                        this.Font,
+                                        new SolidBrush(atom.Color),
+                                        new PointF(xPos, yPos));
+                        var untangibles = (AtomCollection)map[coord, Map.LevelType.Untangibles];
+                        untangibles.ForEach(uAtom => g.DrawString(uAtom.Symbol,
+                                                        this.Font,
+                                                        new SolidBrush(uAtom.Color),
+                                                        new PointF(xPos, yPos)));
+                    }
                 }
             }
 #endif

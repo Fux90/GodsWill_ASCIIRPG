@@ -77,6 +77,7 @@ namespace GodsWill_ASCIIRPG
 
         public God God { get; private set; }
 
+        [StraightSightNeededForPerception]
         public Character(string name,
                          int currentPf,
                          int maximumPf,

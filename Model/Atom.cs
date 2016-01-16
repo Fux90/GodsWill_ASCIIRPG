@@ -127,6 +127,14 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(listenersSerializableName, listeners, typeof(List<IAtomListener>));
             info.AddValue(isPickableSerializableName, IsPickable, typeof(bool));
         }
+
+        public bool HasToBeInStraightSight
+        {
+            get
+            {
+                return this.GetType().GetCustomAttributes(typeof(StraightSightNeededForPerception), true).Length > 0;
+            }
+        }
         #endregion
     }
 

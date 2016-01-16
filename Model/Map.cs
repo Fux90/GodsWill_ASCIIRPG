@@ -156,6 +156,7 @@ namespace GodsWill_ASCIIRPG
             this.table = table;
             this.buffer = new BidimensionalArray<Atom>(table.Rows, table.Cols);
             this.untangibles = new BidimensionalArray<AtomCollection>(table.Rows, table.Cols, () => new AtomCollection());
+            this.explored = new BidimensionalArray<bool>(table.Rows, table.Cols, false);
             this.views = new List<IMapViewer>();
         }
 
@@ -180,6 +181,11 @@ namespace GodsWill_ASCIIRPG
             {
                 viewer.NotifyRemoval(freedCell);
             }
+        }
+
+        public bool IsCellExplored(Coord pos)
+        {
+            return explored[pos];
         }
 
         public void Insert(Atom a)
