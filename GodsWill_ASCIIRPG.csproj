@@ -55,6 +55,7 @@
     <Compile Include="Control\PgController.cs" />
     <Compile Include="Model\Circle.cs" />
     <Compile Include="Model\Core\TernaryValue.cs" />
+    <Compile Include="Model\Descriptionable.cs" />
     <Compile Include="Model\GeometricItem.cs" />
     <Compile Include="Model\Perception.cs" />
     <Compile Include="Model\Perceptions\ListenPerception.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Model\SceneryItems\Wall.cs" />
     <Compile Include="Model\Shield.cs" />
     <Compile Include="Model\Shields\WoodenShield.cs" />
+    <Compile Include="Model\Spell.cs" />
     <Compile Include="Model\Stats.cs" />
     <Compile Include="Model\StraightSightNeededForPerception.cs" />
     <Compile Include="Model\TemporaryBonus\DivineModifier.cs" />

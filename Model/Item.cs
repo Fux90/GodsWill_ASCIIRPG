@@ -8,8 +8,8 @@ using GodsWill_ASCIIRPG.Model.Core;
 
 namespace GodsWill_ASCIIRPG
 {
-    abstract public class Item : Atom
-	{
+    abstract public class Item : Atom, Descriptionable
+    {
         public const int _UnlimitedUses = -1;
 
         int cost;

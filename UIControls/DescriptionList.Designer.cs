@@ -1,6 +1,6 @@
 ﻿namespace GodsWill_ASCIIRPG.UIControls
 {
-    partial class DescriptionList
+    partial class DescriptionList<T>
     {
         /// <summary> 
         /// Variabile di progettazione necessaria.

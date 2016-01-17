@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.UIControls;
+using GodsWill_ASCIIRPG.Model;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
-    public partial class DescriptionList : UserControl
+    public partial class DescriptionList<T> : UserControl 
+        where T : Descriptionable
     {
         private const int PaddingValue = 4;
 
-        PagedListUserControl<Item> itemList;
+        PagedListUserControl<T> itemList;
         Label lblDescription;
         Label lblTitle;
         Label lblPageNumber;
@@ -49,7 +51,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
         }
 
-        public List<Item> Items
+        public List<T> Items
         {
             get
             {
@@ -63,7 +65,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
         }
 
-        public PagedListUserControl<Item>.StringifyMethod Stringify
+        public PagedListUserControl<T>.StringifyMethod Stringify
         {
             get { return itemList.Stringify; }
             set { itemList.Stringify = value; }
@@ -97,7 +99,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             tblListAndPages.RowStyles.Add(new RowStyle(SizeType.Percent, 100.0f));
             tblListAndPages.RowStyles.Add(new RowStyle(SizeType.Absolute, 30.0f)); // Page Indication
 
-            itemList = new PagedListUserControl<Item>();
+            itemList = new PagedListUserControl<T>();
             itemList.Padding = new Padding(PaddingValue);
             itemList.Dock = DockStyle.Fill;
             lblPageNumber = this.DockFillLabel("lblPageNumber", Color.White);

@@ -20,7 +20,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         Backpack controlledBackpack;
 
         TableLayoutPanel gamePanel;
-        DescriptionList descriptionList;
+        DescriptionList<Item> descriptionList;
 
         public bool ValidIndex { get; private set; }
 
@@ -42,7 +42,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.gamePanel = gamePanel;
             this.BackColor = Color.Black;
 
-            descriptionList = new DescriptionList();
+            descriptionList = new DescriptionList<Item>();
             descriptionList.KeyUp += OnKeyUp;
             descriptionList.Dock = DockStyle.Fill;
             descriptionList.Stringify = (item) => String.Format("[{0}] {1}",
