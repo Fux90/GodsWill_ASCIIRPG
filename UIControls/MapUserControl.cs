@@ -539,6 +539,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 {
                     coord.X = c;
                     var xPos = xCell * charSize + offSetX;
+                    
                     if (controlledPg.IsLightingCell(coord) && map.IsCellExplored(coord))
                     {
                         var atom = map[coord];
@@ -554,10 +555,20 @@ namespace GodsWill_ASCIIRPG.UIControls
                     }
                     else
                     {
-                        g.DrawString(   obscuredCell,
-                                        this.Font,
-                                        Brushes.DimGray,
-                                        new PointF(xPos, yPos));
+                        if (map.IsCellUnknown(coord))
+                        {
+                            g.DrawString(Floor._Symbol,
+                                            this.Font,
+                                            new SolidBrush(Floor._Color),
+                                            new PointF(xPos, yPos));
+                        }
+                        else
+                        {
+                            g.DrawString(obscuredCell,
+                                            this.Font,
+                                            Brushes.DimGray,
+                                            new PointF(xPos, yPos));
+                        }
                     }
                 }
             }

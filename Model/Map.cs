@@ -24,7 +24,7 @@ namespace GodsWill_ASCIIRPG
         public int Width { get; set; }
         public int Height { get; set; }
         public Coord PlayerInitialPosition { get; set; }
-        public bool NotToExplore { get; set; }
+        public TernaryValue Explored { get; set; }
         public bool Lightened { get; set; }
         #endregion
 
@@ -74,7 +74,7 @@ namespace GodsWill_ASCIIRPG
                     
                 }
             }
-            var map = new Map(Name, PlayerInitialPosition, table, NotToExplore, !Lightened);
+            var map = new Map(Name, PlayerInitialPosition, table, Explored, !Lightened);
             for (int i = 0; i < views.Count; i++)
             {
                 map.RegisterViewer(views[i]);
@@ -116,7 +116,7 @@ namespace GodsWill_ASCIIRPG
         BidimensionalArray<Atom> table;
         BidimensionalArray<AtomCollection> untangibles;
         BidimensionalArray<Atom> buffer;
-        BidimensionalArray<bool> explored;
+        BidimensionalArray<TernaryValue> explored;
         BidimensionalArray<bool> dark;
         List<IMapViewer> views;
         #endregion
@@ -156,7 +156,7 @@ namespace GodsWill_ASCIIRPG
         public Map( string name,
                     Coord playerInitialPosition,
                     BidimensionalArray<Atom> table,
-                    bool notToExplore,
+                    TernaryValue notToExplore,
                     bool dark)
         {
             this.name = name;
@@ -164,7 +164,7 @@ namespace GodsWill_ASCIIRPG
             this.table = table;
             this.buffer = new BidimensionalArray<Atom>(table.Rows, table.Cols);
             this.untangibles = new BidimensionalArray<AtomCollection>(table.Rows, table.Cols, () => new AtomCollection());
-            this.explored = new BidimensionalArray<bool>(table.Rows, table.Cols, notToExplore);
+            this.explored = new BidimensionalArray<TernaryValue>(table.Rows, table.Cols, notToExplore);
             this.dark = new BidimensionalArray<bool>(table.Rows, table.Cols, dark);
             this.views = new List<IMapViewer>();
         }
@@ -194,7 +194,12 @@ namespace GodsWill_ASCIIRPG
 
         public bool IsCellExplored(Coord pos)
         {
-            return explored[pos];
+            return explored[pos].ToBool();
+        }
+
+        public bool IsCellUnknown(Coord pos)
+        {
+            return explored[pos] == TernaryValue.Unknown;
         }
 
         public void Insert(Atom a)
@@ -341,9 +346,9 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(viewsSerializableName, views, typeof(List<IMapViewer>));
         }
 
-        public void Explore(Coord pos)
+        public void Explore(Coord pos, bool fullyExplored)
         {
-            explored[pos] = true;
+            explored[pos] = fullyExplored ? TernaryValue.Explored : TernaryValue.Unknown;
         }
 
         public bool IsDark(Coord coord)

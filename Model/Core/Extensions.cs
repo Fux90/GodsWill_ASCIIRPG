@@ -122,5 +122,10 @@ namespace GodsWill_ASCIIRPG.Model.Core
             supported.ForEach(s => { result |= atomType.IsSubclassOf(s); });
             return result;
         }
+
+        public static bool ToBool(this TernaryValue v)
+        {
+            return v == TernaryValue.Explored;
+        }
     }
 }

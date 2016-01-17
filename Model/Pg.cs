@@ -185,34 +185,43 @@ namespace GodsWill_ASCIIRPG
             throw new NotImplementedException();
         }
 
+        public override void InsertInMap(Map map, Coord newPos)
+        {
+            base.InsertInMap(map, newPos);
+            Explore();
+        }
+
+        public override bool Move(Direction dir, out bool acted)
+        {
+            var moved = base.Move(dir, out acted);
+            Explore();
+            return moved;
+        }
+
         public void Explore()
         {
-            /*
-            I tried midpoint algorythm, but some points
-            were ignored.
-            */
-            var left = Math.Max(0, this.Position.X - PerceptionRange);
-            var right = Math.Min(this.Position.X + PerceptionRange, this.Map.Width);
-            var top = Math.Max(0, this.Position.Y - PerceptionRange);
-            var bottom = Math.Min(this.Position.Y + PerceptionRange, this.Map.Height);
+            var toBeChecked = new List<Atom>();
+            var pts = new FilledCircle(Position, PerceptionRange);
 
-            var sqrPerceptionRange = PerceptionRange * PerceptionRange;
-            var pos = new Coord();
-            for (int r = top; r < bottom; r++)
+            foreach (Coord pt in pts)
             {
-                pos.Y = r; 
-                for (int c = left; c < right; c++)
+                var explored = true;
+
+                if (pt == Position)
                 {
-                    pos.X = c;
-                    if(this.Position.SquaredDistanceFrom(pos) < sqrPerceptionRange)
-                    if(Map[pos].HasToBeInStraightSight)
+                    Map.Explore(pt, explored);
+                    continue;
+                }
+                if (pt.X >= 0 && pt.Y >= 0
+                    && pt.X < Map.Width && pt.Y < Map.Height)
+                {
+                    
+                    if (Map[pt].HasToBeInStraightSight)
                     {
-
+                        explored = !SomethingBlockView(pt);    
                     }
-                    else
-                    {
-
-                    }
+                    
+                    Map.Explore(pt, explored);
                 }
             }
         }

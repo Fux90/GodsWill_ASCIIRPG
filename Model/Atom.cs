@@ -72,7 +72,7 @@ namespace GodsWill_ASCIIRPG
         }
 
         #region METHODS
-        public void InsertInMap(Map map, Coord newPos)
+        public virtual void InsertInMap(Map map, Coord newPos)
         {
             this.map = map;
             this.position = newPos;

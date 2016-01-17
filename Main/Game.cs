@@ -4,6 +4,7 @@ using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.AICharacters;
 using GodsWill_ASCIIRPG.Model.Armors;
+using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.Model.SceneryItems;
 using GodsWill_ASCIIRPG.Model.Shields;
 using GodsWill_ASCIIRPG.Model.Weapons;
@@ -69,7 +70,7 @@ namespace GodsWill_ASCIIRPG
                 mapBuilder.Height = 30;
                 mapBuilder.Width = 19;
 
-                mapBuilder.NotToExplore = true;
+                mapBuilder.Explored = TernaryValue.Unexplored;
                 mapBuilder.Lightened = true;
 
                 //mapBuilder.AddAtom(new Wall(new Coord() { X = 10, Y = 10 }));

@@ -9,10 +9,13 @@ namespace GodsWill_ASCIIRPG.Model
 {
     class Floor : SceneryItem
     {
+        public const string _Symbol = ".";
+        public static readonly Color _Color = Color.White;
+
         public Floor(Coord position)
             : base("Floor", 
-                   ".", 
-                   Color.White, 
+                   _Symbol, 
+                   _Color, 
                    true, 
                    false,
                    "A walkable tile",

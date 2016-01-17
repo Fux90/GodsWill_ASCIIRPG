@@ -477,6 +477,20 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
+        protected bool SomethingBlockView(Coord other)
+        {
+            var line = new Line(Position, other);
+            foreach (Coord pt in line)
+            {
+                if (Map[pt].BlockVision)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public virtual void RegisterTemporaryMod(TemporaryModifier mod)
         {
             TempModifiers.AddTemporaryModifier(mod);
