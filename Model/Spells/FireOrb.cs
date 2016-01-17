@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GodsWill_ASCIIRPG.Model.Core;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -10,7 +11,14 @@ namespace GodsWill_ASCIIRPG.Model.Spells
     public class FireOrb : AttackSpell
     {
         protected FireOrb(Atom sender, IDamageable target)
-            : base(sender, new FireBallAnimation(sender.Position, ((Atom)target).Position, Color.Red))
+            : base( sender,
+                    new List<IDamageable>() { target },
+                    new DamageCalculator(
+                       new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
+                       {
+                           { DamageType.Fire, () => Dice.Throws(8) }
+                       }),
+                    new FireBallAnimation(sender.Position, ((Atom)target).Position, Color.Red))
         {
 
         }
@@ -31,11 +39,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         public override void Launch()
         {
             //Launcher
-        }
-
-        protected override void Effect(AtomCollection targets, object parameters)
-        {
-            throw new NotImplementedException();
+            base.Effect();
         }
     }
 }

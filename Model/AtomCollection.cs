@@ -47,11 +47,16 @@ namespace GodsWill_ASCIIRPG.Model
             atoms.Add(atom);
         }
 
+        public void AddRange(List<Atom> atomList)
+        {
+            atoms.AddRange(atomList);
+        }
+
         public void Clear()
         {
             atoms.Clear();
         }
-
+        
         public bool Contains(Atom atom)
         {
             return atoms.Contains(atom);
