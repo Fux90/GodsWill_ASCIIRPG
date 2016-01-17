@@ -38,6 +38,11 @@ namespace GodsWill_ASCIIRPG.Model
                 frameItems.Add(fItem);
             }
 
+            public void AddFrameItem(string symbol, Color color, Coord pos)
+            {
+                frameItems.Add(new FrameItem(symbol, color, pos));
+            }
+
             public void AddFrameItem(string symbol, Color color, List<Coord> positions)
             {
                 positions.ForEach( pos => frameItems.Add(new FrameItem(symbol, color, pos)));
@@ -46,6 +51,11 @@ namespace GodsWill_ASCIIRPG.Model
             public Frame Build()
             {
                 return new Frame(frameItems);
+            }
+
+            public void Clear()
+            {
+                frameItems.Clear();
             }
         }
 
@@ -60,10 +70,28 @@ namespace GodsWill_ASCIIRPG.Model
         }
 
         List<IAnimationViewer> animationViewers;
+        List<Frame> frames;
 
         public Animation()
         {
             animationViewers = new List<IAnimationViewer>();
+            frames = new List<Frame>();
+        }
+
+        protected void AddFrame(Frame frame)
+        {
+            frames.Add(frame);
+        }
+
+        public void Play()
+        {
+            foreach (var frame in frames)
+            {
+                foreach (var viewer in animationViewers)
+                {
+                    viewer.PlayFrame(frame);
+                }
+            }
         }
     }
 }

@@ -58,8 +58,10 @@
     <Compile Include="Model\Core\TernaryValue.cs" />
     <Compile Include="Model\Descriptionable.cs" />
     <Compile Include="Model\GeometricItem.cs" />
+    <Compile Include="Model\IFighter.cs" />
     <Compile Include="Model\Perception.cs" />
     <Compile Include="Model\Perceptions\ListenPerception.cs" />
+    <Compile Include="Model\FireBallAnimation.cs" />
     <Compile Include="Model\SelectorCursor.cs" />
     <Compile Include="Main\GameForm.cs">
       <SubType>Form</SubType>
@@ -101,6 +103,8 @@
     <Compile Include="Model\Shield.cs" />
     <Compile Include="Model\Shields\WoodenShield.cs" />
     <Compile Include="Model\Spell.cs" />
+    <Compile Include="Model\Spells\FireOrb.cs" />
+    <Compile Include="Model\Spells\SpellTypes.cs" />
     <Compile Include="Model\Stats.cs" />
     <Compile Include="Model\StraightSightNeededForPerception.cs" />
     <Compile Include="Model\TemporaryBonus\DivineModifier.cs" />

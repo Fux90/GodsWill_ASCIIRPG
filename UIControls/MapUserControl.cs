@@ -25,6 +25,13 @@ namespace GodsWill_ASCIIRPG.UIControls
 {
     public partial class MapUserControl : UserControl, PgController, AIController, IMapViewer
     {
+        public delegate bool AfterSelectionOperation(Coord selPos);
+        private readonly AfterSelectionOperation defaultAfterSelectionOp = (selPos) => 
+        {
+            MessageBox.Show("Selected cell " + selPos.ToString());
+            return false;
+        };
+
         public enum Modes
         {
             Normal,
@@ -106,6 +113,22 @@ namespace GodsWill_ASCIIRPG.UIControls
             {
                 return (int)Math.Min(   RegionTop + viewportHeightInCells, 
                                         controlledPg.Map.Height - 1); }
+        }
+
+        private AfterSelectionOperation afterSelectionOperation;
+        private AfterSelectionOperation CurrentAfterSelectionOperation
+        {
+            get
+            {
+                var op = afterSelectionOperation;
+                afterSelectionOperation = null;
+                return op == null ? defaultAfterSelectionOp : op;
+            }
+
+            set
+            {
+                afterSelectionOperation = value;
+            }
         }
 
         private Modes mode;
@@ -271,7 +294,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                         selectorCursor.Move(Direction.West, out acted);
                         break;
                     case ControllerCommand.SelectionCursor_PickedCell:
-                        MessageBox.Show("Selected cell " + selectorCursor.Position.ToString());
+                        acted = CurrentAfterSelectionOperation(selectorCursor.Position);
                         ExitSelectionMode();
                         break;
                     #endregion

@@ -9,6 +9,6 @@ namespace GodsWill_ASCIIRPG.View
 {
     public interface IAnimationViewer
     {
-        void NotifyFrame(Animation.Frame f);
+        void PlayFrame(Animation.Frame frame);
     }
 }
