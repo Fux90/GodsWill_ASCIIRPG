@@ -53,6 +53,7 @@
     <Compile Include="Control\MapController.cs" />
     <Compile Include="Control\MenuController.cs" />
     <Compile Include="Control\PgController.cs" />
+    <Compile Include="Model\Animation.cs" />
     <Compile Include="Model\Circle.cs" />
     <Compile Include="Model\Core\TernaryValue.cs" />
     <Compile Include="Model\Descriptionable.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="UIControls\SingleMessageLogUserControl.Designer.cs">
       <DependentUpon>SingleMessageLogUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\IAnimationViewer.cs" />
     <Compile Include="View\IAtomListener.cs" />
     <Compile Include="View\IBackpackViewer.cs" />
     <Compile Include="View\IScrollable.cs" />
