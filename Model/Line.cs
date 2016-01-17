@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
-    public class Line : GeometricItem, IEnumerable
+    public class Line : GeometricItem
     {
         public Line(Coord ptA, Coord ptB)
         {
@@ -37,57 +37,57 @@ namespace GodsWill_ASCIIRPG.Model
             }
         }
 
-        public IEnumerator GetEnumerator()
-        {
-            return new LineEnum(pts.ToArray());
-        }
+        //public IEnumerator GetEnumerator()
+        //{
+        //    return new LineEnum(pts.ToArray());
+        //}
     }
 
-    public class LineEnum : IEnumerator
-    {
-        Coord[] pts;
+    //public class LineEnum : IEnumerator
+    //{
+    //    Coord[] pts;
 
-        // Enumerators are positioned before the first element
-        // until the first MoveNext() call.
-        int position = -1;
+    //    // Enumerators are positioned before the first element
+    //    // until the first MoveNext() call.
+    //    int position = -1;
 
-        public LineEnum(Coord[] _pts)
-        {
-            pts = _pts;
-        }
+    //    public LineEnum(Coord[] _pts)
+    //    {
+    //        pts = _pts;
+    //    }
 
-        public bool MoveNext()
-        {
-            position++;
-            return (position < pts.Length);
-        }
+    //    public bool MoveNext()
+    //    {
+    //        position++;
+    //        return (position < pts.Length);
+    //    }
 
-        public void Reset()
-        {
-            position = -1;
-        }
+    //    public void Reset()
+    //    {
+    //        position = -1;
+    //    }
 
-        object IEnumerator.Current
-        {
-            get
-            {
-                return Current;
-            }
-        }
+    //    object IEnumerator.Current
+    //    {
+    //        get
+    //        {
+    //            return Current;
+    //        }
+    //    }
 
-        public Coord Current
-        {
-            get
-            {
-                try
-                {
-                    return pts[position];
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-        }
-    }
+    //    public Coord Current
+    //    {
+    //        get
+    //        {
+    //            try
+    //            {
+    //                return pts[position];
+    //            }
+    //            catch (IndexOutOfRangeException)
+    //            {
+    //                throw new InvalidOperationException();
+    //            }
+    //        }
+    //    }
+    //}
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GodsWill_ASCIIRPG.Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,14 +72,20 @@ namespace GodsWill_ASCIIRPG.Model
 
             while (y <= x)
             {
-                pts.Add(new Coord(x + x0, y + y0)); // Octant 1
-                pts.Add(new Coord(y + x0, x + y0)); // Octant 2
-                pts.Add(new Coord(-x + x0, y + y0)); // Octant 4
-                pts.Add(new Coord(-y + x0, x + y0)); // Octant 3
-                pts.Add(new Coord(-x + x0, -y + y0)); // Octant 5
-                pts.Add(new Coord(-y + x0, -x + y0)); // Octant 6
-                pts.Add(new Coord(x + x0, -y + y0)); // Octant 7
-                pts.Add(new Coord(y + x0, -x + y0)); // Octant 8
+                var O1 = new Coord(x + x0, y + y0); // Octant 1
+                var O2 = new Coord(y + x0, x + y0); // Octant 2
+                var O3 = new Coord(-x + x0, y + y0); // Octant 4
+                var O4 = new Coord(-y + x0, x + y0); // Octant 3
+                var O5 = new Coord(-x + x0, -y + y0); // Octant 5
+                var O6 = new Coord(-y + x0, -x + y0); // Octant 6
+                var O7 = new Coord(x + x0, -y + y0); // Octant 7
+                var O8 = new Coord(y + x0, -x + y0); // Octant 8
+
+                pts.AddRange(HorLine(O1, O3));
+                pts.AddRange(HorLine(O2, O4));
+                pts.AddRange(HorLine(O5, O7));
+                pts.AddRange(HorLine(O6, O8));
+
                 y++;
                 if (decisionOver2 <= 0)
                 {
@@ -91,54 +98,20 @@ namespace GodsWill_ASCIIRPG.Model
                 }
             }
         }
-    }
-    }
 
-    public class CircleEnum : IEnumerator
-    {
-        Coord[] pts;
-
-        // Enumerators are positioned before the first element
-        // until the first MoveNext() call.
-        int position = -1;
-
-        public CircleEnum(Coord[] _pts)
+        private List<Coord> HorLine(Coord a, Coord b)
         {
-            pts = _pts;
-        }
+            int x0 = Math.Min(a.X, b.X);
+            int x1 = Math.Max(a.X, b.X);
+            int y = a.Y;
 
-        public bool MoveNext()
-        {
-            position++;
-            return (position < pts.Length);
-        }
-
-        public void Reset()
-        {
-            position = -1;
-        }
-
-        object IEnumerator.Current
-        {
-            get
+            List<Coord> pts = new List<Coord>();
+            for (int x = x0; x < x1; x++)
             {
-                return Current;
+                pts.Add(new Coord(x, y));
             }
-        }
 
-        public Coord Current
-        {
-            get
-            {
-                try
-                {
-                    return pts[position];
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    throw new InvalidOperationException();
-                }
-            }
+            return pts;
         }
     }
 }

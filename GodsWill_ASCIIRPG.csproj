@@ -54,6 +54,7 @@
     <Compile Include="Control\MenuController.cs" />
     <Compile Include="Control\PgController.cs" />
     <Compile Include="Model\Circle.cs" />
+    <Compile Include="Model\GeometricItem.cs" />
     <Compile Include="Model\SelectorCursor.cs" />
     <Compile Include="Main\GameForm.cs">
       <SubType>Form</SubType>

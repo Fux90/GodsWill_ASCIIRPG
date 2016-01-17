@@ -1,7 +1,7 @@
 ﻿//#define DRAW_ALL
 //#define DRAW_NO_SCROLL
 //#define DEBUG_LINE
-//#define DEBUG_CIRCLE
+#define DEBUG_CIRCLE
 #define DEBUG_CENTERING
 #define DEBUG_CENTER_VIEWPORT
 
