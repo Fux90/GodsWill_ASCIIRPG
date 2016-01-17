@@ -6,6 +6,7 @@
 #define DEBUG_CENTER_VIEWPORT
 #define PREVENT_AI
 #define DEBUG_ENEMY_SENSING
+#define DEBUG_SPELL_LAUNCH
 
 using System;
 using System.Collections.Generic;
@@ -279,6 +280,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                         EnterSelectionMode();
                         break;
                     case ControllerCommand.Player_ExitSelectionModeWithoutSelection:
+                        CurrentAfterSelectionOperation = defaultAfterSelectionOp;
                         ExitSelectionMode();
                         break;
                     case ControllerCommand.SelectionCursor_MoveNorth:
@@ -415,6 +417,16 @@ namespace GodsWill_ASCIIRPG.UIControls
                             case Keys.NumPad0:
                             circle = new FilledCircle(controlledPg.Position, 15);
                                 this.NotifyMovement(controlledPg, controlledPg.Position, controlledPg.Position);
+                                break;
+#endif
+#if DEBUG_SPELL_LAUNCH
+                            case Keys.Add:
+                                CurrentAfterSelectionOperation = (pos) =>
+                                {
+                                    MessageBox.Show("Lancio spell");
+                                    return false;
+                                };
+                                EnterSelectionMode();
                                 break;
 #endif
 #region DEITY

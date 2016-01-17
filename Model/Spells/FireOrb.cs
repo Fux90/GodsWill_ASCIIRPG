@@ -33,7 +33,45 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 
         public FireOrb Create(Atom sender, IDamageable target)
         {
-            return new FireOrb(sender, target);
+            // Line between sender and target
+            var lineOfAction = new Line(sender.Position, ((Atom)target).Position);
+            // First blockable atom
+            var actualTarget = target;
+            foreach (Coord pt in lineOfAction)
+            {
+                var testedAtom = sender.Map[pt];
+                if (testedAtom.Physical && !testedAtom.Walkable)
+                {
+                    if(typeof(IDamageable).IsAssignableFrom(testedAtom.GetType()))
+                    {
+                        actualTarget = (IDamageable)testedAtom;
+                    }
+                    else
+                    {
+                        actualTarget = new FakeTarget(  testedAtom.Name, 
+                                                        testedAtom.Symbol, 
+                                                        testedAtom.Color,
+                                                        testedAtom.Position);
+                    }
+                }
+            }
+            var msg = new StringBuilder();
+            var missed = actualTarget != target;
+            if(missed)
+            {
+                msg.AppendFormat("{0} misses his target!", Launcher.Name);
+                missed = true;
+            }
+            
+            msg.AppendFormat("{0} hits {1}{2} with {3}",
+                                Launcher.Name,
+                                missed ? "instead " : "",
+                                ((Atom)target).Name,
+                                this.Name);
+            
+            sender.NotifyListeners(msg.ToString());
+
+            return new FireOrb(sender, actualTarget);
         }
 
         public override void Launch()
