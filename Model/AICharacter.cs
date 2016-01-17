@@ -162,11 +162,18 @@ namespace GodsWill_ASCIIRPG
         //}
         public AI.SensingMethod SensePg { get; protected set; }
 
-        public override void Die(Character pg)
+        public override void Die(IFighter pg)
         {
-            // Pg Xp, Gold, Items, etc...
-            pg.GainExperience(AICharacter.XpCalculation(pg, this));
-            // Remove from map
+            var killerType = pg.GetType();
+            var pgType = typeof(Pg);
+
+            if (killerType == pgType || killerType.IsSubclassOf(pgType))
+            {
+                var charPg = pg as Pg;
+                // Pg Xp, Gold, Items, etc...
+                charPg.GainExperience(AICharacter.XpCalculation(charPg, this));
+                // Remove from map
+            }
             this.Map.Remove(this);
         }
 

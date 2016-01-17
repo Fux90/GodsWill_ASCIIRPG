@@ -48,7 +48,7 @@ namespace GodsWill_ASCIIRPG
 
         public bool IsUnarmed { get; protected set; }
 
-        public delegate void _SpecialAttack(Character attacker, Character defender);
+        public delegate void _SpecialAttack(IFighter attacker, IDamageable defender);
         private _SpecialAttack specialAttack;
         public _SpecialAttack SpecialAttack
         {

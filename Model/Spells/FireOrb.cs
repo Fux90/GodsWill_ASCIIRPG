@@ -9,8 +9,8 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 {
     public class FireOrb : AttackSpell
     {
-        protected FireOrb(Atom sender, Atom target)
-            : base(sender, new FireBallAnimation(sender.Position, target.Position, Color.Red))
+        protected FireOrb(Atom sender, IDamageable target)
+            : base(sender, new FireBallAnimation(sender.Position, ((Atom)target).Position, Color.Red))
         {
 
         }
@@ -23,7 +23,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
             }
         }
 
-        public FireOrb Create(Atom sender, Atom target)
+        public FireOrb Create(Atom sender, IDamageable target)
         {
             return new FireOrb(sender, target);
         }

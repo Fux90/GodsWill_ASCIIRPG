@@ -10,7 +10,7 @@ using System.Text;
 namespace GodsWill_ASCIIRPG
 {
     [StraightSightNeededForPerception]
-    public abstract class Character : MoveableAtom
+    public abstract class Character : MoveableAtom, IFighter, IDamageable
     {
         protected enum HpType
         {
@@ -235,11 +235,11 @@ namespace GodsWill_ASCIIRPG
         //    return moved;
         //}
 
-        public void Attack(Character defenderCharachter)
+        public void Attack(IDamageable defenderCharachter)
         {
             var msg = new StringBuilder();
 
-            msg.AppendFormat("Tries to hit {0} with {1}: ", defenderCharachter.Name, HandledWepon.Name);
+            msg.AppendFormat("Tries to hit {0} with {1}: ", ((Atom)defenderCharachter).Name, HandledWepon.Name);
             var tpc = Dice.Throws(20) + Stats[StatsType.Precision].ModifierOfStat() + HandledWepon.BonusOnTPC;
             var defenderCA = defenderCharachter.CA;
             if (tpc >= defenderCA)
@@ -286,12 +286,12 @@ namespace GodsWill_ASCIIRPG
 
             if(defenderCharachter.Dead)
             {
-                NotifyListeners(String.Format("Kills {0}", defenderCharachter.Name));
+                NotifyListeners(String.Format("Kills {0}", ((Atom)defenderCharachter).Name));
                 defenderCharachter.Die(this);
             }
         }
 
-        public abstract void Die(Character killer);
+        public abstract void Die(IFighter killer);
 
         public bool PickUp()
         {

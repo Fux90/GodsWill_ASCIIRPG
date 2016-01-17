@@ -251,7 +251,7 @@ namespace GodsWill_ASCIIRPG
             CharacterSheets.ForEach((sheet) => sheet.NotifyHunger(Hunger));
         }
 
-        public override void Die(Character killer)
+        public override void Die(IFighter killer)
         {
             // Save story ?
             // delete all world

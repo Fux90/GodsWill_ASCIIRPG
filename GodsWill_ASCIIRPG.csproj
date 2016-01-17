@@ -58,6 +58,7 @@
     <Compile Include="Model\Core\TernaryValue.cs" />
     <Compile Include="Model\Descriptionable.cs" />
     <Compile Include="Model\GeometricItem.cs" />
+    <Compile Include="Model\IDamageable.cs" />
     <Compile Include="Model\IFighter.cs" />
     <Compile Include="Model\Perception.cs" />
     <Compile Include="Model\Perceptions\ListenPerception.cs" />
