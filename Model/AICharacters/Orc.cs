@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GodsWill_ASCIIRPG.Model.Core;
 using System.Drawing;
+using GodsWill_ASCIIRPG.Model.Perceptions;
 
 namespace GodsWill_ASCIIRPG.Model.AICharacters
 {
@@ -69,6 +70,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
         }
     }
 
+    //[PerceptionCD(typeof(ListenPerception), 15)]
     [Prerequisite(MinimumLevel = Pg.Level.Novice)]
     public class Orc : AICharacter
     {

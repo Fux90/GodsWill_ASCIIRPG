@@ -6,6 +6,7 @@ using System.Text;
 using System.Drawing;
 using GodsWill_ASCIIRPG.View;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model.Perceptions;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -86,6 +87,7 @@ namespace GodsWill_ASCIIRPG
         }
     }
 
+    [HasPerception(typeof(ListenPerception))]
 	public class Pg : Character
 	{
         public enum Level
@@ -207,23 +209,39 @@ namespace GodsWill_ASCIIRPG
             {
                 var explored = true;
 
+                
                 if (pt == Position)
                 {
                     Map.Explore(pt, explored);
                     continue;
                 }
                 if (pt.X >= 0 && pt.Y >= 0
-                    && pt.X < Map.Width && pt.Y < Map.Height)
+                    && pt.X < Map.Width && pt.Y < Map.Height
+                    && !Map.IsFullyExplored(pt))
                 {
-                    
+
                     if (Map[pt].HasToBeInStraightSight)
                     {
-                        explored = !SomethingBlockView(pt);    
+                        explored = !SomethingBlockView(pt);
+                        if (!explored)
+                        {
+                            foreach (var perception in Perceptions)
+                            {
+                                explored = perception.Sense(this, Map[pt]);
+                                if (explored)
+                                {
+                                    break;
+                                }
+                            }
+                        }
                     }
-                    
+
                     Map.Explore(pt, explored);
                 }
             }
+            
+
+            this.Map.NotifyViewersOfExploration();
         }
 
         public override void EffectOfTurn()

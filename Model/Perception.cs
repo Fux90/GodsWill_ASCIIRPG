@@ -9,21 +9,23 @@ namespace GodsWill_ASCIIRPG.Model
 {
     public abstract class Perception
     {
-        protected abstract bool SensingProcess(Character sensor, Atom sensed);
+        protected abstract bool SensingProcess(Character sensor, Atom sensed, int CD);
 
         public bool Sense(Character sensor, Atom sensed)
         {
 
             var CDs = sensed.GetType()
                             .GetCustomAttributes(typeof(PerceptionCD), false);
-            var CD = CDs.Where(a => ((PerceptionCD)a).PerceptionType == this.GetType()).FirstOrDefault();
+            var sensing = CDs.Where(a => ((PerceptionCD)a).PerceptionType == this.GetType()).FirstOrDefault();
 
-            if(CD == null)
+            if(sensing == null)
             {
                 return false;
             }
 
-            return SensingProcess(sensor, sensed);
+            return SensingProcess(  sensor, 
+                                    sensed,
+                                    ((PerceptionCD)sensing).CD);
         }
     }
 
@@ -31,12 +33,28 @@ namespace GodsWill_ASCIIRPG.Model
     public class PerceptionCD : Attribute
     {
         public int CD { get; private set; }
-        public Type PerceptionType { get; set; }
+        public Type PerceptionType { get; private set; }
 
-        public PerceptionCD(int cd, Type perceptionType)
+        public PerceptionCD(Type perceptionType, int cd)
         {
             CD = cd;
             PerceptionType = perceptionType;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class HasPerception : Attribute
+    {
+        public Type PerceptionType { get; private set; }
+
+        public HasPerception(Type perceptionType)
+        {
+            PerceptionType = perceptionType;
+        }
+
+        public Perception Instantiate()
+        {
+            return (Perception)Activator.CreateInstance(PerceptionType);
         }
     }
 }

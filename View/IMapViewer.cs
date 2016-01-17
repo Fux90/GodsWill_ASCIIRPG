@@ -10,5 +10,6 @@ namespace GodsWill_ASCIIRPG
     {
         void NotifyMovement(Atom movedAtom, Coord freedCell, Coord occupiedCell);
         void NotifyRemoval(Coord freedCell);
+        void NotifyExploration();
     }
 }

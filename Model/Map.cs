@@ -192,6 +192,11 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
+        public void NotifyViewersOfExploration()
+        {
+            views.ForEach(view => view.NotifyExploration());
+        }
+
         public bool IsCellExplored(Coord pos)
         {
             return explored[pos].ToBool();
@@ -200,6 +205,11 @@ namespace GodsWill_ASCIIRPG
         public bool IsCellUnknown(Coord pos)
         {
             return explored[pos] == TernaryValue.Unknown;
+        }
+
+        public bool IsFullyExplored(Coord pos)
+        {
+            return explored[pos] == TernaryValue.Explored;
         }
 
         public void Insert(Atom a)

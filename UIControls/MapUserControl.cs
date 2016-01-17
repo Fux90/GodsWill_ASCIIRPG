@@ -330,6 +330,11 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.Refresh();
         }
 
+        public void NotifyExploration()
+        {
+            this.Refresh();
+        }
+
         protected override void OnKeyUp(KeyEventArgs e)
         {
             switch (mode)

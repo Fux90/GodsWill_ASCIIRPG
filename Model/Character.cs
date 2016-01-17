@@ -78,6 +78,8 @@ namespace GodsWill_ASCIIRPG
 
         public God God { get; private set; }
 
+        public List<Perception> Perceptions { get; private set; }
+
         public Character(string name,
                          int currentPf,
                          int maximumPf,
@@ -109,9 +111,17 @@ namespace GodsWill_ASCIIRPG
 
             this.CharacterSheets = new List<ISheetViewer>();
 
+            this.Perceptions = initPerceptions();
             this.TempModifiers = new TemporaryModifierCollection();
         }
- 
+
+        private List<Perception> initPerceptions()
+        {
+            var perceptions = this.GetType().GetCustomAttributes(typeof(HasPerception), false)
+                                    .Select(hP => ((HasPerception)hP).Instantiate()).ToList();
+            return perceptions;
+        }
+
         public virtual void GainExperience(int xp)
         {
             
