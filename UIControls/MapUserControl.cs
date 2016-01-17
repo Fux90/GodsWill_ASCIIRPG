@@ -4,6 +4,8 @@
 #define DEBUG_CIRCLE
 #define DEBUG_CENTERING
 #define DEBUG_CENTER_VIEWPORT
+#define PREVENT_AI
+#define DEBUG_ENEMY_SENSING
 
 using System;
 using System.Collections.Generic;
@@ -282,7 +284,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                 if(acted)
                 {
                     controlledPg.EffectOfTurn();
+#if !PREVENT_AI
                     Notify(ControllerCommand.AI_Turn);
+#endif
                     aiCharacters.RemoveAll(aiChar => aiChar.Dead);
                 }
             }
@@ -334,7 +338,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 {
                     switch (e.KeyCode)
                     {
-                        #region MOVEMENT
+#region MOVEMENT
                         case Keys.W:
                             Notify(ControllerCommand.Player_MoveNorth);
                             break;
@@ -347,9 +351,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                         case Keys.D:
                             Notify(ControllerCommand.Player_MoveEast);
                             break;
-                        #endregion
+#endregion
 
-                        #region OBJECT_HANDLING
+#region OBJECT_HANDLING
                         case Keys.G:
                             Notify(ControllerCommand.Player_PickUp);
                             break;
@@ -371,7 +375,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                                     ? ControllerCommand.Player_PutAwayShield
                                     : ControllerCommand.Player_EmbraceShield);
                             break;
-                            #endregion
+#endregion
 
 #if DEBUG_LINE
                 case Keys.L:
@@ -385,20 +389,20 @@ namespace GodsWill_ASCIIRPG.UIControls
                                 this.NotifyMovement(controlledPg, controlledPg.Position, controlledPg.Position);
                                 break;
 #endif
-                            #region DEITY
+#region DEITY
                             case Keys.K:
                             Notify(ControllerCommand.Player_Pray);
                             break;
-                        #endregion
+#endregion
 
-                        #region MSG_CONSOLE_HANDLING
+#region MSG_CONSOLE_HANDLING
                         case Keys.PageUp:
                             Notify(ControllerCommand.Player_ScrollMsgsUp);
                             break;
                         case Keys.PageDown:
                             Notify(ControllerCommand.Player_ScrollMsgsDown);
                             break;
-                        #endregion
+#endregion
 
                         case Keys.Escape:
                             Notify(ControllerCommand.Player_ExitGame);
@@ -415,7 +419,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 {
                     switch (e.KeyCode)
                     {
-                        #region CURSOR_MOVEMENT
+#region CURSOR_MOVEMENT
                         case Keys.W:
                             Notify(ControllerCommand.SelectionCursor_MoveNorth);
                             break;
@@ -428,7 +432,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                         case Keys.D:
                             Notify(ControllerCommand.SelectionCursor_MoveEast);
                             break;
-                            #endregion
+#endregion
 
                         case Keys.Enter:
                             Notify(ControllerCommand.SelectionCursor_PickedCell);
@@ -471,7 +475,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 }
             }
 #elif DRAW_NO_SCROLL
-            #region NO_SCROLL
+#region NO_SCROLL
             var firstCol = RegionLeft;
             var lastCol = RegionRight;
             var firstRow = RegionTop;
@@ -506,7 +510,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                                     new PointF(xPos, yPos));
                 }
             }
-            #endregion
+#endregion
 #else
             var firstCol = RegionLeft;
             var lastCol = RegionRight;
@@ -557,13 +561,21 @@ namespace GodsWill_ASCIIRPG.UIControls
                     {
                         if (map.IsCellUnknown(coord))
                         {
+#if DEBUG_ENEMY_SENSING
+                            g.DrawString("@",
+                                            this.Font,
+                                            Brushes.Blue,
+                                            new PointF(xPos, yPos));
+#else
                             g.DrawString(Floor._Symbol,
                                             this.Font,
                                             new SolidBrush(Floor._Color),
                                             new PointF(xPos, yPos));
+#endif
                         }
                         else
                         {
+
                             g.DrawString(obscuredCell,
                                             this.Font,
                                             Brushes.DimGray,
@@ -574,14 +586,14 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
 #endif
 #if DEBUG_CENTER_VIEWPORT
-            #region CENTER_VIEWPORT
-            var ptCenter = new PointF(  (centerRegion.X - firstCol) * charSize + offSetX,
+                            #region CENTER_VIEWPORT
+                            var ptCenter = new PointF(  (centerRegion.X - firstCol) * charSize + offSetX,
                                         (centerRegion.Y - firstRow) * charSize + offSetY);
             g.DrawString("*", this.Font, Brushes.Orange, ptCenter);
-            #endregion
+#endregion
 #endif
 #if DEBUG_CENTERING
-            #region CENTERING
+#region CENTERING
             g.DrawLine(Pens.Blue, new Point(0, 0), new Point(Width, Height));
             g.DrawLine(Pens.Blue, new Point(0, Height), new Point(Width, 0));
             var r_mapW2 = map.Width % 2;
@@ -630,7 +642,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                     g.DrawString("*", this.Font, Brushes.Yellow, ptF);
                 }
             }
-            #endregion
+#endregion
 #endif
 #if DEBUG_LINE
             if (line != null)

@@ -77,6 +77,16 @@ namespace GodsWill_ASCIIRPG
                 //mapBuilder.AddAtom(new Wall(new Coord() { X = 11, Y = 10 }));
                 //mapBuilder.AddAtom(new Wall(new Coord() { X = 12, Y = 10 }));
 
+                // Orc Covering Walls
+                for (int x = 9; x < 12; x++)
+                {
+                    mapBuilder.AddAtom(new Wall(new Coord(x, 10)));
+                }
+                for (int y = 10; y < 14; y++)
+                {
+                    mapBuilder.AddAtom(new Wall(new Coord(8, y)));
+                }
+                // 4 Corners
                 mapBuilder.AddAtom(new Wall(new Coord() { X = 0, Y = 0 }));
                 mapBuilder.AddAtom(new Wall(new Coord() { X = 0, Y = mapBuilder.Height - 1 }));
                 mapBuilder.AddAtom(new Wall(new Coord() { X = mapBuilder.Width - 1, Y = 0 }));
