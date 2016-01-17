@@ -187,6 +187,10 @@ namespace GodsWill_ASCIIRPG
 
         public void Explore()
         {
+            /*
+            I tried midpoint algorythm, but some points
+            were ignored.
+            */
             var left = Math.Max(0, this.Position.X - PerceptionRange);
             var right = Math.Min(this.Position.X + PerceptionRange, this.Map.Width);
             var top = Math.Max(0, this.Position.Y - PerceptionRange);

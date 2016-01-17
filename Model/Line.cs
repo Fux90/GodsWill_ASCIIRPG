@@ -8,12 +8,8 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
-    public class Line : IEnumerable
+    public class Line : GeometricItem, IEnumerable
     {
-        private List<Coord> pts;
-
-        public Coord this[int pos] { get { return pts[pos]; } }
-
         public Line(Coord ptA, Coord ptB)
         {
             pts = new List<Coord>();

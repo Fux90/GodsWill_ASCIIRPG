@@ -7,14 +7,62 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
-    public class Circle : IEnumerable
+    public abstract class Circle : GeometricItem, IEnumerable
     {
-        private List<Coord> pts;
-
-        public Coord this[int pos] { get { return pts[pos]; } }
+        public Coord Center { get; private set; }
+        public int Radius{ get; private set; }
 
         public Circle(Coord center, int radius)
         {
+            Center = center;
+            Radius = radius;
+        }
+    }
+
+    public class SimpleCircle : Circle 
+    {
+        public SimpleCircle(Coord center, int radius)
+            : base(center, radius)
+        {
+            pts = new List<Coord>();
+
+            int x0 = center.X;
+            int y0 = center.Y;
+            int x = radius;
+            int y = 0;
+            int decisionOver2 = 1 - x;   // Decision criterion divided by 2 evaluated at x=r, y=0
+
+            while (y <= x)
+            {
+                pts.Add(new Coord(x + x0, y + y0)); // Octant 1
+                pts.Add(new Coord(y + x0, x + y0)); // Octant 2
+                pts.Add(new Coord(-x + x0, y + y0)); // Octant 4
+                pts.Add(new Coord(-y + x0, x + y0)); // Octant 3
+                pts.Add(new Coord(-x + x0, -y + y0)); // Octant 5
+                pts.Add(new Coord(-y + x0, -x + y0)); // Octant 6
+                pts.Add(new Coord(x + x0, -y + y0)); // Octant 7
+                pts.Add(new Coord(y + x0, -x + y0)); // Octant 8
+                y++;
+                if (decisionOver2 <= 0)
+                {
+                    decisionOver2 += 2 * y + 1;   // Change in decision criterion for y -> y+1
+                }
+                else
+                {
+                    x--;
+                    decisionOver2 += 2 * (y - x) + 1;   // Change for y -> y+1, x -> x-1
+                }
+            }
+        }        
+    }
+
+    public class FilledCircle : Circle
+    {
+        public FilledCircle(Coord center, int radius)
+            : base(center, radius)
+        {
+            pts = new List<Coord>();
+
             int x0 = center.X;
             int y0 = center.Y;
             int x = radius;
@@ -43,11 +91,7 @@ namespace GodsWill_ASCIIRPG.Model
                 }
             }
         }
-
-        public IEnumerator GetEnumerator()
-        {
-            return new CircleEnum(pts.ToArray());
-        }
+    }
     }
 
     public class CircleEnum : IEnumerator

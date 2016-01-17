@@ -1,6 +1,7 @@
 ﻿//#define DRAW_ALL
 //#define DRAW_NO_SCROLL
 //#define DEBUG_LINE
+//#define DEBUG_CIRCLE
 #define DEBUG_CENTERING
 #define DEBUG_CENTER_VIEWPORT
 
@@ -38,6 +39,9 @@ namespace GodsWill_ASCIIRPG.UIControls
         List<AICharacter> aiCharacters;
 #if DEBUG_LINE
         Line line;
+#endif
+#if DEBUG_CIRCLE
+        Circle circle;
 #endif
         BackpackController backpackController;
         //MapController mapController;
@@ -367,16 +371,22 @@ namespace GodsWill_ASCIIRPG.UIControls
                                     ? ControllerCommand.Player_PutAwayShield
                                     : ControllerCommand.Player_EmbraceShield);
                             break;
-                        #endregion
+                            #endregion
 
 #if DEBUG_LINE
                 case Keys.L:
                     line = new Line(controlledPg.Position, aiCharacters[0].Position);
-                    this.NotifyMovement(controlledPg.Position, controlledPg.Position);
+                    this.NotifyMovement(controlledPg, controlledPg.Position, controlledPg.Position);
                     break;
 #endif
-                        #region DEITY
-                        case Keys.K:
+#if DEBUG_CIRCLE
+                            case Keys.NumPad0:
+                            circle = new FilledCircle(controlledPg.Position, 15);
+                                this.NotifyMovement(controlledPg, controlledPg.Position, controlledPg.Position);
+                                break;
+#endif
+                            #region DEITY
+                            case Keys.K:
                             Notify(ControllerCommand.Player_Pray);
                             break;
                         #endregion
@@ -616,8 +626,22 @@ namespace GodsWill_ASCIIRPG.UIControls
             {
                 foreach (Coord pt in line)
                 {
-                    var ptF = new PointF(pt.X * charSize, pt.Y * charSize);
+                    var ptF = new PointF(pt.X * charSize + offSetX, pt.Y * charSize + offSetY);
                     g.DrawString("*", this.Font, Brushes.Red, ptF);
+                }
+            }
+#endif
+#if DEBUG_CIRCLE
+            if (circle != null)
+            {
+                foreach (Coord pt in circle)
+                {
+                    var yPos = pt.Y * charSize + offSetY;
+                    var xPos = pt.X * charSize + offSetX;
+                    g.DrawString("*",
+                                    this.Font,
+                                    Brushes.Orange,
+                                    new PointF(xPos, yPos));
                 }
             }
 #endif
