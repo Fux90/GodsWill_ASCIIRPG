@@ -29,8 +29,9 @@ namespace GodsWill_ASCIIRPG.UIControls
         }
         
         const float charSize = 10.0f;
-
+        const string obscuredCell = "░";
         private readonly SelectorCursor selectorCursor = new SelectorCursor(); 
+
         Pg controlledPg;
         Atom currentAtomFollowedByViewport;
 
@@ -527,9 +528,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                 for (int c = firstCol; c <= lastCol; c++, xCell++)
                 {
                     coord.X = c;
-                    if (map.IsCellExplored(coord))
+                    var xPos = xCell * charSize + offSetX;
+                    if (controlledPg.IsLightingCell(coord) && map.IsCellExplored(coord))
                     {
-                        var xPos = xCell * charSize + offSetX;
                         var atom = map[coord];
                         g.DrawString(atom.Symbol,
                                         this.Font,
@@ -540,6 +541,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                                                         this.Font,
                                                         new SolidBrush(uAtom.Color),
                                                         new PointF(xPos, yPos)));
+                    }
+                    else
+                    {
+                        g.DrawString(   obscuredCell,
+                                        this.Font,
+                                        Brushes.DimGray,
+                                        new PointF(xPos, yPos));
                     }
                 }
             }

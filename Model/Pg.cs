@@ -119,6 +119,7 @@ namespace GodsWill_ASCIIRPG
         }
 
         public int PerceptionRange { get; protected set; }
+        public int LightRange { get { return 0; } }
 
         public Pg(  string name,
                     Level level,
@@ -191,6 +192,7 @@ namespace GodsWill_ASCIIRPG
             var top = Math.Max(0, this.Position.Y - PerceptionRange);
             var bottom = Math.Min(this.Position.Y + PerceptionRange, this.Map.Height);
 
+            var sqrPerceptionRange = PerceptionRange * PerceptionRange;
             var pos = new Coord();
             for (int r = top; r < bottom; r++)
             {
@@ -198,7 +200,7 @@ namespace GodsWill_ASCIIRPG
                 for (int c = left; c < right; c++)
                 {
                     pos.X = c;
-                    if(this.Position.SquaredDistanceFrom(pos) < PerceptionRange)
+                    if(this.Position.SquaredDistanceFrom(pos) < sqrPerceptionRange)
                     if(Map[pos].HasToBeInStraightSight)
                     {
 
@@ -289,6 +291,18 @@ namespace GodsWill_ASCIIRPG
                     sheet.NotifyStat(stat, this.Stats[stat]);
                 }
             });
+        }
+
+        public bool IsLightingCell(Coord coord)
+        {
+            if(Map.IsDark(coord))
+            {
+                var lRange = LightRange;
+                var sqrDist = lRange * lRange;
+                return coord.SquaredDistanceFrom(Position) < sqrDist;
+            }
+
+            return true;
         }
     }
 }

@@ -24,6 +24,8 @@ namespace GodsWill_ASCIIRPG
         public int Width { get; set; }
         public int Height { get; set; }
         public Coord PlayerInitialPosition { get; set; }
+        public bool NotToExplore { get; set; }
+        public bool Lightened { get; set; }
         #endregion
 
         public MapBuilder()
@@ -62,19 +64,22 @@ namespace GodsWill_ASCIIRPG
         public Map Create()
         {
             var table = new BidimensionalArray<Atom>(Height, Width);
-            
+            var explored = new BidimensionalArray<bool>(Height, Width);
+
             for (int r = 0; r < table.Rows; r++)
             {
                 for (int c = 0; c < table.Cols; c++)
                 {
                     table[r, c] = new Floor(new Coord() { X = c, Y = r });
+                    
                 }
             }
-            var map = new Map(Name, PlayerInitialPosition, table);
+            var map = new Map(Name, PlayerInitialPosition, table, NotToExplore, !Lightened);
             for (int i = 0; i < views.Count; i++)
             {
                 map.RegisterViewer(views[i]);
             }
+            
             foreach (var atom in elements)
             {
                 //map.Insert(atom);
@@ -112,6 +117,7 @@ namespace GodsWill_ASCIIRPG
         BidimensionalArray<AtomCollection> untangibles;
         BidimensionalArray<Atom> buffer;
         BidimensionalArray<bool> explored;
+        BidimensionalArray<bool> dark;
         List<IMapViewer> views;
         #endregion
 
@@ -149,14 +155,17 @@ namespace GodsWill_ASCIIRPG
 
         public Map( string name,
                     Coord playerInitialPosition,
-                    BidimensionalArray<Atom> table)
+                    BidimensionalArray<Atom> table,
+                    bool notToExplore,
+                    bool dark)
         {
             this.name = name;
             this.playerInitialPosition = playerInitialPosition;
             this.table = table;
             this.buffer = new BidimensionalArray<Atom>(table.Rows, table.Cols);
             this.untangibles = new BidimensionalArray<AtomCollection>(table.Rows, table.Cols, () => new AtomCollection());
-            this.explored = new BidimensionalArray<bool>(table.Rows, table.Cols, false);
+            this.explored = new BidimensionalArray<bool>(table.Rows, table.Cols, notToExplore);
+            this.dark = new BidimensionalArray<bool>(table.Rows, table.Cols, dark);
             this.views = new List<IMapViewer>();
         }
 
@@ -331,6 +340,17 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(bufferSerializableName, buffer, typeof(BidimensionalArray<Atom>));
             info.AddValue(viewsSerializableName, views, typeof(List<IMapViewer>));
         }
+
+        public void Explore(Coord pos)
+        {
+            explored[pos] = true;
+        }
+
+        public bool IsDark(Coord coord)
+        {
+            return dark[coord];
+        }
+
         #endregion
     }
 }

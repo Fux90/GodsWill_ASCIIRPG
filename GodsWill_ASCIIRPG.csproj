@@ -53,6 +53,7 @@
     <Compile Include="Control\MapController.cs" />
     <Compile Include="Control\MenuController.cs" />
     <Compile Include="Control\PgController.cs" />
+    <Compile Include="Model\Circle.cs" />
     <Compile Include="Model\SelectorCursor.cs" />
     <Compile Include="Main\GameForm.cs">
       <SubType>Form</SubType>
@@ -94,6 +95,7 @@
     <Compile Include="Model\Shield.cs" />
     <Compile Include="Model\Shields\WoodenShield.cs" />
     <Compile Include="Model\Stats.cs" />
+    <Compile Include="Model\StraightSightNeededForPerception.cs" />
     <Compile Include="Model\TemporaryBonus\DivineModifier.cs" />
     <Compile Include="Model\TemporaryModifier.cs" />
     <Compile Include="Model\Unphysical.cs" />

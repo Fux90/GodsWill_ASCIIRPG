@@ -68,6 +68,10 @@ namespace GodsWill_ASCIIRPG
 #if DEBUG_MAP
                 mapBuilder.Height = 30;
                 mapBuilder.Width = 19;
+
+                mapBuilder.NotToExplore = false;
+                mapBuilder.Lightened = true;
+
                 //mapBuilder.AddAtom(new Wall(new Coord() { X = 10, Y = 10 }));
                 //mapBuilder.AddAtom(new Wall(new Coord() { X = 11, Y = 10 }));
                 //mapBuilder.AddAtom(new Wall(new Coord() { X = 12, Y = 10 }));

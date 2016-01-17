@@ -9,6 +9,7 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
+    [StraightSightNeededForPerception]
     public abstract class Character : MoveableAtom
     {
         protected enum HpType
@@ -77,7 +78,6 @@ namespace GodsWill_ASCIIRPG
 
         public God God { get; private set; }
 
-        [StraightSightNeededForPerception]
         public Character(string name,
                          int currentPf,
                          int maximumPf,
