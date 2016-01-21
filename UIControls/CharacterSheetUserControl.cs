@@ -28,6 +28,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         private const string _lblArmor = "lblArmor";
         private const string _lblShield = "lblShield";
         private const string _lblWeapon = "lblWeapon";
+        private const string _lblGold = "lblGold";
 
         TableLayoutPanel tblMainPanelLayout;
         TableLayoutPanel tblPanelNameAndLevel;
@@ -46,14 +47,15 @@ namespace GodsWill_ASCIIRPG.UIControls
 
             tblMainPanelLayout = new TableLayoutPanel();
             tblMainPanelLayout.RowStyles.Clear();
-            tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 5.0f)); // Name and Level
+            tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 6.0f)); // Name and Level
             tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 5.0f)); // XP
             tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 5.0f)); // Pf and hunger
             tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 5.0f)); // CAs
             tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 20.0f));// Stats
-            tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 20.0f));// Armor
-            tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 20.0f));// Shield
-            tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 20.0f));// Weapon
+            tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 18.0f));// Armor
+            tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 18.0f));// Shield
+            tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 18.0f));// Weapon
+            tblMainPanelLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 5.0f));// Gold
 
             tblPanelNameAndLevel = CreateColumns(new float[] { 60.0f, 40.0f });
             tblPanelNameAndLevel.Controls.Add(this.DockFillLabel(_lblName, Color.Red), 0, 0);
@@ -93,6 +95,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             tblMainPanelLayout.Controls.Add(this.DockFillLabel(_lblArmor, Color.DarkRed), 0, 5);
             tblMainPanelLayout.Controls.Add(this.DockFillLabel(_lblShield, Color.Brown), 0, 6);
             tblMainPanelLayout.Controls.Add(this.DockFillLabel(_lblWeapon, Color.Gray), 0, 7);
+            tblMainPanelLayout.Controls.Add(this.DockFillLabel(_lblGold, Color.Gold), 0, 8);
 
             this.Controls.Add(tblMainPanelLayout);
 
@@ -174,6 +177,11 @@ namespace GodsWill_ASCIIRPG.UIControls
             var size = (float)tblPanelNameAndLevel.Controls[_lblName].Text.Length * Font.SizeInPoints + padding;
             tblPanelNameAndLevel.ColumnStyles[0].SizeType = SizeType.Absolute;
             tblPanelNameAndLevel.ColumnStyles[0].Width = size;
+        }
+
+        public void NotifyGold(int currentGold)
+        {
+            setTextAndRefresh(tblMainPanelLayout.Controls[_lblGold], String.Format("$: {0}", currentGold));
         }
 
         public void NotifyHp(int currentHp, int maximumHp)

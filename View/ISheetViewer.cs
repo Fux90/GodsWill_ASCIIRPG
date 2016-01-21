@@ -12,6 +12,7 @@ namespace GodsWill_ASCIIRPG.View
         void NotifyName(string name);
         void NotifyLevel(Pg.Level level, God god);
         void NotifyXp(int currentXp, int nextXp);
+        void NotifyGold(int currentGold);
         void NotifyHp(int currentHp, int maximumHp);
         void NotifyHunger(int hunger);
         void NotifyDefences(int CA, int SpecialCA);

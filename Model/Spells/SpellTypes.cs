@@ -9,7 +9,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 {
     public abstract class HealSpell : Spell
     {
-        public HealSpell(Atom launcher, Animation animation = null)
+        public HealSpell(ISpellcaster launcher, Animation animation = null)
             : base(launcher, animation)
         {
 
@@ -18,7 +18,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 
     public abstract class UtilitySpell : Spell
     {
-        public UtilitySpell(Atom launcher, Animation animation)
+        public UtilitySpell(ISpellcaster launcher, Animation animation)
             : base(launcher, animation)
         {
 
@@ -58,7 +58,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         private DamageCalculator dmg;
         private List<IDamageable> targets;
 
-        public AttackSpell( Atom launcher, 
+        public AttackSpell( ISpellcaster launcher, 
                             List<IDamageable> targets, 
                             DamageCalculator dmg,
                             Animation animation)
@@ -72,7 +72,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         {
             var atomTargets = new AtomCollection();
             atomTargets.AddRange(targets.Select(t => ((Atom)t)).ToList());
-            Effect(atomTargets, (object)new object[] { dmg.CalculateDamage(), tpc });
+            Launch(atomTargets, (object)new object[] { dmg.CalculateDamage(), tpc });
         }
 
         protected override void Effect(AtomCollection targets, object parameters)
@@ -84,7 +84,17 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 
             if (tpc == -1)
             {
-                targets.ForEach(t => ((IDamageable)t).SufferDamage(dmg));
+                targets.ForEach(t =>
+                {
+                    var damageable = (IDamageable)t;
+                    damageable.SufferDamage(dmg);
+                    if (damageable.Dead)
+                    {
+                        ((Atom)Launcher).NotifyListeners(String.Format("Kills {0}",
+                                                        ((Atom)t).Name));
+                        damageable.Die((IFighter)Launcher);
+                    }
+                });
             }
             else
             {
@@ -94,6 +104,13 @@ namespace GodsWill_ASCIIRPG.Model.Spells
                     if (tpc >= damageable.CASpecial)
                     {
                         damageable.SufferDamage(dmg);
+                    }
+
+                    if(damageable.Dead)
+                    {
+                        ((Atom)Launcher).NotifyListeners(String.Format("Kills {0}", 
+                                                        ((Atom)t).Name));
+                        damageable.Die((IFighter)Launcher);
                     }
                 });
             }

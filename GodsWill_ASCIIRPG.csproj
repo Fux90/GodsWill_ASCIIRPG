@@ -53,13 +53,19 @@
     <Compile Include="Control\MapController.cs" />
     <Compile Include="Control\MenuController.cs" />
     <Compile Include="Control\PgController.cs" />
+    <Compile Include="Model\Allied.cs" />
     <Compile Include="Model\Animation.cs" />
     <Compile Include="Model\Circle.cs" />
     <Compile Include="Model\Core\TernaryValue.cs" />
     <Compile Include="Model\Descriptionable.cs" />
     <Compile Include="Model\GeometricItem.cs" />
+    <Compile Include="Model\IBlockable.cs" />
     <Compile Include="Model\IDamageable.cs" />
     <Compile Include="Model\IFighter.cs" />
+    <Compile Include="Model\IMerchant.cs" />
+    <Compile Include="Model\ISpellcaster.cs" />
+    <Compile Include="Model\IStatsProvided.cs" />
+    <Compile Include="Model\Items\Gold.cs" />
     <Compile Include="Model\Perception.cs" />
     <Compile Include="Model\Perceptions\ListenPerception.cs" />
     <Compile Include="Model\FireBallAnimation.cs" />
@@ -104,7 +110,9 @@
     <Compile Include="Model\Shield.cs" />
     <Compile Include="Model\Shields\WoodenShield.cs" />
     <Compile Include="Model\Spell.cs" />
+    <Compile Include="Model\Spells\BlockSpellcasterFor.cs" />
     <Compile Include="Model\Spells\FireOrb.cs" />
+    <Compile Include="Model\Spells\FreeAction.cs" />
     <Compile Include="Model\Spells\SpellTypes.cs" />
     <Compile Include="Model\Stats.cs" />
     <Compile Include="Model\StraightSightNeededForPerception.cs" />
@@ -198,9 +206,7 @@
   <ItemGroup>
     <None Include="Main\App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\Items\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

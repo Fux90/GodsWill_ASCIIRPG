@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace GodsWill_ASCIIRPG.Model
+{
+    public interface IBlockable
+    {
+        int BlockedTurns { get; }
+        void BlockForTurns(int numTurns);
+        void SkipTurn();
+    }
+}

@@ -1,15 +1,19 @@
 ﻿using GodsWill_ASCIIRPG.View;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
-    public abstract class Animation
+    public abstract class Animation : IEnumerable
     {
+        public const int _InterFrameDelay = 70;
+
         public class FrameItem
         {
             public string Symbol { get; private set; }
@@ -63,18 +67,28 @@ namespace GodsWill_ASCIIRPG.Model
         {
             List<FrameItem> frameItems;
 
+            public FrameItem this[int index]
+            {
+                get { return frameItems[index]; }
+            }
+
             public Frame(List<FrameItem> fItems)
             {
-                frameItems = fItems;
+                frameItems = new List<FrameItem>(fItems.Count);
+                frameItems.AddRange(fItems);
+            }
+
+            public void ForEach(Action<FrameItem> action)
+            {
+                frameItems.ForEach(fI => action(fI));
             }
         }
 
-        List<IAnimationViewer> animationViewers;
+        static List<IAnimationViewer> animationViewers = new List<IAnimationViewer>();
         List<Frame> frames;
 
         public Animation()
         {
-            animationViewers = new List<IAnimationViewer>();
             frames = new List<Frame>();
         }
 
@@ -85,11 +99,71 @@ namespace GodsWill_ASCIIRPG.Model
 
         public void Play()
         {
-            foreach (var frame in frames)
+            foreach (var viewer in animationViewers)
             {
-                foreach (var viewer in animationViewers)
+                viewer.PlayFrame(this);
+            }
+        }
+
+        public static void RegisterAnimationViewer(IAnimationViewer view)
+        {
+            animationViewers.Add(view);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)GetEnumerator();
+        }
+
+        public AnimationEnum GetEnumerator()
+        {
+            return new AnimationEnum(frames.ToArray());
+        }
+    }
+
+    public class AnimationEnum : IEnumerator
+    {
+        Animation.Frame[] frames;
+
+        // Enumerators are positioned before the first element
+        // until the first MoveNext() call.
+        int position = -1;
+
+        public AnimationEnum(Animation.Frame[] list)
+        {
+            frames = list;
+        }
+
+        public bool MoveNext()
+        {
+            position++;
+            return (position < frames.Length);
+        }
+
+        public void Reset()
+        {
+            position = -1;
+        }
+
+        object IEnumerator.Current
+        {
+            get
+            {
+                return Current;
+            }
+        }
+
+        public Animation.Frame Current
+        {
+            get
+            {
+                try
                 {
-                    viewer.PlayFrame(frame);
+                    return frames[position];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    throw new InvalidOperationException();
                 }
             }
         }

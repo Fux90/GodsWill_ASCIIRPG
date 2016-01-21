@@ -10,7 +10,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 {
     public class FireOrb : AttackSpell
     {
-        protected FireOrb(Atom sender, IDamageable target)
+        protected FireOrb(ISpellcaster sender, IDamageable target, bool missedRealTarget)
             : base( sender,
                     new List<IDamageable>() { target },
                     new DamageCalculator(
@@ -18,9 +18,22 @@ namespace GodsWill_ASCIIRPG.Model.Spells
                        {
                            { DamageType.Fire, () => Dice.Throws(8) }
                        }),
-                    new FireBallAnimation(sender.Position, ((Atom)target).Position, Color.Red))
+                    new FireBallAnimation(((Atom)sender).Position, ((Atom)target).Position, Color.Red))
         {
+            var msg = new StringBuilder();
 
+            if (missedRealTarget)
+            {
+                msg.AppendFormat("{0} misses his target!", ((Atom)sender).Name);
+            }
+
+            msg.AppendFormat("{0} hits {1}{2} with {3}",
+                                ((Atom)sender).Name,
+                                missedRealTarget ? "instead " : "",
+                                ((Atom)target).Name,
+                                this.Name);
+
+            ((Atom)sender).NotifyListeners(msg.ToString());
         }
 
         public override string FullDescription
@@ -31,16 +44,16 @@ namespace GodsWill_ASCIIRPG.Model.Spells
             }
         }
 
-        public FireOrb Create(Atom sender, IDamageable target)
+        public static FireOrb Create(ISpellcaster sender, IDamageable target)
         {
             // Line between sender and target
-            var lineOfAction = new Line(sender.Position, ((Atom)target).Position);
+            var lineOfAction = new Line(((Atom)sender).Position, ((Atom)target).Position);
             // First blockable atom
             var actualTarget = target;
             foreach (Coord pt in lineOfAction)
             {
-                var testedAtom = sender.Map[pt];
-                if (testedAtom.Physical && !testedAtom.Walkable)
+                var testedAtom = ((Atom)sender).Map[pt];
+                if (testedAtom.Physical && !testedAtom.Walkable && testedAtom != sender)
                 {
                     if(typeof(IDamageable).IsAssignableFrom(testedAtom.GetType()))
                     {
@@ -53,25 +66,13 @@ namespace GodsWill_ASCIIRPG.Model.Spells
                                                         testedAtom.Color,
                                                         testedAtom.Position);
                     }
+
+                    break;
                 }
             }
-            var msg = new StringBuilder();
+            
             var missed = actualTarget != target;
-            if(missed)
-            {
-                msg.AppendFormat("{0} misses his target!", Launcher.Name);
-                missed = true;
-            }
-            
-            msg.AppendFormat("{0} hits {1}{2} with {3}",
-                                Launcher.Name,
-                                missed ? "instead " : "",
-                                ((Atom)target).Name,
-                                this.Name);
-            
-            sender.NotifyListeners(msg.ToString());
-
-            return new FireOrb(sender, actualTarget);
+            return new FireOrb(sender, actualTarget, missed);
         }
 
         public override void Launch()

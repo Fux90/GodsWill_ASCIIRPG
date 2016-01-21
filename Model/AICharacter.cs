@@ -27,7 +27,7 @@ namespace GodsWill_ASCIIRPG
         public Color? Color { get; set; }
         public string Description { get; set; }
         public Coord? Position { get; set; }
-        public bool? Hostile { get; set; }
+        public Allied? AlliedTo { get; set; }
 
         public AICharacterBuilder() { }
 
@@ -44,10 +44,9 @@ namespace GodsWill_ASCIIRPG
 	{
         public delegate int XPCalculationMethod(Character pg, Character monster);
 
-        private bool hostile;
         private AI intelligence;
         
-        public bool Hostile { get { return hostile; } }
+        public bool Hostile { get { return this.AlliedTo == Allied.Enemy; } }
         public AI AI { get { return intelligence; } }
         private int perceptionDistance;
         private int squaredPerceptionDistance;
@@ -104,7 +103,7 @@ namespace GodsWill_ASCIIRPG
                             Color? color = null,
                             string description = "A creature of the world", 
                             Coord position = new Coord(),
-                            bool hostile = true)
+                            Allied hostile = Allied.Enemy)
             : base( name, 
                     currentPf,
                     maximumPf,
@@ -118,7 +117,7 @@ namespace GodsWill_ASCIIRPG
                     unblockable,
                     symbol,
                     color == null 
-                        ? (hostile ? Color.Red : Color.Green)
+                        ? (hostile == Allied.Enemy ? Color.Red : Color.Green)
                         : (Color)color,
                     description,
                     position)
@@ -127,7 +126,7 @@ namespace GodsWill_ASCIIRPG
             this.SensePg = sensingMethod == null ? AI.SensingAlgorythms.AllAround : sensingMethod;
             this.intelligence.ControlledCharacter = this;
             this.PerceptionDistance = perceptionDistance;
-            this.hostile = hostile;
+            this.AlliedTo = hostile;
         }
 
         private static XPCalculationMethod xpCalculation;
@@ -145,12 +144,27 @@ namespace GodsWill_ASCIIRPG
 
         public override bool Interaction(Atom interactor)
         {
-            if(interactor.GetType() == typeof(Pg) && hostile)
+            var interactorType = interactor.GetType();
+            if (interactorType == typeof(Pg) && Hostile)
             {
                 var pg = interactor as Pg;
                 pg.Attack(this);
-
+                
                 return true;
+            }
+            else if(interactorType.IsSubclassOf(typeof(AICharacter)))
+            {
+                var other = interactor as AICharacter;
+                if(other.AlliedTo != this.AlliedTo 
+                    && other.AlliedTo != Allied.None
+                    && this.AlliedTo != Allied.None)
+                {
+                    other.Attack(this);
+                }
+                else
+                {
+                    // 
+                }
             }
 
             return false;

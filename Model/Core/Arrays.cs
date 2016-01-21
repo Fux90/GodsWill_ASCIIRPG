@@ -76,5 +76,16 @@ namespace GodsWill_ASCIIRPG.Model.Core
                 content[coord.Y, coord.X] = value;
             }
         }
+
+        public void ForEach(Action<T> action)
+        {
+            for (int r = 0; r < this.Rows; r++)
+            {
+                for (int c = 0; c < this.Cols; c++)
+                {
+                    action((T)content[r, c]);
+                }
+            }
+        }
     }
 }

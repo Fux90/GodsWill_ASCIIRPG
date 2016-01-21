@@ -77,7 +77,8 @@ namespace GodsWill_ASCIIRPG
             Game.Current.GameInitialization(mapViewControl, 
                                             mapViewControl, 
                                             mapViewControl,
-                                            singleMsgConsole);
+                                            singleMsgConsole,
+                                            mapViewControl);
             //Game.Current.RunGame();
         }
 

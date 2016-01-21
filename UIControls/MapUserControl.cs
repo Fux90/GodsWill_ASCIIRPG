@@ -21,10 +21,13 @@ using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.View;
+using GodsWill_ASCIIRPG.Model.Spells;
+using System.Threading;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
-    public partial class MapUserControl : UserControl, PgController, AIController, IMapViewer
+    public partial class MapUserControl 
+        : UserControl, PgController, AIController, IMapViewer, IAnimationViewer
     {
         public delegate bool AfterSelectionOperation(Coord selPos);
         private readonly AfterSelectionOperation defaultAfterSelectionOp = (selPos) => 
@@ -256,13 +259,23 @@ namespace GodsWill_ASCIIRPG.UIControls
                     #region DEITY
                     case ControllerCommand.Player_Pray:
                         controlledPg.Pray(out acted);
-                        
-                        break; 
+
+                        break;
                     #endregion
 
                     #region AIs
                     case ControllerCommand.AI_Turn:
-                        aiCharacters.ForEach(aiChar => aiChar.AI.ExecuteAction());
+                        aiCharacters.ForEach(aiChar =>
+                        {
+                            if (aiChar.BlockedTurns > 0)
+                            {
+                                aiChar.AI.ExecuteAction();
+                            }
+                            else
+                            {
+                                aiChar.SkipTurn();
+                            }
+                        });
                         break;
                     #endregion
 
@@ -313,6 +326,12 @@ namespace GodsWill_ASCIIRPG.UIControls
                     Notify(ControllerCommand.AI_Turn);
 #endif
                     aiCharacters.RemoveAll(aiChar => aiChar.Dead);
+
+                    if(controlledPg.BlockedTurns > 0)
+                    {
+                        controlledPg.SkipTurn();
+                        Notify(ControllerCommand.AI_Turn);
+                    }
                 }
             }
         }
@@ -423,7 +442,16 @@ namespace GodsWill_ASCIIRPG.UIControls
                             case Keys.Add:
                                 CurrentAfterSelectionOperation = (pos) =>
                                 {
-                                    MessageBox.Show("Lancio spell");
+                                    var target = controlledPg.Map[pos];
+                                    if (typeof(IDamageable).IsAssignableFrom(target.GetType()))
+                                    {
+                                        var spell = FireOrb.Create(controlledPg, ((IDamageable)target));
+                                        spell.Launch();
+                                    }
+                                    else
+                                    {
+                                        controlledPg.NotifyListeners("Can'use in that target");
+                                    }
                                     return false;
                                 };
                                 EnterSelectionMode();
@@ -621,6 +649,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                                             Brushes.DimGray,
                                             new PointF(xPos, yPos));
                         }
+
+                        var untangibles = (AtomCollection)map[coord, Map.LevelType.Untangibles];
+                        untangibles.Where(  a => !a.HasToBeInStraightSight).ToList()
+                                    .ForEach(uAtom =>   g.DrawString(uAtom.Symbol,
+                                                        this.Font,
+                                                        new SolidBrush(uAtom.Color),
+                                                        new PointF(xPos, yPos)));
                     }
                 }
             }
@@ -708,6 +743,20 @@ namespace GodsWill_ASCIIRPG.UIControls
                 }
             }
 #endif
+            if(currentFrame != null)
+            {
+                currentFrame.ForEach(fI =>
+                {
+                    var pt = fI.Position;
+                    var yPos = (pt.Y - firstRow) * charSize + offSetY;
+                    var xPos = (pt.X - firstCol) * charSize + offSetX;
+                    g.DrawString(   fI.Symbol,
+                                    this.Font,
+                                    new SolidBrush(fI.Color),
+                                    new PointF(xPos, yPos));
+                });
+                currentFrame = null;
+            }
         }
 
         public void Register(AICharacter character)
@@ -718,6 +767,17 @@ namespace GodsWill_ASCIIRPG.UIControls
         public void Unregister(AICharacter character)
         {
             aiCharacters.Remove(character);
+        }
+
+        Animation.Frame currentFrame;
+        public void PlayFrame(Animation animation)
+        {
+            foreach (Animation.Frame frame in animation)
+            {
+                currentFrame = frame;
+                this.Refresh();
+                Thread.Sleep(Animation._InterFrameDelay);
+            }
         }
     }
 }

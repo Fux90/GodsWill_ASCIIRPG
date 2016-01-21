@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
-    public interface IDamageable
+    public interface IDamageable : IStatsProvided
     {
         int Hp { get; }
         int MaxHp { get; }
         bool Dead { get; }
-
-        Stats Stats { get; }
 
         int CA //Physical attacks
         {

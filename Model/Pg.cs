@@ -7,6 +7,7 @@ using System.Drawing;
 using GodsWill_ASCIIRPG.View;
 using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.Model.Perceptions;
+using GodsWill_ASCIIRPG.Model.Items;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -88,7 +89,7 @@ namespace GodsWill_ASCIIRPG
     }
 
     [HasPerception(typeof(ListenPerception))]
-	public class Pg : Character
+	public class Pg : Character, ISpellcaster
 	{
         public enum Level
         {
@@ -107,8 +108,6 @@ namespace GodsWill_ASCIIRPG
         private int[] xp;
         public int XP { get { return xp[0]; } private set { xp[0] = value; } }
         public int NextXP { get { return xp[1]; } private set { xp[1] = value; } }
-
-        private int explorationRadius;
 
         public override Dice HealthDice
         {
@@ -259,6 +258,12 @@ namespace GodsWill_ASCIIRPG
             // Back to main menu
         }
 
+        public override void PickUpGold(Gold gold)
+        {
+            base.PickUpGold(gold);
+            this.NotifyAll();
+        }
+
         public override bool Interaction(Atom interactor)
         {
             if (interactor.GetType().IsSubclassOf(typeof(AICharacter)))
@@ -310,6 +315,7 @@ namespace GodsWill_ASCIIRPG
             CharacterSheets.ForEach((sheet) => sheet.NotifyName(this.Name));
             CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(this.CurrentLevel, this.God));
             CharacterSheets.ForEach((sheet) => sheet.NotifyXp(this.XP, this.NextXP));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyGold(this.MyGold));
             CharacterSheets.ForEach((sheet) => sheet.NotifyHp(this.Hp, this.MaxHp));
             CharacterSheets.ForEach((sheet) => sheet.NotifyHunger(this.Hunger));
             CharacterSheets.ForEach((sheet) => sheet.NotifyDefences(this.CA, this.CASpecial));
@@ -334,6 +340,12 @@ namespace GodsWill_ASCIIRPG
             }
 
             return true;
+        }
+
+        public void LaunchSpell(Spell spell, out bool acted)
+        {
+            spell.Launch();
+            acted = spell.IsFreeAction;
         }
     }
 }

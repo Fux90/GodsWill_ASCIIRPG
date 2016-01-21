@@ -45,7 +45,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
             Color = Color.ValueIfNotNullOrElse(System.Drawing.Color.DarkOliveGreen);
             Description = Description.ValueIfNotNullOrElse("A greenish, smelly human-like creature. Strong, but usually not very smart.");
             Position = Position.ValueIfNotNullOrElse(new Coord());
-            Hostile = Hostile.ValueIfNotNullOrElse(true);
+            AlliedTo = AlliedTo.ValueIfNotNullOrElse(Allied.Enemy);
 
             var orc = new Orc(  Name,
                                 (int)CurrentPf,
@@ -64,7 +64,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                                 (System.Drawing.Color)Color,
                                 Description,
                                 (Coord)Position,
-                                (bool)Hostile);
+                                (Allied)AlliedTo);
 
             return orc;
         }
@@ -100,7 +100,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                     Color color,
                     string description,
                     Coord position,
-                    bool hostile)
+                    Allied hostile)
             : base( name,
                     currentPf,
                     maximumPf,

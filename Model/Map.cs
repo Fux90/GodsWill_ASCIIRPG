@@ -167,6 +167,8 @@ namespace GodsWill_ASCIIRPG
             this.explored = new BidimensionalArray<TernaryValue>(table.Rows, table.Cols, notToExplore);
             this.dark = new BidimensionalArray<bool>(table.Rows, table.Cols, dark);
             this.views = new List<IMapViewer>();
+
+            table.ForEach(atom => atom.InsertInMap(this, atom.Position));
         }
 
         #region METHODS
@@ -314,7 +316,10 @@ namespace GodsWill_ASCIIRPG
 
             if (movedAtomType == typeof(SelectorCursor))
             {
-                var msg = String.Format("{0}", steppedAtom.Description);
+                var exploredCell = steppedAtom.Map.IsFullyExplored(steppedAtom.Position);
+                var msg = String.Format("{0}", exploredCell 
+                                                ? steppedAtom.Description
+                                                : new Floor().Description);
 
                 movedAtom.NotifyListeners(msg);
             }

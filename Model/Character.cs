@@ -1,5 +1,6 @@
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model.Items;
 using GodsWill_ASCIIRPG.View;
 using System;
 using System.Collections.Generic;
@@ -10,12 +11,17 @@ using System.Text;
 namespace GodsWill_ASCIIRPG
 {
     [StraightSightNeededForPerception]
-    public abstract class Character : MoveableAtom, IFighter, IDamageable
+    public abstract class Character : MoveableAtom, IFighter, IDamageable, IBlockable, IMerchant
     {
         protected enum HpType
         {
             Current,
             Max
+        }
+
+        public Allied AlliedTo
+        {
+            get; protected set;
         }
 
         int[] hp;
@@ -25,6 +31,8 @@ namespace GodsWill_ASCIIRPG
         Weapon handledWeapon;
         Backpack backpack;
         Stats stats;
+
+        public int MyGold { get; protected set; }
 
         protected List<ISheetViewer> CharacterSheets { get; private set; }
 
@@ -80,6 +88,8 @@ namespace GodsWill_ASCIIRPG
 
         public List<Perception> Perceptions { get; private set; }
 
+        public int BlockedTurns { get; private set; }
+
         public Character(string name,
                          int currentPf,
                          int maximumPf,
@@ -125,6 +135,23 @@ namespace GodsWill_ASCIIRPG
         public virtual void GainExperience(int xp)
         {
             
+        }
+
+        public virtual void PickUpGold(Gold gold)
+        {
+            this.MyGold += gold.Amount;
+            this.Map.Remove(gold);
+        }
+
+        public bool GiveAwayGold(int amount, out Gold gold)
+        {
+            gold = new Gold(Math.Min(MyGold, amount));
+            if (MyGold >= amount)
+            {
+                return true;
+            }
+            this.NotifyListeners("Not enough gold to fullfil the request...");
+            return false;
         }
 
         public void SufferDamage(Damage dmg)
@@ -512,6 +539,16 @@ namespace GodsWill_ASCIIRPG
         public virtual void RegisterSheet(ISheetViewer sheet)
         {
             CharacterSheets.Add(sheet);
+        }
+
+        public void BlockForTurns(int numTurns)
+        {
+            BlockedTurns = numTurns;
+        }
+
+        public virtual void SkipTurn()
+        {
+            BlockedTurns--;
         }
     }
 }

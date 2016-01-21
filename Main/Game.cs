@@ -5,6 +5,7 @@ using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.AICharacters;
 using GodsWill_ASCIIRPG.Model.Armors;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model.Items;
 using GodsWill_ASCIIRPG.Model.SceneryItems;
 using GodsWill_ASCIIRPG.Model.Shields;
 using GodsWill_ASCIIRPG.Model.Weapons;
@@ -62,7 +63,8 @@ namespace GodsWill_ASCIIRPG
             public void GameInitialization( PgController pgController, 
                                             AIController aiController,
                                             IMapViewer mapViewer,
-                                            IAtomListener singleMsgListener)
+                                            IAtomListener singleMsgListener,
+                                            IAnimationViewer animationViewer)
             {
                 // Map generation
                 var mapBuilder = new MapBuilder();
@@ -96,6 +98,8 @@ namespace GodsWill_ASCIIRPG
                 mapBuilder.AddSingleMessageListener(singleMsgListener);
 
                 mapBuilder.PlayerInitialPosition = new Coord() { X = 1, Y = 1 };
+
+                mapBuilder.AddAtom(new Gold(10, new Coord(2, 2)));
                 mapBuilder.AddAtom(new LongSword(position: new Coord() { X = 7, Y = 4 }));
                 mapBuilder.AddAtom(new Leather(position: new Coord() { X = 7, Y = 3 }));
                 for (int i = 8; i < 18; i++)
@@ -121,6 +125,8 @@ namespace GodsWill_ASCIIRPG
                 pgController.BackpackController.Register(CurrentPg.Backpack);
 
                 CurrentPg.InsertInMap(map, map.PlayerInitialPosition);
+
+                Animation.RegisterAnimationViewer(animationViewer);
             }
 
             private Game()

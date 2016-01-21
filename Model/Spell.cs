@@ -1,4 +1,5 @@
 ﻿using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model.Spells;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +12,31 @@ namespace GodsWill_ASCIIRPG.Model
     {
 
         public string Name {  get { return this.GetType().Name.Clean(); } }
-        
+        private int StopForTurns
+        {
+            get
+            {
+                var m = (BlockSpellcasterFor[])this.GetType().GetCustomAttributes(typeof(BlockSpellcasterFor), false);
+                return m.Length == 0 ? 0 : m[0].Turns;
+            }
+        }
+        public bool IsFreeAction
+        {
+            get
+            {
+                return this.GetType().GetCustomAttributes(typeof(FreeAction), false).Length > 0;
+            }
+        }
+
         Animation animation;
-        public Atom Launcher
+        public ISpellcaster Launcher
         {
             get; private set;
         }
 
         public abstract string FullDescription { get; }
 
-        public Spell(Atom launcher, Animation animation)
+        public Spell(ISpellcaster launcher, Animation animation)
         {
             this.Launcher = launcher;
             this.animation = animation;
@@ -33,6 +49,7 @@ namespace GodsWill_ASCIIRPG.Model
         ///  organizing parameters properly 
         /// </summary>
         /// <param name="launcher"></param>
+        /// <returns>True if turn consuming</returns>
         public abstract void Launch();
 
         /// <summary>
@@ -45,6 +62,8 @@ namespace GodsWill_ASCIIRPG.Model
 
         protected void Launch(AtomCollection targets, object parameters = null)
         {
+            Launcher.BlockForTurns(this.StopForTurns);
+
             if(animation != null)
             {
                 animation.Play();
