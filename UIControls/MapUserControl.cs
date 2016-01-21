@@ -2,10 +2,10 @@
 //#define DRAW_NO_SCROLL
 //#define DEBUG_LINE
 #define DEBUG_CIRCLE
-#define DEBUG_CENTERING
-#define DEBUG_CENTER_VIEWPORT
-#define PREVENT_AI
-#define DEBUG_ENEMY_SENSING
+//#define DEBUG_CENTERING
+//#define DEBUG_CENTER_VIEWPORT
+//#define PREVENT_AI
+//#define DEBUG_ENEMY_SENSING
 #define DEBUG_SPELL_LAUNCH
 
 using System;
@@ -269,11 +269,11 @@ namespace GodsWill_ASCIIRPG.UIControls
                         {
                             if (aiChar.BlockedTurns > 0)
                             {
-                                aiChar.AI.ExecuteAction();
+                                aiChar.SkipTurn();
                             }
                             else
                             {
-                                aiChar.SkipTurn();
+                                aiChar.AI.ExecuteAction();
                             }
                         });
                         break;

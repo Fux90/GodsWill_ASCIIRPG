@@ -43,7 +43,7 @@ namespace GodsWill_ASCIIRPG
             NextXp = 1000;
             CurrentPf = Pg.healthDice.Max + toughMod;
             MaxPf = Pg.healthDice.Max + toughMod;
-            Hunger = Pg.hungerDice.Max * toughMod;
+            Hunger = Pg.hungerDice.Max * Math.Max(1, toughMod);
             Armor = null;
             Shield = null;
             Weapon = null;
@@ -310,24 +310,31 @@ namespace GodsWill_ASCIIRPG
             NotifyAll();
         }
 
-        private void NotifyAll()
+        //private void NotifyAll()
+        //{
+        //    CharacterSheets.ForEach((sheet) => sheet.NotifyName(this.Name));
+        //    CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(this.CurrentLevel, this.God));
+        //    CharacterSheets.ForEach((sheet) => sheet.NotifyXp(this.XP, this.NextXP));
+        //    CharacterSheets.ForEach((sheet) => sheet.NotifyGold(this.MyGold));
+        //    CharacterSheets.ForEach((sheet) => sheet.NotifyHp(this.Hp, this.MaxHp));
+        //    CharacterSheets.ForEach((sheet) => sheet.NotifyHunger(this.Hunger));
+        //    CharacterSheets.ForEach((sheet) => sheet.NotifyDefences(this.CA, this.CASpecial));
+        //    CharacterSheets.ForEach((sheet) => sheet.NotifyArmor(this.WornArmor));
+        //    CharacterSheets.ForEach((sheet) => sheet.NotifyShield(this.EmbracedShield));
+        //    CharacterSheets.ForEach((sheet) => sheet.NotifyWeapon(this.HandledWepon));
+        //    CharacterSheets.ForEach((sheet) => {
+        //        foreach (var stat in Stats.AllStats)
+        //        {
+        //            sheet.NotifyStat(stat, this.Stats[stat]);
+        //        }
+        //    });
+        //}
+
+        protected override void NotifyAll()
         {
-            CharacterSheets.ForEach((sheet) => sheet.NotifyName(this.Name));
+            base.NotifyAll();
             CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(this.CurrentLevel, this.God));
             CharacterSheets.ForEach((sheet) => sheet.NotifyXp(this.XP, this.NextXP));
-            CharacterSheets.ForEach((sheet) => sheet.NotifyGold(this.MyGold));
-            CharacterSheets.ForEach((sheet) => sheet.NotifyHp(this.Hp, this.MaxHp));
-            CharacterSheets.ForEach((sheet) => sheet.NotifyHunger(this.Hunger));
-            CharacterSheets.ForEach((sheet) => sheet.NotifyDefences(this.CA, this.CASpecial));
-            CharacterSheets.ForEach((sheet) => sheet.NotifyArmor(this.WornArmor));
-            CharacterSheets.ForEach((sheet) => sheet.NotifyShield(this.EmbracedShield));
-            CharacterSheets.ForEach((sheet) => sheet.NotifyWeapon(this.HandledWepon));
-            CharacterSheets.ForEach((sheet) => {
-                foreach (var stat in Stats.AllStats)
-                {
-                    sheet.NotifyStat(stat, this.Stats[stat]);
-                }
-            });
         }
 
         public bool IsLightingCell(Coord coord)

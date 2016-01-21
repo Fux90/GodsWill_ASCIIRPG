@@ -504,14 +504,40 @@ namespace GodsWill_ASCIIRPG
 
         public virtual void EffectOfTurn()
         {
-            var expiredMods = 0;
-            if((TempModifiers.PassedTurn()) > 0)
+            ConsumeModifiers();
+        }
+
+        private void ConsumeModifiers()
+        {
+            var expiredMods = TempModifiers.PassedTurn();
+            if (expiredMods > 0)
             {
                 NotifyListeners(String.Format("{0} modifier{1} {2} expired",
                                               expiredMods,
                                               expiredMods == 1 ? "" : "s",
                                               expiredMods == 1 ? "has" : "have"));
+                NotifyAll();
             }
+        }
+
+        protected virtual void NotifyAll()
+        {
+            CharacterSheets.ForEach((sheet) => sheet.NotifyName(this.Name));
+            //CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(this.CurrentLevel, this.God));
+            //CharacterSheets.ForEach((sheet) => sheet.NotifyXp(this.XP, this.NextXP));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyGold(this.MyGold));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyHp(this.Hp, this.MaxHp));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyHunger(this.Hunger));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyDefences(this.CA, this.CASpecial));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyArmor(this.WornArmor));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyShield(this.EmbracedShield));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyWeapon(this.HandledWepon));
+            CharacterSheets.ForEach((sheet) => {
+                foreach (var stat in Stats.AllStats)
+                {
+                    sheet.NotifyStat(stat, this.Stats[stat]);
+                }
+            });
         }
 
         protected bool SomethingBlockView(Coord other)
