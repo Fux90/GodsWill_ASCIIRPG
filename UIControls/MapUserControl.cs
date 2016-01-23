@@ -6,7 +6,7 @@
 //#define DEBUG_CENTER_VIEWPORT
 //#define PREVENT_AI
 //#define DEBUG_ENEMY_SENSING
-#define DEBUG_SPELL_LAUNCH
+//#define DEBUG_SPELL_LAUNCH
 
 using System;
 using System.Collections.Generic;
@@ -57,6 +57,8 @@ namespace GodsWill_ASCIIRPG.UIControls
         Circle circle;
 #endif
         BackpackController backpackController;
+        SpeelbookController spellbookController;
+
         //MapController mapController;
         GameForm gameForm;
 
@@ -119,19 +121,35 @@ namespace GodsWill_ASCIIRPG.UIControls
                                         controlledPg.Map.Height - 1); }
         }
 
-        private AfterSelectionOperation afterSelectionOperation;
-        private AfterSelectionOperation CurrentAfterSelectionOperation
+        private AfterSelectionOperation afterValidSelectionOperation;
+        private AfterSelectionOperation CurrentAfterValidSelectionOperation
         {
             get
             {
-                var op = afterSelectionOperation;
-                afterSelectionOperation = null;
+                var op = afterValidSelectionOperation;
+                afterValidSelectionOperation = null;
                 return op == null ? defaultAfterSelectionOp : op;
             }
 
             set
             {
-                afterSelectionOperation = value;
+                afterValidSelectionOperation = value;
+            }
+        }
+
+        private AfterSelectionOperation afterInalidSelectionOperation;
+        private AfterSelectionOperation CurrentAfterInvalidSelectionOperation
+        {
+            get
+            {
+                var op = afterInalidSelectionOperation;
+                afterInalidSelectionOperation = null;
+                return op == null ? afterInalidSelectionOperation : op;
+            }
+
+            set
+            {
+                afterInalidSelectionOperation = value;
             }
         }
 
@@ -182,6 +200,14 @@ namespace GodsWill_ASCIIRPG.UIControls
             get
             {
                 return backpackController;
+            }
+        }
+
+        public SpeelbookController SpellbookController
+        {
+            get
+            {
+                return spellbookController;
             }
         }
 
@@ -293,7 +319,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                         EnterSelectionMode();
                         break;
                     case ControllerCommand.Player_ExitSelectionModeWithoutSelection:
-                        CurrentAfterSelectionOperation = defaultAfterSelectionOp;
+                        CurrentAfterValidSelectionOperation = defaultAfterSelectionOp;
+                        CurrentAfterInvalidSelectionOperation(selectorCursor.Position);
+                        CurrentAfterInvalidSelectionOperation = defaultAfterSelectionOp;
                         ExitSelectionMode();
                         break;
                     case ControllerCommand.SelectionCursor_MoveNorth:
@@ -309,8 +337,44 @@ namespace GodsWill_ASCIIRPG.UIControls
                         selectorCursor.Move(Direction.West, out acted);
                         break;
                     case ControllerCommand.SelectionCursor_PickedCell:
-                        acted = CurrentAfterSelectionOperation(selectorCursor.Position);
+                        acted = CurrentAfterValidSelectionOperation(selectorCursor.Position);
                         ExitSelectionMode();
+                        break;
+                    #endregion
+
+                    #region SPELLS
+                    case ControllerCommand.Player_CastSpell:
+                        spellbookController.Notify(ControllerCommand.Spellbook_Open);
+                        this.WaitForRefocusThenDo(() =>
+                        {
+                            if (spellbookController.ValidIndex)
+                            {
+                                var spell = controlledPg.Spellbook[spellbookController.SelectedIndex];
+                                var target = spell.Target;
+                                if(target.TargetType == TargetType.NumberOfEnemies)
+                                {
+                                    var xEnemies = target.NumberOfTargets;
+                                    var enemies = new List<Atom>();
+
+                                    while (xEnemies > 0)
+                                    {
+                                        CurrentAfterValidSelectionOperation = (selPos) => {
+                                            for (int i = xEnemies - 1; i > 0; i--)
+                                            {
+                                                enemies.Add(controlledPg.Map[selPos]);
+                                            }
+                                            return true;
+                                        };
+                                        CurrentAfterValidSelectionOperation = (selPos) => {
+                                            enemies.Add(controlledPg.Map[selPos]);
+                                            return true;
+                                        };
+                                        Notify(ControllerCommand.Player_EnterSelectionMode);
+                                        xEnemies--;
+                                    }
+                                }
+                            }
+                        });
                         break;
                     #endregion
 
@@ -381,6 +445,11 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
+            var modifiers = 0;
+            if (e.Alt) modifiers += 100;
+            if (e.Shift) modifiers += 10;
+            if (e.Control) modifiers += 1;
+
             switch (mode)
             {
                 case Modes.Normal:
@@ -395,7 +464,15 @@ namespace GodsWill_ASCIIRPG.UIControls
                             Notify(ControllerCommand.Player_MoveWest);
                             break;
                         case Keys.S:
-                            Notify(ControllerCommand.Player_MoveSouth);
+                                switch(modifiers)
+                                {
+                                    case 10:
+                                        Notify(ControllerCommand.Spellbook_Open);
+                                        break;
+                                    default:
+                                        Notify(ControllerCommand.Player_MoveSouth);
+                                        break;
+                                }
                             break;
                         case Keys.D:
                             Notify(ControllerCommand.Player_MoveEast);

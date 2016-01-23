@@ -30,6 +30,7 @@ namespace GodsWill_ASCIIRPG
         Shield embracedShield;
         Weapon handledWeapon;
         Backpack backpack;
+        Spellbook spellbook;;
         Stats stats;
 
         public int MyGold { get; protected set; }
@@ -73,6 +74,7 @@ namespace GodsWill_ASCIIRPG
         public Shield EmbracedShield { get { return embracedShield == null ? Shield.NoShield : embracedShield; } }
         public Weapon HandledWepon { get { return handledWeapon == null ? Weapon.UnarmedAttack : handledWeapon; } }
         public Backpack Backpack { get { return backpack; } }
+        public Spellbook Spellbook{ get { return spellbook; } }
 
         public TemporaryModifierCollection TempModifiers { get; private set; }
 

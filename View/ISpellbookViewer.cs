@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.View
 {
-    public interface ISpeelbookViewer : IViewer
+    public interface ISpellbookViewer : IViewer
     {
         void NotifyAdd(Spell[] spells);
     }

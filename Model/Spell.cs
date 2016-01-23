@@ -8,6 +8,26 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    public enum TargetType
+    {
+        Personal,
+        AllEnemies,
+        AllAllies,
+        NumberOfEnemies
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class Target : Attribute
+    {
+        public TargetType TargetType { get; private set; }
+        public int NumberOfTargets { get; set; }
+
+        public Target(TargetType targetType)
+        {
+            TargetType = targetType;
+        }
+    }
+
     public abstract class Spell : Descriptionable
     {
 
@@ -20,6 +40,16 @@ namespace GodsWill_ASCIIRPG.Model
                 return m.Length == 0 ? 0 : m[0].Turns;
             }
         }
+
+        public Target Target
+        {
+            get
+            {
+                var targetTypes = this.GetType().GetCustomAttributes(typeof(Target), false);
+                return targetTypes.Length == 0 ? new Target(Model.TargetType.Personal) : (Target)targetTypes[0];
+            }
+        }
+
         public bool IsFreeAction
         {
             get

@@ -37,5 +37,13 @@ namespace GodsWill_ASCIIRPG
         SelectionCursor_MoveSouth,
         SelectionCursor_MoveWest,
         SelectionCursor_PickedCell,
+        Spellbook_SelectPrevious,
+        Spellbook_SelectPreviousPage,
+        Spellbook_SelectNext,
+        Spellbook_SelectNextPage,
+        Spellbook_Pick,
+        Spellbook_Close,
+        Spellbook_Open,
+        Player_CastSpell,
     }
 }

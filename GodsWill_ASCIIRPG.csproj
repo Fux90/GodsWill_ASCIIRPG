@@ -53,6 +53,7 @@
     <Compile Include="Control\MapController.cs" />
     <Compile Include="Control\MenuController.cs" />
     <Compile Include="Control\PgController.cs" />
+    <Compile Include="Control\SpeelbookController.cs" />
     <Compile Include="Model\Allied.cs" />
     <Compile Include="Model\Animation.cs" />
     <Compile Include="Model\Circle.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Model\Shield.cs" />
     <Compile Include="Model\Shields\WoodenShield.cs" />
     <Compile Include="Model\Spell.cs" />
+    <Compile Include="Model\Spellbook.cs" />
     <Compile Include="Model\Spells\BlockSpellcasterFor.cs" />
     <Compile Include="Model\Spells\FireOrb.cs" />
     <Compile Include="Model\Spells\FreeAction.cs" />
@@ -170,6 +172,12 @@
     <Compile Include="UIControls\SingleMessageLogUserControl.Designer.cs">
       <DependentUpon>SingleMessageLogUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="UIControls\SpellbookUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UIControls\SpellbookUserControl.Designer.cs">
+      <DependentUpon>SpellbookUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\IAnimationViewer.cs" />
     <Compile Include="View\IAtomListener.cs" />
     <Compile Include="View\IBackpackViewer.cs" />
@@ -177,6 +185,7 @@
     <Compile Include="View\ISheetViewer.cs" />
     <Compile Include="View\IMapViewer.cs" />
     <Compile Include="View\IMenuViewer.cs" />
+    <Compile Include="View\ISpellbookViewer.cs" />
     <Compile Include="View\IViewer.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
