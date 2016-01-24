@@ -142,6 +142,12 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         {
 
         }
+
+        public override void SetTargets<T>(List<T> targets)
+        {
+            Targets.Clear();
+            targets.ForEach(target => Targets.Add((IDamageable)target));
+        }
     }
 
 }

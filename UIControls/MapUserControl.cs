@@ -402,60 +402,124 @@ namespace GodsWill_ASCIIRPG.UIControls
                                         var maxEnemies = target.NumericParameter;
                                         var chosenEnemies = 0;
                                         var targets = new List<Atom>();
+                                        targets.Clear();
+                                        spellBuilder.NotifyListeners("Select target");
 
-                                        CurrentAfterValidSelectionOperation = (selPos, allowOtherSel) =>
+                                        AfterSelectionOperation op = null;
+                                        op = (selPos, allowOtherSel) =>
                                         {
                                             var selTarget = controlledPg.Map[selPos];
-                                            var op = CurrentAfterValidSelectionOperation;
                                             var spellType = spellBuilder.SpellToBuildType;
                                             var permittedType = typeof(Atom);
 
-                                            if (spellType == typeof(HealSpell))
+                                            if (typeof(HealSpell).IsAssignableFrom(spellType))
                                             {
                                             }
-                                            else if (spellType == typeof(UtilitySpell))
+                                            else if (typeof(UtilitySpell).IsAssignableFrom(spellType))
                                             {
                                             }
-                                            else if (spellType == typeof(AttackSpell))
+                                            else if (typeof(AttackSpell).IsAssignableFrom(spellType))
                                             {
                                                 permittedType = typeof(IDamageable);
                                             }
 
                                             // If target is of the expected family type
+                                            
+                                            
                                             if (permittedType.IsAssignableFrom(selTarget.GetType()))
                                             {
                                                 if (!targets.Contains(selTarget))
                                                 {
                                                     chosenEnemies++;
                                                     targets.Add(selTarget);
-                                                    if (allowOtherSel && maxEnemies < chosenEnemies)
-                                                    {
-                                                        spellBuilder.SetTargets(targets);
-                                                        var spell = spellBuilder.Create(out issues);
-                                                        if (!issues)
-                                                        {
-                                                            controlledPg.CastSpell(spell, out acted);
-                                                        }
-
-                                                        return issues;
-                                                    }
                                                 }
                                                 else
                                                 {
                                                     spellBuilder.NotifyListeners("Target already selected");
                                                 }
+
+                                                if ((!allowOtherSel && targets.Count() > 0) || maxEnemies == chosenEnemies)
+                                                {
+                                                    spellBuilder.SetTargets(targets);
+                                                    var spell = spellBuilder.Create(out issues);
+                                                    if (!issues)
+                                                    {
+                                                        controlledPg.CastSpell(spell, out acted);
+                                                        this.Refresh();
+                                                        return acted;
+                                                    }
+
+                                                    return !issues;
+                                                }
                                             }
+                                           
                                             //else
                                             {
+                                                spellBuilder.NotifyListeners("Select next target");
                                                 // Select next target
-                                                CurrentAfterValidSelectionOperation = op;
+                                                CurrentAfterValidSelectionOperation = (AfterSelectionOperation)op.Clone();
                                                 EnterSelectionMode();
                                             }
-                                            
-                                            
-                                            return true;
+
+
+                                            return acted;
                                         };
-                                        CurrentAfterInvalidSelectionOperation = (selPos, allowOtherSel) =>
+                                        CurrentAfterValidSelectionOperation = op;
+                                            //CurrentAfterValidSelectionOperation = (selPos, allowOtherSel) =>
+                                            //{
+                                            //    var selTarget = controlledPg.Map[selPos];
+                                            //    var op = (AfterSelectionOperation)CurrentAfterValidSelectionOperation.Clone();
+                                            //    var spellType = spellBuilder.SpellToBuildType;
+                                            //    var permittedType = typeof(Atom);
+
+                                            //    if (typeof(HealSpell).IsAssignableFrom(spellType))
+                                            //    {
+                                            //    }
+                                            //    else if (typeof(UtilitySpell).IsAssignableFrom(spellType))
+                                            //    {
+                                            //    }
+                                            //    else if (typeof(AttackSpell).IsAssignableFrom(spellType))
+                                            //    {
+                                            //        permittedType = typeof(IDamageable);
+                                            //    }
+
+                                            //    // If target is of the expected family type
+                                            //    if (permittedType.IsAssignableFrom(selTarget.GetType()))
+                                            //    {
+                                            //        if (!targets.Contains(selTarget))
+                                            //        {
+                                            //            chosenEnemies++;
+                                            //            targets.Add(selTarget);
+                                            //            if (!allowOtherSel || maxEnemies == chosenEnemies)
+                                            //            {
+                                            //                spellBuilder.SetTargets(targets);
+                                            //                var spell = spellBuilder.Create(out issues);
+                                            //                if (!issues)
+                                            //                {
+                                            //                    controlledPg.CastSpell(spell, out acted);
+                                            //                    this.Refresh();
+                                            //                    return acted;
+                                            //                }
+
+                                            //                return !issues;
+                                            //            }
+                                            //        }
+                                            //        else
+                                            //        {
+                                            //            spellBuilder.NotifyListeners("Target already selected");
+                                            //        }
+                                            //    }
+                                            //    //else
+                                            //    {
+                                            //        // Select next target
+                                            //        CurrentAfterValidSelectionOperation = (AfterSelectionOperation)op.Clone();
+                                            //        EnterSelectionMode();
+                                            //    }
+
+
+                                            //    return acted;
+                                            //};
+                                            CurrentAfterInvalidSelectionOperation = (selPos, allowOtherSel) =>
                                         {
                                             acted = false;
                                             targets.Clear();
@@ -463,7 +527,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                                             return true;
                                         };
 
-                                        //Notify(ControllerCommand.Player_EnterSelectionMode);
+                                        EnterSelectionMode();
                                     }
                                     break;
                                 }

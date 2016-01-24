@@ -360,7 +360,7 @@ namespace GodsWill_ASCIIRPG
         public void CastSpell(Spell spell, out bool acted)
         {
             spell.Launch();
-            acted = spell.IsFreeAction;
+            acted = !spell.IsFreeAction;
         }
 
         public void LearnSpell(SpellBuilder spell)

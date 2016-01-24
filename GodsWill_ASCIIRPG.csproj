@@ -119,6 +119,7 @@
     <Compile Include="Model\Spell.cs" />
     <Compile Include="Model\Spellbook.cs" />
     <Compile Include="Model\Spells\BlockSpellcasterFor.cs" />
+    <Compile Include="Model\Spells\Devastation.cs" />
     <Compile Include="Model\Spells\FireOrb.cs" />
     <Compile Include="Model\Spells\FreeAction.cs" />
     <Compile Include="Model\Spells\SpellTypes.cs" />

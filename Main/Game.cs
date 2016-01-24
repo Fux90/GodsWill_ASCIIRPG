@@ -118,12 +118,21 @@ namespace GodsWill_ASCIIRPG
                 mapBuilder.AddAtom(book1);
 
                 mapBuilder.AddAtom(new WoodenShield(position: Coord.Random(mapBuilder.Width, mapBuilder.Height)));
-                var orcBuilder = AICharacter.DummyCharacter(typeof(Orc)).Builder;
-                orcBuilder.Position = new Coord(10, 12);
-                var orc = orcBuilder.Build();
-                mapBuilder.AddAtom(orc);
-                currentPg.Listeners.ForEach(listener => orc.RegisterListener(listener));
-                aiController.Register(orc);
+                var orcBuilder1 = AICharacter.DummyCharacter(typeof(Orc)).Builder;
+                orcBuilder1.Position = new Coord(10, 12);
+                var orc1 = orcBuilder1.Build();
+                mapBuilder.AddAtom(orc1);
+
+
+                var orcBuilder2 = AICharacter.DummyCharacter(typeof(Orc)).Builder;
+                orcBuilder2.Position = new Coord(13, 12);
+                var orc2 = orcBuilder2.Build();
+                mapBuilder.AddAtom(orc2);
+
+                currentPg.Listeners.ForEach(listener => orc1.RegisterListener(listener));
+                currentPg.Listeners.ForEach(listener => orc2.RegisterListener(listener));
+                aiController.Register(orc1);
+                aiController.Register(orc2);
 #else
                 mapBuilder.LoadFromFile("");
 #endif

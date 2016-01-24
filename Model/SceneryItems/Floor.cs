@@ -21,13 +21,13 @@ namespace GodsWill_ASCIIRPG.Model
                    "A walkable tile",
                    position)
         {
-
+            
         }
 
         public Floor()
             : this(new Coord())
         {
-
+            
         }
     }
 }

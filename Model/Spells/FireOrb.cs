@@ -29,13 +29,11 @@ namespace GodsWill_ASCIIRPG.Model.Spells
             }
         }
 
-        public override void SetTargets<T>(List<T> targets)
-        {
-            if(typeof(IDamageable).IsAssignableFrom(typeof(T)))
-            {
-                targets.ForEach( target => Targets.Add((IDamageable)target));
-            }
-        }
+        //public override void SetTargets<T>(List<T> targets)
+        //{
+        //    Targets.Clear();
+        //    targets.ForEach( target => Targets.Add((IDamageable)target));
+        //}
 
         public override string FullDescription
         {
@@ -46,6 +44,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         }
     }
 
+    [Target(TargetType.NumberOfTargets, NumericParameter = 1)]
     public class FireOrb : AttackSpell
     {
         protected FireOrb(ISpellcaster caster, IDamageable target, bool missedRealTarget)

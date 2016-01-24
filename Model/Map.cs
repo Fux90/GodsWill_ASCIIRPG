@@ -223,6 +223,13 @@ namespace GodsWill_ASCIIRPG
                     buffer[a.Position] = table[a.Position];
                     table[a.Position] = a;
                 }
+                else
+                {
+                    if(typeof(Floor).IsAssignableFrom(buffer[a.Position].GetType()))
+                    {
+                        buffer[a.Position] = a;
+                    }
+                }
             }
             else
             {
@@ -274,7 +281,9 @@ namespace GodsWill_ASCIIRPG
 
         public void RemoveFromBufferAt(Coord coord)
         {
-            buffer[coord] = new Floor(coord);
+            var floor = new Floor(coord);
+            buffer[coord] = floor;
+            floor.InsertInMap(this, coord);
         }
 
         public Atom UnderneathAtom(Coord pos)
