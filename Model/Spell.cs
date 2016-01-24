@@ -31,6 +31,23 @@ namespace GodsWill_ASCIIRPG.Model
 
     public abstract class Spell
     {
+        public static List<Type> All
+        {
+            get
+            {
+                var typeOfSpell = typeof(SpellBuilder);
+
+                var ts =
+                from a in AppDomain.CurrentDomain.GetAssemblies()
+                from t in a.GetTypes()
+                where t.IsSubclassOf(typeOfSpell)
+                where !t.IsAbstract
+                select t;
+
+                return ts.ToList<Type>();
+            }
+        }
+
         public string Name {  get { return this.GetType().Name.Clean(); } }
 
         public Pg.Level MinimumLevel
@@ -105,17 +122,16 @@ namespace GodsWill_ASCIIRPG.Model
 
     public abstract class SpellBuilder : Atom, Descriptionable
     {
-        public ISpellcaster Caster { get; private set; }
+        public ISpellcaster Caster { get; set; }
         public abstract string FullDescription { get; }
 
-        public SpellBuilder(ISpellcaster caster)
+        public SpellBuilder()
             : base( "Spellbuilder",
                     "SB",
                     Color.White,
                     true,
                     false)
         {
-            Caster = caster;
         }
 
         public abstract string Name { get; }
@@ -131,8 +147,7 @@ namespace GodsWill_ASCIIRPG.Model
     {
         public List<T> Targets { get; protected set; }
 
-        public SpellBuilder(ISpellcaster caster)
-            : base(caster)
+        public SpellBuilder()
         {
             Targets = new List<T>();
         }

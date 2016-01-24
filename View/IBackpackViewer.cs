@@ -8,6 +8,6 @@ namespace GodsWill_ASCIIRPG
 {
 	public interface IBackpackViewer : IViewer
 	{
-        void NotifyAdd(Item[] items);
+        void NotifyAddRemoval(Item[] items);
 	}
 }

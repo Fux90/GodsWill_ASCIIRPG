@@ -10,8 +10,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 {
     public class FireOrbBuilder : AttackSpellBuilder<FireOrb>
     {
-        public FireOrbBuilder(ISpellcaster caster)
-            : base(caster)
+        public FireOrbBuilder()
         {
 
         }

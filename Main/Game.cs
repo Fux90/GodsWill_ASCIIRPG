@@ -113,6 +113,10 @@ namespace GodsWill_ASCIIRPG
                         mapBuilder.AddAtom(new LongSword(position: new Coord() { X = i, Y = j }));
                     }
                 }
+
+                var book1 = ItemGenerators.GenerateByBuilderType(typeof(PrayerBookBuilder), position: new Coord(14, 7));
+                mapBuilder.AddAtom(book1);
+
                 mapBuilder.AddAtom(new WoodenShield(position: Coord.Random(mapBuilder.Width, mapBuilder.Height)));
                 var orcBuilder = AICharacter.DummyCharacter(typeof(Orc)).Builder;
                 orcBuilder.Position = new Coord(10, 12);

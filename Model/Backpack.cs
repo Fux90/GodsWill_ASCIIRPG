@@ -34,13 +34,13 @@ namespace GodsWill_ASCIIRPG.Model
         public void Add(Item item)
         {
             this.items.Add(item);
-            NotifyAdd();
+            NotifyAddRemoval();
         }
 
         public Item Remove(Item item)
         {
             return RemoveAt(this.items.IndexOf(item));
-            NotifyAdd();
+            NotifyAddRemoval();
         }
 
         public Item RemoveAt(int index)
@@ -53,12 +53,12 @@ namespace GodsWill_ASCIIRPG.Model
         public void RegisterViewer(IBackpackViewer viewer)
         {
             backPackViewers.Add(viewer);
-            NotifyAdd();
+            NotifyAddRemoval();
         }
 
-        public void NotifyAdd()
+        public void NotifyAddRemoval()
         {
-            backPackViewers.ForEach( viewer => viewer.NotifyAdd(this.ToArray()) );
+            backPackViewers.ForEach( viewer => viewer.NotifyAddRemoval(this.ToArray()) );
         }
 
         IEnumerator IEnumerable.GetEnumerator()

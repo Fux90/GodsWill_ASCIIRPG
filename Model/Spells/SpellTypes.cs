@@ -120,18 +120,16 @@ namespace GodsWill_ASCIIRPG.Model.Spells
     public abstract class HealSpellBuilder<SpellToBuild> : SpellBuilder<ISpellcaster, SpellToBuild>
         where SpellToBuild : HealSpell
     {
-        public HealSpellBuilder(ISpellcaster caster)
-            : base(caster)
+        public HealSpellBuilder()
         {
-            this.Targets = new List<ISpellcaster>() { caster };
+            this.Targets = new List<ISpellcaster>() { Caster };
         }
     }
 
     public abstract class UtilitySpellBuilder<SpellToBuild> : SpellBuilder<Atom, SpellToBuild>
         where SpellToBuild : UtilitySpell
     {
-        public UtilitySpellBuilder(ISpellcaster caster)
-            : base(caster)
+        public UtilitySpellBuilder()
         {
 
         }
@@ -140,8 +138,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
     public abstract class AttackSpellBuilder<SpellToBuild> : SpellBuilder<IDamageable, SpellToBuild>
         where SpellToBuild : AttackSpell
     {
-        public AttackSpellBuilder(ISpellcaster caster)
-            : base(caster)
+        public AttackSpellBuilder()
         {
 
         }
