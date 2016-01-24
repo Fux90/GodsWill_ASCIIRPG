@@ -52,12 +52,16 @@ namespace GodsWill_ASCIIRPG
 
             public void InitialMenu(List<IAtomListener> atomListeners,
                                     List<ISheetViewer> sheetViews,
-                                    List<IBackpackViewer> backpackViewers)
+                                    List<IBackpackViewer> backpackViewers,
+                                    List<ISpellbookViewer> spellbookViewers,
+                                    List<IAtomListener> secondarySpellsViewers)
             {
                 currentPg = new PgCreator() { God = Gods.Ares }.Create();
                 atomListeners.ForEach( listener => currentPg.RegisterListener(listener));
                 sheetViews.ForEach( sheet => currentPg.RegisterSheet(sheet));
                 backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterViewer(viewer));
+                spellbookViewers.ForEach(viewer => currentPg.Spellbook.RegisterViewer(viewer));
+                secondarySpellsViewers.ForEach(secondarySpellsViewer => currentPg.Spellbook.RegisterSecondaryView(secondarySpellsViewer));
             }
 
             public void GameInitialization( PgController pgController, 
@@ -123,6 +127,7 @@ namespace GodsWill_ASCIIRPG
 
                 pgController.Register(CurrentPg);
                 pgController.BackpackController.Register(CurrentPg.Backpack);
+                pgController.SpellbookController.Register(CurrentPg.Spellbook);
 
                 CurrentPg.InsertInMap(map, map.PlayerInitialPosition);
 

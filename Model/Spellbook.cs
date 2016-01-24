@@ -10,15 +10,16 @@ namespace GodsWill_ASCIIRPG.Model
 {
     public class Spellbook : IEnumerable
     {
-        List<Spell> spells;
+        List<SpellBuilder> spells;
         List<ISpellbookViewer> spellbookViewers;
+        IAtomListener spellSecondaryView;
 
         public int Count
         {
             get { return spells.Count; }
         }
 
-        public Spell this[int index]
+        public SpellBuilder this[int index]
         {
             get
             {
@@ -26,25 +27,35 @@ namespace GodsWill_ASCIIRPG.Model
             }
         }
 
-        public Spellbook(List<Spell> items = null)
+        public Spellbook(List<SpellBuilder> items = null, IAtomListener spellSecondaryView = null)
         {
-            this.spells = items != null ? items : new List<Spell>();
+            this.spells = items != null ? items : new List<SpellBuilder>();
             spellbookViewers = new List<ISpellbookViewer>();
+            this.spellSecondaryView = spellSecondaryView;
         }
 
-        public void Add(Spell spell)
+        public bool Add(SpellBuilder spell)
         {
-            this.spells.Add(spell);
-            NotifyAdd();
+            if (this.spells.Contains(spell))
+            {
+                return false;
+            }
+            else
+            { 
+                this.spells.Add(spell);
+                spell.RegisterListener(spellSecondaryView);
+                NotifyAdd();
+                return true;
+            }
         }
 
-        public Spell Remove(Spell spell)
+        public SpellBuilder Remove(SpellBuilder spell)
         {
             NotifyAdd();
             return RemoveAt(this.spells.IndexOf(spell));
         }
 
-        public Spell RemoveAt(int index)
+        public SpellBuilder RemoveAt(int index)
         {
             var removedSpell = spells[index];
             spells.RemoveAt(index);
@@ -55,6 +66,11 @@ namespace GodsWill_ASCIIRPG.Model
         {
             spellbookViewers.Add(viewer);
             NotifyAdd();
+        }
+
+        public void RegisterSecondaryView(IAtomListener spellSecondaryView)
+        {
+            this.spellSecondaryView = spellSecondaryView;
         }
 
         public void NotifyAdd()
@@ -72,11 +88,11 @@ namespace GodsWill_ASCIIRPG.Model
             return new SpellbookEnum(spells.ToArray());
         }
 
-        public Spell[] ToArray()
+        public SpellBuilder[] ToArray()
         {
             if (this.Count > 0)
             {
-                var res = new Spell[this.Count];
+                var res = new SpellBuilder[this.Count];
                 for (int i = 0; i < this.Count; i++)
                 {
                     res[i] = this[i];
@@ -84,14 +100,14 @@ namespace GodsWill_ASCIIRPG.Model
                 return res;
             }
 
-            return new Spell[] { };
+            return new SpellBuilder[] { };
         }
 
-        public List<Spell> ToList()
+        public List<SpellBuilder> ToList()
         {
             if (this.Count > 0)
             {
-                var res = new List<Spell>(this.Count);
+                var res = new List<SpellBuilder>(this.Count);
                 for (int i = 0; i < this.Count; i++)
                 {
                     res.Add(this[i]);
@@ -99,19 +115,19 @@ namespace GodsWill_ASCIIRPG.Model
                 return res;
             }
 
-            return new List<Spell>();
+            return new List<SpellBuilder>();
         }
     }
 
     public class SpellbookEnum : IEnumerator
     {
-        Spell[] spells;
+        SpellBuilder[] spells;
 
         // Enumerators are positioned before the first element
         // until the first MoveNext() call.
         int position = -1;
 
-        public SpellbookEnum(Spell[] list)
+        public SpellbookEnum(SpellBuilder[] list)
         {
             spells = list;
         }
@@ -135,7 +151,7 @@ namespace GodsWill_ASCIIRPG.Model
             }
         }
 
-        public Spell Current
+        public SpellBuilder Current
         {
             get
             {

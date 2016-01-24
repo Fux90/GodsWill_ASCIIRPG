@@ -26,6 +26,7 @@ namespace GodsWill_ASCIIRPG
         public Shield Shield { get; set; }
         public Weapon Weapon { get; set; }
         public Backpack Backpack { get; set; }
+        public Spellbook Spellbook { get; set; }
         public string Symbol { get; private set; }
         public Color Color { get; private set; }
         public God God { get; set; }
@@ -48,6 +49,7 @@ namespace GodsWill_ASCIIRPG
             Shield = null;
             Weapon = null;
             Backpack = new Backpack();
+            Spellbook = new Spellbook();
             Symbol = "@";
             Color = Color.White;
             God = null;
@@ -77,6 +79,7 @@ namespace GodsWill_ASCIIRPG
                             Shield,
                             Weapon,
                             Backpack,
+                            Spellbook,
                             God,
                             Symbol,
                             Color);
@@ -122,6 +125,9 @@ namespace GodsWill_ASCIIRPG
         public int PerceptionRange { get; protected set; }
         public int LightRange { get { return 0; } }
 
+        private Spellbook spellbook;
+        public Spellbook Spellbook { get { return spellbook; } }
+
         public Pg(  string name,
                     Level level,
                     int currentXp,
@@ -136,6 +142,7 @@ namespace GodsWill_ASCIIRPG
                     Shield shield,
                     Weapon weapon,
                     Backpack backpack,
+                    Spellbook spellbook,
                     God god,
                     string symbol,
                     Color color)
@@ -157,6 +164,7 @@ namespace GodsWill_ASCIIRPG
             maxLevel = Enum.GetValues(typeof(Level)).Length - 1;
             xp = new int[] { currentXp, nextXp };
             this.PerceptionRange = perception;
+            this.spellbook = spellbook;
         }
 
         public override void GainExperience(int xp)
@@ -349,10 +357,27 @@ namespace GodsWill_ASCIIRPG
             return true;
         }
 
-        public void LaunchSpell(Spell spell, out bool acted)
+        public void CastSpell(Spell spell, out bool acted)
         {
             spell.Launch();
             acted = spell.IsFreeAction;
+        }
+
+        public void LearnSpell(SpellBuilder spell)
+        {
+            if(this.Spellbook.Add(spell))
+            {
+                NotifyListeners(String.Format("{0} already known", spell.Name));
+            }
+            else
+            {
+                NotifyListeners(String.Format("{0} learnt", spell.Name));
+            }
+        }
+
+        public void ForgetSpell(SpellBuilder spell)
+        {
+            this.Spellbook.Remove(spell);
         }
     }
 }

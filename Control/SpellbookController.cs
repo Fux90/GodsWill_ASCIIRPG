@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Control
 {
-    public interface SpeelbookController : Controller<Spellbook>
+    public interface SpellbookController : Controller<Spellbook>
     {
         int SelectedIndex { get; }
         bool ValidIndex { get; }

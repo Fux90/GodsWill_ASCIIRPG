@@ -9,6 +9,6 @@ namespace GodsWill_ASCIIRPG.View
 {
     public interface ISpellbookViewer : IViewer
     {
-        void NotifyAdd(Spell[] spells);
+        void NotifyAdd(SpellBuilder[] spells);
     }
 }

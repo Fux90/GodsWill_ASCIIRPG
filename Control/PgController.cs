@@ -10,5 +10,6 @@ namespace GodsWill_ASCIIRPG.Control
     {
         //MapController MapController { get; }
         BackpackController BackpackController { get; }
+        SpellbookController SpellbookController { get; }
     }
 }

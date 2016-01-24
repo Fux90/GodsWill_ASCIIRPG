@@ -14,14 +14,14 @@ using GodsWill_ASCIIRPG.View;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
-    public partial class SpellbookUserControl : UserControl, SpeelbookController, ISpellbookViewer
+    public partial class SpellbookUserControl : UserControl, SpellbookController, ISpellbookViewer
     {
         private const int PaddingValue = 4;
 
         Spellbook controlledSpellbook;
 
         TableLayoutPanel gamePanel;
-        DescriptionList<Spell> descriptionList;
+        DescriptionList<SpellBuilder> descriptionList;
 
         public bool ValidIndex { get; private set; }
 
@@ -43,7 +43,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.gamePanel = gamePanel;
             this.BackColor = Color.Black;
 
-            descriptionList = new DescriptionList<Spell>();
+            descriptionList = new DescriptionList<SpellBuilder>();
             descriptionList.KeyUp += OnKeyUp;
             descriptionList.Dock = DockStyle.Fill;
             descriptionList.Stringify = (item) => String.Format("[{0}] {1}",
@@ -159,7 +159,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             descriptionList.Items = null;
         }
 
-        public void NotifyAdd(Spell[] spellsInSpellbook)
+        public void NotifyAdd(SpellBuilder[] spellsInSpellbook)
         {
             descriptionList.Items = spellsInSpellbook.ToList();
         }

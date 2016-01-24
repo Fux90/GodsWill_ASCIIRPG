@@ -45,5 +45,11 @@ namespace GodsWill_ASCIIRPG
         Spellbook_Close,
         Spellbook_Open,
         Player_CastSpell,
+        SelectionCursor_PickedCellOneOfMany,
+        Backpack_UseItem,
+        Backpack_PutOnArmor,
+        Backpack_EmbraceShield,
+        Backpack_HandleWeapon,
+        Player_UseItem,
     }
 }

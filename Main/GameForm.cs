@@ -31,7 +31,11 @@ namespace GodsWill_ASCIIRPG
 
             var singleMsgConsole = new SingleMessageLogUserControl();
             var backpackControl = new BackpackUserControl(tblGameScreen);
-            var mapViewControl = new MapUserControl(this, backpackControl, singleMsgConsole);
+            var spellbookControl = new SpellbookUserControl(tblGameScreen);
+            var mapViewControl = new MapUserControl(this, 
+                                                    backpackControl, 
+                                                    spellbookControl, 
+                                                    singleMsgConsole);
             var characterSheet = new CharacterSheetUserControl();
             var logConsole = new LogUserControl();            
 
@@ -67,13 +71,16 @@ namespace GodsWill_ASCIIRPG
 
             this.Controls.Add(tblGameScreen);
             this.Controls.Add(backpackControl);
+            this.Controls.Add(spellbookControl);
 
             this.Text = GameName;
 
             Game.Current.Init();
             Game.Current.InitialMenu(   new List<IAtomListener> { logConsole },
                                         new List<ISheetViewer> { characterSheet },
-                                        new List<IBackpackViewer> { backpackControl });
+                                        new List<IBackpackViewer> { backpackControl },
+                                        new List<ISpellbookViewer> { spellbookControl },
+                                        new List<IAtomListener> { singleMsgConsole });
             Game.Current.GameInitialization(mapViewControl, 
                                             mapViewControl, 
                                             mapViewControl,

@@ -8,32 +8,34 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model.Spells
 {
-    public class FireOrb : AttackSpell
+    public class FireOrbBuilder : AttackSpellBuilder<FireOrb>
     {
-        protected FireOrb(ISpellcaster sender, IDamageable target, bool missedRealTarget)
-            : base( sender,
-                    new List<IDamageable>() { target },
-                    new DamageCalculator(
-                       new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
-                       {
-                           { DamageType.Fire, () => Dice.Throws(8) }
-                       }),
-                    new FireBallAnimation(((Atom)sender).Position, ((Atom)target).Position, Color.Red))
+        public FireOrbBuilder(ISpellcaster caster)
+            : base(caster)
         {
-            var msg = new StringBuilder();
 
-            if (missedRealTarget)
+        }
+
+        public override FireOrb InnerCreate(out bool issues)
+        {
+            if (Targets.Count > 0)
             {
-                msg.AppendFormat("{0} misses his target!", ((Atom)sender).Name);
+                issues = false;
+                return FireOrb.Create(Caster, Targets[0]);
             }
+            else
+            {
+                issues = true;
+                return null;
+            }
+        }
 
-            msg.AppendFormat("{0} hits {1}{2} with {3}",
-                                ((Atom)sender).Name,
-                                missedRealTarget ? "instead " : "",
-                                ((Atom)target).Name,
-                                this.Name);
-
-            ((Atom)sender).NotifyListeners(msg.ToString());
+        public override void SetTargets<T>(List<T> targets)
+        {
+            if(typeof(IDamageable).IsAssignableFrom(typeof(T)))
+            {
+                targets.ForEach( target => Targets.Add((IDamageable)target));
+            }
         }
 
         public override string FullDescription
@@ -42,6 +44,35 @@ namespace GodsWill_ASCIIRPG.Model.Spells
             {
                 return "Fire orb";
             }
+        }
+    }
+
+    public class FireOrb : AttackSpell
+    {
+        protected FireOrb(ISpellcaster caster, IDamageable target, bool missedRealTarget)
+            : base( caster,
+                    new List<IDamageable>() { target },
+                    new DamageCalculator(
+                       new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
+                       {
+                           { DamageType.Fire, () => Dice.Throws(8) }
+                       }),
+                    new FireBallAnimation(((Atom)caster).Position, ((Atom)target).Position, Color.Red))
+        {
+            var msg = new StringBuilder();
+
+            if (missedRealTarget)
+            {
+                msg.AppendFormat("{0} misses his target!", ((Atom)caster).Name);
+            }
+
+            msg.AppendFormat("{0} hits {1}{2} with {3}",
+                                ((Atom)caster).Name,
+                                missedRealTarget ? "instead " : "",
+                                ((Atom)target).Name,
+                                this.Name);
+
+            ((Atom)caster).NotifyListeners(msg.ToString());
         }
 
         public static FireOrb Create(ISpellcaster sender, IDamageable target)

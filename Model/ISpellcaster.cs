@@ -8,6 +8,9 @@ namespace GodsWill_ASCIIRPG.Model
 {
     public interface ISpellcaster : IStatsProvided, IBlockable
     {
-        void LaunchSpell(Spell spell, out bool acted);
+        Spellbook Spellbook { get; }
+        void CastSpell(Spell spell, out bool acted);
+        void LearnSpell(SpellBuilder spell);
+        void ForgetSpell(SpellBuilder spell);
     }
 }

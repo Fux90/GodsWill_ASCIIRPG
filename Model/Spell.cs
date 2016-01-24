@@ -5,22 +5,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace GodsWill_ASCIIRPG.Model
 {
     public enum TargetType
     {
         Personal,
-        AllEnemies,
-        AllAllies,
-        NumberOfEnemies
+        AllEnemiesInRange,
+        AllAlliesInRange,
+        NumberOfTargets
     }
 
     [AttributeUsage(AttributeTargets.Class)]
     public class Target : Attribute
     {
         public TargetType TargetType { get; private set; }
-        public int NumberOfTargets { get; set; }
+        public int NumericParameter{ get; set; }
 
         public Target(TargetType targetType)
         {
@@ -28,25 +29,26 @@ namespace GodsWill_ASCIIRPG.Model
         }
     }
 
-    public abstract class Spell : Descriptionable
+    public abstract class Spell
     {
-
         public string Name {  get { return this.GetType().Name.Clean(); } }
+
+        public Pg.Level MinimumLevel
+        {
+            get
+            {
+                var prerequisite = this.GetType().GetCustomAttributes(typeof(Prerequisite), false);
+                return prerequisite.Length > 0
+                    ? ((Prerequisite)prerequisite[0]).MinimumLevel
+                    : Pg.Level.Novice;
+            }
+        }
         private int StopForTurns
         {
             get
             {
                 var m = (BlockSpellcasterFor[])this.GetType().GetCustomAttributes(typeof(BlockSpellcasterFor), false);
                 return m.Length == 0 ? 0 : m[0].Turns;
-            }
-        }
-
-        public Target Target
-        {
-            get
-            {
-                var targetTypes = this.GetType().GetCustomAttributes(typeof(Target), false);
-                return targetTypes.Length == 0 ? new Target(Model.TargetType.Personal) : (Target)targetTypes[0];
             }
         }
 
@@ -63,8 +65,6 @@ namespace GodsWill_ASCIIRPG.Model
         {
             get; private set;
         }
-
-        public abstract string FullDescription { get; }
 
         public Spell(ISpellcaster launcher, Animation animation)
         {
@@ -100,6 +100,78 @@ namespace GodsWill_ASCIIRPG.Model
             }
 
             Effect(targets, parameters);
+        }
+    }
+
+    public abstract class SpellBuilder : Atom, Descriptionable
+    {
+        public ISpellcaster Caster { get; private set; }
+        public abstract string FullDescription { get; }
+
+        public SpellBuilder(ISpellcaster caster)
+            : base( "Spellbuilder",
+                    "SB",
+                    Color.White,
+                    true,
+                    false)
+        {
+            Caster = caster;
+        }
+
+        public abstract string Name { get; }
+        public abstract Target Target { get; }
+        public abstract Spell Create(out bool issues);
+
+        public abstract Type SpellToBuildType { get; }
+        public abstract void SetTargets<T>(List<T> targets);
+    }
+
+    public abstract class SpellBuilder<T, SpellToBuild> : SpellBuilder
+        where SpellToBuild : Spell
+    {
+        public List<T> Targets { get; protected set; }
+
+        public SpellBuilder(ISpellcaster caster)
+            : base(caster)
+        {
+            Targets = new List<T>();
+        }
+
+        public override string Name
+        {
+            get
+            {
+                return typeof(SpellToBuild).Name.Clean();
+            }
+        }
+
+        public override Spell Create(out bool issues)
+        {
+            return (Spell)InnerCreate(out issues);
+        }
+
+        public abstract SpellToBuild InnerCreate(out bool issues);
+
+        public override Target Target
+        {
+            get
+            {
+                var targetTypes = typeof(SpellToBuild).GetCustomAttributes(typeof(Target), false);
+                return targetTypes.Length == 0 ? new Target(Model.TargetType.Personal) : (Target)targetTypes[0];
+            }
+        }
+
+        public override Type SpellToBuildType
+        {
+            get
+            {
+                return typeof(SpellToBuild);
+            }
+        }
+
+        public override bool Interaction(Atom interactor)
+        {
+            return false;
         }
     }
 }

@@ -50,7 +50,7 @@ namespace GodsWill_ASCIIRPG
             IsPickable = true;
         }
 
-        public bool ConsumeUse()
+        protected bool ConsumeUse()
         {
             if (uses > 0)
             {

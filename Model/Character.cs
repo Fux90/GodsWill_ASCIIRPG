@@ -30,7 +30,7 @@ namespace GodsWill_ASCIIRPG
         Shield embracedShield;
         Weapon handledWeapon;
         Backpack backpack;
-        Spellbook spellbook;;
+        //Spellbook spellbook;
         Stats stats;
 
         public int MyGold { get; protected set; }
@@ -74,7 +74,7 @@ namespace GodsWill_ASCIIRPG
         public Shield EmbracedShield { get { return embracedShield == null ? Shield.NoShield : embracedShield; } }
         public Weapon HandledWepon { get { return handledWeapon == null ? Weapon.UnarmedAttack : handledWeapon; } }
         public Backpack Backpack { get { return backpack; } }
-        public Spellbook Spellbook{ get { return spellbook; } }
+        //public Spellbook Spellbook{ get { return spellbook; } }
 
         public TemporaryModifierCollection TempModifiers { get; private set; }
 
@@ -143,6 +143,11 @@ namespace GodsWill_ASCIIRPG
         {
             this.MyGold += gold.Amount;
             this.Map.Remove(gold);
+        }
+
+        public virtual void UseItem(Item item)
+        {
+            item.ActiveUse(this);
         }
 
         public bool GiveAwayGold(int amount, out Gold gold)

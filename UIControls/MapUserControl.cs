@@ -29,8 +29,8 @@ namespace GodsWill_ASCIIRPG.UIControls
     public partial class MapUserControl 
         : UserControl, PgController, AIController, IMapViewer, IAnimationViewer
     {
-        public delegate bool AfterSelectionOperation(Coord selPos);
-        private readonly AfterSelectionOperation defaultAfterSelectionOp = (selPos) => 
+        public delegate bool AfterSelectionOperation(Coord selPos, bool allowOtherSelection = false);
+        private readonly AfterSelectionOperation defaultAfterSelectionOp = (selPos, otherSel) => 
         {
             MessageBox.Show("Selected cell " + selPos.ToString());
             return false;
@@ -57,7 +57,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         Circle circle;
 #endif
         BackpackController backpackController;
-        SpeelbookController spellbookController;
+        SpellbookController spellbookController;
 
         //MapController mapController;
         GameForm gameForm;
@@ -144,7 +144,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             {
                 var op = afterInalidSelectionOperation;
                 afterInalidSelectionOperation = null;
-                return op == null ? afterInalidSelectionOperation : op;
+                return op == null ? defaultAfterSelectionOp : op;
             }
 
             set
@@ -171,6 +171,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         public MapUserControl(  GameForm gameForm, 
                                 BackpackController backpackController,
+                                SpellbookController spellbookController,
                                 IAtomListener selectorMsgListener)
         {
             InitializeComponent();
@@ -181,6 +182,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
             this.aiCharacters = new List<AICharacter>();
             this.backpackController = backpackController;
+            this.spellbookController = spellbookController;
             this.gameForm = gameForm;
 
             this.selectorCursor.RegisterListener(selectorMsgListener);
@@ -203,7 +205,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
         }
 
-        public SpeelbookController SpellbookController
+        public SpellbookController SpellbookController
         {
             get
             {
@@ -240,6 +242,32 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                     case ControllerCommand.Backpack_Open:
                         backpackController.Notify(ControllerCommand.Backpack_Open);
+                        this.WaitForRefocusThenDo(() =>
+                        {
+                            if (backpackController.ValidIndex)
+                            {
+                                var item = controlledPg.Backpack[backpackController.SelectedIndex];
+
+                                switch (backpackController.RapidOperation)
+                                {
+                                    case RapidOperation.Embrace:
+                                        controlledPg.EmbraceShield(item);
+                                        break;
+                                    case RapidOperation.Handle:
+                                        controlledPg.HandleWeapon(item);
+                                        break;
+                                    case RapidOperation.PutOn:
+                                        controlledPg.WearArmor(item);
+                                        break;
+                                    case RapidOperation.Use:
+                                        controlledPg.UseItem(item);
+                                        break;
+                                    case RapidOperation.None:
+                                    default:
+                                        break;
+                                }
+                            }
+                        });
                         break;
                     case ControllerCommand.Player_HandleWeapon:
                         backpackController.Notify(ControllerCommand.Backpack_Open);
@@ -279,6 +307,16 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                     case ControllerCommand.Player_PutAwayShield:
                         controlledPg.DisembraceShield();
+                        break;
+                    case ControllerCommand.Player_UseItem:
+                        backpackController.Notify(ControllerCommand.Backpack_Open);
+                        this.WaitForRefocusThenDo(() =>
+                        {
+                            if (backpackController.ValidIndex)
+                            {
+                                controlledPg.UseItem(controlledPg.Backpack[backpackController.SelectedIndex]);
+                            }
+                        });
                         break;
                     #endregion
 
@@ -340,6 +378,10 @@ namespace GodsWill_ASCIIRPG.UIControls
                         acted = CurrentAfterValidSelectionOperation(selectorCursor.Position);
                         ExitSelectionMode();
                         break;
+                    case ControllerCommand.SelectionCursor_PickedCellOneOfMany:
+                        ExitSelectionMode();
+                        acted = CurrentAfterValidSelectionOperation(selectorCursor.Position, true);
+                        break;
                     #endregion
 
                     #region SPELLS
@@ -349,29 +391,81 @@ namespace GodsWill_ASCIIRPG.UIControls
                         {
                             if (spellbookController.ValidIndex)
                             {
-                                var spell = controlledPg.Spellbook[spellbookController.SelectedIndex];
-                                var target = spell.Target;
-                                if(target.TargetType == TargetType.NumberOfEnemies)
-                                {
-                                    var xEnemies = target.NumberOfTargets;
-                                    var enemies = new List<Atom>();
+                                var spellBuilder = (SpellBuilder)controlledPg.Spellbook[spellbookController.SelectedIndex];
+                                var target = spellBuilder.Target;
+                                var issues = false;
 
-                                    while (xEnemies > 0)
+                                switch(target.TargetType)
+                                {
+                                    case TargetType.NumberOfTargets:
                                     {
-                                        CurrentAfterValidSelectionOperation = (selPos) => {
-                                            for (int i = xEnemies - 1; i > 0; i--)
+                                        var maxEnemies = target.NumericParameter;
+                                        var chosenEnemies = 0;
+                                        var targets = new List<Atom>();
+
+                                        CurrentAfterValidSelectionOperation = (selPos, allowOtherSel) =>
+                                        {
+                                            var selTarget = controlledPg.Map[selPos];
+                                            var op = CurrentAfterValidSelectionOperation;
+                                            var spellType = spellBuilder.SpellToBuildType;
+                                            var permittedType = typeof(Atom);
+
+                                            if (spellType == typeof(HealSpell))
                                             {
-                                                enemies.Add(controlledPg.Map[selPos]);
                                             }
+                                            else if (spellType == typeof(UtilitySpell))
+                                            {
+                                            }
+                                            else if (spellType == typeof(AttackSpell))
+                                            {
+                                                permittedType = typeof(IDamageable);
+                                            }
+
+                                            // If target is of the expected family type
+                                            if (permittedType.IsAssignableFrom(selTarget.GetType()))
+                                            {
+                                                if (!targets.Contains(selTarget))
+                                                {
+                                                    chosenEnemies++;
+                                                    targets.Add(selTarget);
+                                                    if (allowOtherSel && maxEnemies < chosenEnemies)
+                                                    {
+                                                        spellBuilder.SetTargets(targets);
+                                                        var spell = spellBuilder.Create(out issues);
+                                                        if (!issues)
+                                                        {
+                                                            controlledPg.CastSpell(spell, out acted);
+                                                        }
+
+                                                        return issues;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    spellBuilder.NotifyListeners("Target already selected");
+                                                }
+                                            }
+                                            //else
+                                            {
+                                                // Select next target
+                                                CurrentAfterValidSelectionOperation = op;
+                                                EnterSelectionMode();
+                                            }
+                                            
+                                            
                                             return true;
                                         };
-                                        CurrentAfterValidSelectionOperation = (selPos) => {
-                                            enemies.Add(controlledPg.Map[selPos]);
+                                        CurrentAfterInvalidSelectionOperation = (selPos, allowOtherSel) =>
+                                        {
+                                            acted = false;
+                                            targets.Clear();
+                                            spellBuilder.NotifyListeners("Spell dismissed");
                                             return true;
                                         };
-                                        Notify(ControllerCommand.Player_EnterSelectionMode);
-                                        xEnemies--;
+
+                                        //Notify(ControllerCommand.Player_EnterSelectionMode);
                                     }
+                                    break;
                                 }
                             }
                         });
@@ -467,7 +561,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                                 switch(modifiers)
                                 {
                                     case 10:
-                                        Notify(ControllerCommand.Spellbook_Open);
+                                        Notify(ControllerCommand.Player_CastSpell);
                                         break;
                                     default:
                                         Notify(ControllerCommand.Player_MoveSouth);
@@ -486,6 +580,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                         case Keys.I:
                             Notify(ControllerCommand.Backpack_Open);
                             break;
+                                // TODO: If pressed Alt activate ActivePower of weapon, shield, armor
                         case Keys.H:
                             Notify(e.Control
                                     ? ControllerCommand.Player_UnhandleWeapon
@@ -501,6 +596,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                                     ? ControllerCommand.Player_PutAwayShield
                                     : ControllerCommand.Player_EmbraceShield);
                             break;
+                            case Keys.U:
+                                Notify(ControllerCommand.Player_UseItem);
+                                break;
 #endregion
 
 #if DEBUG_LINE
@@ -577,14 +675,17 @@ namespace GodsWill_ASCIIRPG.UIControls
                         case Keys.D:
                             Notify(ControllerCommand.SelectionCursor_MoveEast);
                             break;
-#endregion
+                            #endregion
 
                         case Keys.Enter:
                             Notify(ControllerCommand.SelectionCursor_PickedCell);
                             break;
-                        case Keys.Escape:
-                            Notify(ControllerCommand.Player_ExitSelectionModeWithoutSelection);
+                        case Keys.Add:
+                            Notify(ControllerCommand.SelectionCursor_PickedCellOneOfMany);
                             break;
+                        case Keys.Escape:
+                        Notify(ControllerCommand.Player_ExitSelectionModeWithoutSelection);
+                        break;
                     }    
                 }
                 break;

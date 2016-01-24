@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -22,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -53,7 +56,7 @@
     <Compile Include="Control\MapController.cs" />
     <Compile Include="Control\MenuController.cs" />
     <Compile Include="Control\PgController.cs" />
-    <Compile Include="Control\SpeelbookController.cs" />
+    <Compile Include="Control\SpellbookController.cs" />
     <Compile Include="Model\Allied.cs" />
     <Compile Include="Model\Animation.cs" />
     <Compile Include="Model\Circle.cs" />
@@ -62,11 +65,14 @@
     <Compile Include="Model\GeometricItem.cs" />
     <Compile Include="Model\IBlockable.cs" />
     <Compile Include="Model\IDamageable.cs" />
+    <Compile Include="Model\IDescriptionable.cs" />
     <Compile Include="Model\IFighter.cs" />
     <Compile Include="Model\IMerchant.cs" />
     <Compile Include="Model\ISpellcaster.cs" />
     <Compile Include="Model\IStatsProvided.cs" />
     <Compile Include="Model\Items\Gold.cs" />
+    <Compile Include="Model\Items\ItemGenerator.cs" />
+    <Compile Include="Model\Items\PrayerBook.cs" />
     <Compile Include="Model\Perception.cs" />
     <Compile Include="Model\Perceptions\ListenPerception.cs" />
     <Compile Include="Model\FireBallAnimation.cs" />
@@ -195,6 +201,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="UIControls\LogUserControl.resx">
       <DependentUpon>LogUserControl.cs</DependentUpon>
@@ -202,6 +209,7 @@
     <EmbeddedResource Include="UIControls\SingleMessageLogUserControl.resx">
       <DependentUpon>SingleMessageLogUserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
