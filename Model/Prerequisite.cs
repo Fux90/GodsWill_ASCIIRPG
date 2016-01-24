@@ -33,5 +33,16 @@ namespace GodsWill_ASCIIRPG.Model
         {
             throw new NotImplementedException();
         }
+
+        public override string ToString()
+        {
+            var meString = new StringBuilder();
+
+            meString.AppendLine("Prerequisites:");
+            meString.AppendLine(String.Format("Level: {0}", MinimumLevel.ToString()));
+            meString.AppendLine(MinimumStats.ToVerticalString());
+
+            return meString.ToString();
+        }
     }
 }

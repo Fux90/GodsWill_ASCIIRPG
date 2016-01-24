@@ -34,6 +34,11 @@ namespace GodsWill_ASCIIRPG.Model
             this.spellSecondaryView = spellSecondaryView;
         }
 
+        public bool Contains(SpellBuilder spell)
+        {
+            return this.spells.Contains(spell);
+        }
+
         public bool Add(SpellBuilder spell)
         {
             if (this.spells.Contains(spell))

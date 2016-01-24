@@ -114,7 +114,7 @@ namespace GodsWill_ASCIIRPG
                     }
                 }
 
-                var book1 = ItemGenerators.GenerateByBuilderType(typeof(PrayerBookBuilder), position: new Coord(14, 7));
+                var book1 = ItemGenerators.GenerateByBuilderType(typeof(PrayerBookBuilder), position: new Coord(2, 1));
                 mapBuilder.AddAtom(book1);
 
                 mapBuilder.AddAtom(new WoodenShield(position: Coord.Random(mapBuilder.Width, mapBuilder.Height)));

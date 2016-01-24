@@ -121,5 +121,23 @@ namespace GodsWill_ASCIIRPG
             }
             return result;
         }
+
+        public string ToVerticalString(bool onlyNotNull = false)
+        {
+            var str = new StringBuilder();
+            var aS = Stats.AllStats;
+            foreach (StatsType stat in aS)
+            {
+                var value = this[stat];
+                if (onlyNotNull && value == 0)
+                {
+                    continue;
+                }
+                str.AppendLine(String.Format(   "{0}: {1}", 
+                                                stat.ToString(),
+                                                value));
+            }
+            return str.ToString();
+        }
     }
 }

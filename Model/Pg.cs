@@ -363,15 +363,35 @@ namespace GodsWill_ASCIIRPG
             acted = !spell.IsFreeAction;
         }
 
-        public void LearnSpell(SpellBuilder spell)
+        public bool LearnSpell(SpellBuilder spell, int percentageOfSuccess)
         {
-            if(this.Spellbook.Add(spell))
+            if (spell.SatisfyRequisite(this))
             {
-                NotifyListeners(String.Format("{0} already known", spell.Name));
+                if(this.Spellbook.Contains(spell))
+                {
+                    NotifyListeners(String.Format("{0} already known", spell.Name));
+                    return false;
+                }
+
+                var chance = Dice.Throws(new Dice(nFaces: 100));
+                // Every +1 in modifiers for a d20 is 5%
+                chance -= this.Stats[StatsType.Mental].ModifierOfStat() * 5;
+                if (percentageOfSuccess == 100 || chance < percentageOfSuccess)
+                {
+                    this.Spellbook.Add(spell);
+                    NotifyListeners(String.Format("{0} learnt", spell.Name));
+                    return true;
+                }
+                else
+                {
+                    NotifyListeners(String.Format("Ritual has gone wrong!!", spell.Name));
+                    return true;
+                }
             }
             else
             {
-                NotifyListeners(String.Format("{0} learnt", spell.Name));
+                NotifyListeners(String.Format("Can't satisfy prerequisites to learn {0}", spell.Name));
+                return false;
             }
         }
 

@@ -10,7 +10,7 @@ namespace GodsWill_ASCIIRPG.Model
     {
         Spellbook Spellbook { get; }
         void CastSpell(Spell spell, out bool acted);
-        void LearnSpell(SpellBuilder spell);
+        bool LearnSpell(SpellBuilder spell, int percentageOfSuccess = 100);
         void ForgetSpell(SpellBuilder spell);
     }
 }

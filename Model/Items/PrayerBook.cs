@@ -95,7 +95,11 @@ namespace GodsWill_ASCIIRPG.Model.Items
             var ix = Dice.Throws(spellSetFromWhichToChoose.Count) - 1;
             //return new PrayerBook(  (SpellBuilder)Activator.CreateInstance(typeof(FireOrbBuilder)),
             //                        position: position);
-            return new PrayerBook((SpellBuilder)Activator.CreateInstance(spellSetFromWhichToChoose[ix]),
+            var spellB = (SpellBuilder)Activator.CreateInstance(spellSetFromWhichToChoose[ix]);
+            var pl = spellSetFromWhichToChoose[ix].GetCustomAttributes(typeof(PercentageOfSuccess), false);
+            var percentageOfSuccess = pl.Length == 0 ? 100 : ((PercentageOfSuccess)pl[0]).Percentage;
+            return new PrayerBook(spellB,
+                                    percOfSuccess: percentageOfSuccess,
                                     position: position);
         }
     }
@@ -132,6 +136,8 @@ namespace GodsWill_ASCIIRPG.Model.Items
                 desc.AppendLine("A book containing a ritual.");
                 desc.AppendLine(String.Format("It grant the prayer with {0}", spell.Name));
                 desc.AppendLine(String.Format("It has a {0}% of success", percOfSuccess));
+                desc.AppendLine();
+                desc.AppendLine(spell.Prerequisites.ToString());
                 return desc.ToString();
             }
         }
@@ -142,9 +148,9 @@ namespace GodsWill_ASCIIRPG.Model.Items
             {
                 var spellcasterUser = (ISpellcaster)user;
                 this.spell.Caster = spellcasterUser;
-                if (spellcasterUser.Spellbook.Add(spell))
+                if (spellcasterUser.LearnSpell(spell, this.percOfSuccess))
                 {
-                    user.NotifyListeners(String.Format("Learnt {0}", spell.Name));
+                    //user.NotifyListeners(String.Format("Learnt {0}", spell.Name));
                     if (ConsumeUse())
                     {
                         user.Backpack.Remove(this);

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model.Spells
 {
+    [PercentageOfSuccess(100)]
     public class FireOrbBuilder : AttackSpellBuilder<FireOrb>
     {
         public FireOrbBuilder()

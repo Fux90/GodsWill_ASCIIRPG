@@ -140,6 +140,8 @@ namespace GodsWill_ASCIIRPG.Model
 
         public abstract Type SpellToBuildType { get; }
         public abstract void SetTargets<T>(List<T> targets);
+
+        public abstract string Prerequisites { get; }
     }
 
     public abstract class SpellBuilder<T, SpellToBuild> : SpellBuilder
@@ -189,20 +191,13 @@ namespace GodsWill_ASCIIRPG.Model
             return false;
         }
 
-        public override bool SatisfyRequisite(Pg player)
+        public override string Prerequisites
         {
-            var satisfied = true;
-
-            var requisites = typeof(SpellToBuild).GetCustomAttributes(typeof(Prerequisite), true);
-            if (requisites.Length > 0)
+            get
             {
-                var r = (Prerequisite)requisites[0];
-
-                satisfied &= player.CurrentLevel >= r.MinimumLevel;
-                satisfied &= player.Stats >= r.MinimumStats;
+                var p = this.GetType().GetCustomAttributes(typeof(Prerequisite), false);
+                return p.Length == 0 ? "" : p[0].ToString();
             }
-
-            return satisfied;
         }
     }
 }
