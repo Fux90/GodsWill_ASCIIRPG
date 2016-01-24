@@ -188,5 +188,21 @@ namespace GodsWill_ASCIIRPG.Model
         {
             return false;
         }
+
+        public override bool SatisfyRequisite(Pg player)
+        {
+            var satisfied = true;
+
+            var requisites = typeof(SpellToBuild).GetCustomAttributes(typeof(Prerequisite), true);
+            if (requisites.Length > 0)
+            {
+                var r = (Prerequisite)requisites[0];
+
+                satisfied &= player.CurrentLevel >= r.MinimumLevel;
+                satisfied &= player.Stats >= r.MinimumStats;
+            }
+
+            return satisfied;
+        }
     }
 }

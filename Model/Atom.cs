@@ -136,6 +136,24 @@ namespace GodsWill_ASCIIRPG
             }
         }
         #endregion
+
+        #region REQUISITES
+        public virtual bool SatisfyRequisite(Pg player)
+        {
+            var satisfied = true;
+
+            var requisites = this.GetType().GetCustomAttributes(typeof(Prerequisite), true);
+            if(requisites.Length > 0)
+            {
+                var r = (Prerequisite)requisites[0];
+
+                satisfied &= player.CurrentLevel >= r.MinimumLevel;
+                satisfied &= player.Stats >= r.MinimumStats;
+            }
+            
+            return satisfied;
+        }
+        #endregion
     }
 
     public abstract class MoveableAtom : Atom

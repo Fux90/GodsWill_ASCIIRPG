@@ -99,5 +99,27 @@ namespace GodsWill_ASCIIRPG
         {
             stats[(int)stat] = Math.Max(0, stats[(int)stat] - value);
         }
+
+        public static bool operator >=(Stats s1, Stats s2)
+        {
+            var result = true;
+            var stats = Stats.AllStats;
+            foreach (var stat in stats)
+            {
+                result &= s1[stat] >= s2[stat];
+            }
+            return result;
+        }
+
+        public static bool operator <=(Stats s1, Stats s2)
+        {
+            var result = true;
+            var stats = Stats.AllStats;
+            foreach (var stat in stats)
+            {
+                result &= s1[stat] <= s2[stat];
+            }
+            return result;
+        }
     }
 }

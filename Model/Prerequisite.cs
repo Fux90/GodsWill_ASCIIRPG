@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
-    [AttributeUsage(AttributeTargets.All, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = true)]
     public class Prerequisite : Attribute
     {
         private Pg.Level minimumLevel = Pg.Level.Novice;
