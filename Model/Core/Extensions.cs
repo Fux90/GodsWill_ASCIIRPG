@@ -127,5 +127,13 @@ namespace GodsWill_ASCIIRPG.Model.Core
         {
             return v == TernaryValue.Explored;
         }
+
+        public static Coord Center(this Rectangle rect)
+        {
+            var x = (rect.Left + rect.Right) / 2;
+            var y = (rect.Top + rect.Bottom) / 2;
+
+            return new Coord(x, y);
+        }
     }
 }

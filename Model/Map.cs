@@ -8,6 +8,8 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using GodsWill_ASCIIRPG.View;
+using System.Drawing;
+using GodsWill_ASCIIRPG.Model.SceneryItems;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -44,7 +46,7 @@ namespace GodsWill_ASCIIRPG
             var formatter = new BinaryFormatter();
             FileStream mapFile = new FileStream(mapFilePath, FileMode.Open);
             return (Map)formatter.Deserialize(mapFile);
-        } 
+        }
 
         public void AddViewer(IMapViewer viewer)
         {
@@ -59,6 +61,121 @@ namespace GodsWill_ASCIIRPG
         public void AddAtom(Atom a)
         {
             elements.Add(a);
+        }
+
+
+        //def place_objects_all_rooms(con, map, objects):
+        //    for room in rooms:
+        //        place_objects(con, map, room, objects)
+
+        //def place_objects(con, map, room, objects):
+
+        //    num_monsters = libt.random_get_int(0,0,MAX_ROOM_MONSTERS)
+        //    for i in range(num_monsters):
+        //        x = libt.random_get_int(0, room.x1, room.x2)
+        //        y = libt.random_get_int(0, room.y1, room.y2)
+
+        //        if not tile.is_blocked(x, y, map, objects):
+        //            if libt.random_get_int(0,0,100) < 80: #80% di possibilita di pupparsi un orco
+        //                monster = Object(con, x, y,'o','Orc', libt.desaturated_green, blocks = True)
+        //            else:
+        //                monster = Object(con, x, y,'T','Troll', libt.darker_green, blocks = True)
+        //            objects.append(monster)
+        //            monster.insertInMap(map)
+
+        private void create_h_tunnel(BidimensionalArray<Atom> table,
+                                     int x1,
+                                     int x2,
+                                     int y)
+        {
+            for (int x = Math.Min(x1, x2); x <= Math.Max(x1, x2); x++)
+            {
+                AddAtom(new Floor(new Coord(x, y)));
+            }
+        }
+
+        private void create_v_tunnel(BidimensionalArray<Atom> table,
+                                     int y1,
+                                     int y2,
+                                     int x)
+        {
+            for (int y = Math.Min(y1, y2); y <= Math.Max(y1, y2); y++)
+            {
+                AddAtom(new Floor(new Coord(x, y)));
+            }
+        }
+
+        private void create_room(Rectangle room, BidimensionalArray<Atom> map)
+        {
+            for (int x = room.Left + 1; x < room.Right; x++)
+			{
+                for (int y = room.Top + 1; y < room.Bottom; y++)
+			    {
+                    AddAtom(new Floor(new Coord(x, y)));
+                }
+			}
+        }
+
+        private void make_map(  out BidimensionalArray<Atom> map,
+                                int MAX_ROOMS = 15,
+                                int ROOM_MIN_SIZE = 1,
+                                int ROOM_MAX_SIZE = 10)
+        {
+            map = new BidimensionalArray<Atom>(Height, Width, () => new Wall());
+            List<Rectangle> rooms = new List<Rectangle>(MAX_ROOMS);
+
+            int num_rooms = 0;
+
+            for (int r = 0; r < MAX_ROOMS; r++)
+            {
+                //W e H random
+                int w = Dice.Throws(ROOM_MAX_SIZE) + ROOM_MIN_SIZE - 1;
+                int h = Dice.Throws(ROOM_MAX_SIZE) + ROOM_MIN_SIZE - 1;
+
+                // Random position into map borders
+                int x = Dice.Throws(Width - w - 1) - 1;
+                int y = Dice.Throws(Height - h - 1) - 1;
+
+                var new_room = new Rectangle(x, y, w, h);
+
+                var failed = false;
+                foreach (var other_room in rooms)
+                {
+                    if (new_room.IntersectsWith(other_room))
+                    {
+                        failed = true;
+                        break;
+                    }
+                }
+
+                if (!failed)
+                {
+                    create_room(new_room, map);
+                    var newCoord = new_room.Center();
+
+                    if (num_rooms == 0)
+                    {
+                        PlayerInitialPosition = newCoord;
+                    }
+                    else
+                    {
+                        var prevCoord = rooms[num_rooms - 1].Center();
+
+                        if (Dice.Throws(2) == 1)
+                        {
+                            create_h_tunnel(map, prevCoord.X, newCoord.X, prevCoord.Y);
+                            create_v_tunnel(map, prevCoord.Y, newCoord.Y, newCoord.X);
+                        }
+                        else
+                        {
+                            create_v_tunnel(map, prevCoord.Y, newCoord.Y, newCoord.X);
+                            create_h_tunnel(map, prevCoord.X, newCoord.X, prevCoord.Y);
+                        }
+                        rooms.Add(new_room);
+                        num_rooms++;
+                    }
+                }
+            }
         }
 
         public Map Create()
