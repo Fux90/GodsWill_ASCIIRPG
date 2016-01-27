@@ -1,14 +1,15 @@
 ﻿//#define DRAW_ALL
 //#define DRAW_NO_SCROLL
 //#define DEBUG_LINE
-#define DEBUG_CIRCLE
-//#define DEBUG_CENTERING
+//#define DEBUG_CIRCLE
+#define DEBUG_CENTERING
 #define DEBUG_CENTER_VIEWPORT
 //#define PREVENT_AI
 //#define DEBUG_ENEMY_SENSING
 //#define DEBUG_SPELL_LAUNCH
 #define DEBUG_PRINT_MAP // On print button, it saves a txt representation of the map
 #define CHECK_SAME_Y_IN_PRITING
+#define LOG_STAMPS
 
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         }
         private int viewportHeightInCells
         {
-            get { return (int)Math.Ceiling((float)this.Height / charSize); }
+            get { return (int)Math.Ceiling((float)this.Height / /*charSize*/this.FontHeight); }
         }
 
         private float HalfWidth { get { return Width / 2.0f; } }
@@ -101,7 +102,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         private int RegionLeft
         {
-            get { return (int)Math.Max(centerRegion.X - viewportWidthInCells_2, 0); }
+            get { return (int)Math.Max(centerRegion.X - viewportWidthInCells_2 - 1, 0); }
         }
         private int RegionRight
         {
@@ -113,7 +114,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         }
         private int RegionTop
         {
-            get { return (int)Math.Max(centerRegion.Y - viewportHeightInCells_2, 0); }
+            get { return (int)Math.Max(centerRegion.Y - viewportHeightInCells_2 - 1, 0); }
         }
         private int RegionBottom
         {
@@ -178,6 +179,8 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             InitializeComponent();
 
+            this.Size = new Size();
+
             this.DoubleBuffered = true;
             this.BackColor = Color.Black;
             this.Font = new Font(FontFamily.GenericMonospace, charSize);
@@ -188,7 +191,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.gameForm = gameForm;
 
             this.MinimumSize = new Size((int)charSize, this.FontHeight);
-
+            
             this.selectorCursor.RegisterListener(selectorMsgListener);
         }
 
@@ -769,6 +772,18 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             this.Invalidate();
             base.OnResize(e);
+            CenterOnPlayer();
+#if LOG_STAMPS
+            System.Windows.Forms.Control p = this;
+            while(p.Parent != null)
+            {
+                p = p.Parent;
+            }
+            if (p != null)
+            {
+                p.Text = this.Size.ToString();
+            }
+#endif
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -858,14 +873,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                 var coord = new Coord() { Y = r };
                 var yPos = yCell * this.FontHeight/*charSize*/ + offSetY;
                 xCell = 0;
-                var xPos = charSize + offSetX;
+                var xPos = offSetX;
 
                 for (int c = firstCol; c <= lastCol; c++, xCell++)
                 {
                     coord.X = c;
                     //var xPos = xCell * charSize + offSetX;
-                    xPos += charSize;
-
+                    
                     if (controlledPg.IsLightingCell(coord) && map.IsCellExplored(coord))
                     {
                         var atom = map[coord];
@@ -911,6 +925,8 @@ namespace GodsWill_ASCIIRPG.UIControls
                                                         new SolidBrush(uAtom.Color),
                                                         new PointF(xPos, yPos)));
                     }
+
+                    xPos += charSize;
                 }
             }
 #endif
@@ -967,7 +983,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 foreach (var posY in posHs)
                 {
                     var ptF = new PointF(   (posX - firstCol) * charSize + offSetX, 
-                                            (posY - firstRow) * charSize + offSetY);
+                                            (posY - firstRow) * /*charSize */this.FontHeight + offSetY);
                     g.DrawString("*", this.Font, Brushes.Yellow, ptF);
                 }
             }

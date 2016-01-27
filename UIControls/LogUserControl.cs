@@ -23,6 +23,8 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             InitializeComponent();
 
+            this.Size = new Size();
+
             this.DoubleBuffered = true;
             this.BackColor = Color.Black;
             this.BorderStyle = BorderStyle.FixedSingle;

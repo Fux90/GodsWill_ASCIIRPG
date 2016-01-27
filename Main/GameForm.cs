@@ -28,6 +28,7 @@ namespace GodsWill_ASCIIRPG
             InitializeComponent();
 
             tblGameScreen = new TableLayoutPanel();
+            tblGameScreen.Size = new Size();
 
             var singleMsgConsole = new SingleMessageLogUserControl();
             var backpackControl = new BackpackUserControl(tblGameScreen);
@@ -45,18 +46,24 @@ namespace GodsWill_ASCIIRPG
             tblGameScreen.RowStyles.Add(new RowStyle(SizeType.Absolute, 30.0f));
             tblGameScreen.RowStyles.Add(new RowStyle(SizeType.Percent, 0.25F));
             tblGameScreen.BackColor = Color.Beige;
+            tblGameScreen.MinimumSize = new Size();
 
             var tblMapAndSheet = new TableLayoutPanel();
+            tblMapAndSheet.Size = new Size();
             tblMapAndSheet.ColumnStyles.Clear();
             tblMapAndSheet.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0.60F));
             tblMapAndSheet.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0.40F));
             tblMapAndSheet.BackColor = Color.Beige;
             tblMapAndSheet.Margin = new Padding(0);
-
+            tblMapAndSheet.MinimumSize = new Size();
+            
             tblMapAndSheet.Controls.Add(mapViewControl, 0, 0);
             mapViewControl.Dock = DockStyle.Fill;
             tblMapAndSheet.Controls.Add(characterSheet, 1, 0);
             characterSheet.Dock = DockStyle.Fill;
+            //var cellPos = tblMapAndSheet.GetCellPosition(mapViewControl);
+            //int width = tblMapAndSheet.GetColumnWidths()[cellPos.Column];
+            //mapViewControl.Size = new Size(20, 20);
 
             tblGameScreen.Controls.Add(tblMapAndSheet, 0, 0);
             tblMapAndSheet.Dock = DockStyle.Fill;

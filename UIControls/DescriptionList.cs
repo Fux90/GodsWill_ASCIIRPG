@@ -190,14 +190,16 @@ namespace GodsWill_ASCIIRPG.UIControls
             float proportionalNewWidth = (float)Width / initialWidth;
             float proportionalNewHeight = (float)Height / initialHeight;
 
-            // Calculate the current font size
-            lblTitle.Font = new Font(lblTitle.Font.FontFamily,
-                                initialFontSize *
-                                (proportionalNewWidth > proportionalNewHeight
-                                ? proportionalNewHeight
-                                : proportionalNewWidth),
-                                lblTitle.Font.Style);
-
+            if (proportionalNewWidth > 0 && proportionalNewHeight > 0)
+            {
+                // Calculate the current font size
+                lblTitle.Font = new Font(lblTitle.Font.FontFamily,
+                                    initialFontSize *
+                                    (proportionalNewWidth > proportionalNewHeight
+                                    ? proportionalNewHeight
+                                    : proportionalNewWidth),
+                                    lblTitle.Font.Style);
+            }
             UpdateDescription();
 
             ResumeLayout();

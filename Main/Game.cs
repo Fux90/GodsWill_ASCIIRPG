@@ -1,5 +1,5 @@
 #define DEBUG_MAP
-#define RANDOM_MAP_GENERATION
+//#define RANDOM_MAP_GENERATION
 
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
@@ -146,11 +146,13 @@ namespace GodsWill_ASCIIRPG
 #endif
                 var map = mapBuilder.Create();
 
+                CurrentPg.InsertInMap(map, map.PlayerInitialPosition);
+
                 pgController.Register(CurrentPg);
                 pgController.BackpackController.Register(CurrentPg.Backpack);
                 pgController.SpellbookController.Register(CurrentPg.Spellbook);
 
-                CurrentPg.InsertInMap(map, map.PlayerInitialPosition);
+                
 
                 Animation.RegisterAnimationViewer(animationViewer);
             }
