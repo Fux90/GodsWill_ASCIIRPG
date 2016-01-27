@@ -51,5 +51,6 @@ namespace GodsWill_ASCIIRPG
         Backpack_EmbraceShield,
         Backpack_HandleWeapon,
         Player_UseItem,
+        Player_SaveGame,
     }
 }

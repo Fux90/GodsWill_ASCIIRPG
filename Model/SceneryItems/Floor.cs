@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    [Serializable]
     class Floor : SceneryItem
     {
         public const string _Symbol = ".";
@@ -28,6 +30,13 @@ namespace GodsWill_ASCIIRPG.Model
             : this(new Coord())
         {
             
+        }
+
+        public Floor(   SerializationInfo info,
+                        StreamingContext context)
+            : base(info, context)
+        {
+
         }
     }
 }

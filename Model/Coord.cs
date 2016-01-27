@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    [Serializable]
     public struct Coord
     {
         public int X { get; set; }

@@ -6,13 +6,30 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
+    [Serializable]
     [StraightSightNeededForPerception]
-    public abstract class Character : MoveableAtom, IFighter, IDamageable, IBlockable, IMerchant
+    public abstract class Character : MoveableAtom, IFighter, IDamageable, IBlockable, IMerchant, ISerializable
     {
+        #region SERIALIZABLE_CONST_NAMES
+        const string hpSerializableName = "hp";
+        const string hungerSerializableName = "hunger";
+        const string wornArmorSerializableName = "wornArmor";
+        const string embracedShieldSerializableName = "embraceShield";
+        const string handledWeaponSerializableName = "handledWeapon";
+        const string backpackSerializableName = "backpack";
+        const string statsSerializableName = "stats";
+        const string myGoldSerializableName = "gold";
+        const string tempModifiersSerializableName = "tempMods";
+        const string godSerializableName = "god";
+        const string perceptionsSerializableName = "perceptions";
+        const string blockedTurnsSerializableName = "blockedTurns";
+        #endregion
+
         protected enum HpType
         {
             Current,
@@ -127,6 +144,40 @@ namespace GodsWill_ASCIIRPG
             this.TempModifiers = new TemporaryModifierCollection();
         }
 
+        public Character(   SerializationInfo info,
+                            StreamingContext context)
+            : base(info, context)
+        {
+            hp = (int[])info.GetValue(hpSerializableName, typeof(int[]));
+            hunger = (int)info.GetValue(hungerSerializableName, typeof(int));
+            wornArmor = (Armor)info.GetValue(wornArmorSerializableName, typeof(Armor));
+            embracedShield = (Shield)info.GetValue(embracedShieldSerializableName, typeof(Shield));
+            handledWeapon = (Weapon)info.GetValue(handledWeaponSerializableName, typeof(Weapon));
+            backpack = (Backpack)info.GetValue(backpackSerializableName, typeof(Backpack));
+            stats = (Stats)info.GetValue(statsSerializableName, typeof(Stats));
+            MyGold = (int)info.GetValue(myGoldSerializableName, typeof(int));
+            TempModifiers = (TemporaryModifierCollection)info.GetValue(tempModifiersSerializableName, typeof(TemporaryModifierCollection));
+            God = (God)info.GetValue(godSerializableName, typeof(God));
+            Perceptions = (List<Perception>)info.GetValue(perceptionsSerializableName, typeof(List<Perception>));
+            BlockedTurns = (int)info.GetValue(blockedTurnsSerializableName, typeof(int));
+        }
+
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(hpSerializableName, hp, typeof(int[]));
+            info.AddValue(hungerSerializableName, hunger, typeof(int));
+            info.AddValue(wornArmorSerializableName, wornArmor, typeof(Armor));
+            info.AddValue(embracedShieldSerializableName, embracedShield, typeof(Shield));
+            info.AddValue(handledWeaponSerializableName, handledWeapon, typeof(Weapon));
+            info.AddValue(backpackSerializableName, backpack, typeof(Backpack));
+            info.AddValue(statsSerializableName, stats, typeof(Stats));
+            info.AddValue(myGoldSerializableName, MyGold, typeof(int));
+            info.AddValue(tempModifiersSerializableName, TempModifiers, typeof(TemporaryModifierCollection));
+            info.AddValue(godSerializableName, God, typeof(God));
+            info.AddValue(perceptionsSerializableName, Perceptions, typeof(List<Perception>));
+            info.AddValue(blockedTurnsSerializableName, BlockedTurns, typeof(int));
+        }
+
         private List<Perception> initPerceptions()
         {
             var perceptions = this.GetType().GetCustomAttributes(typeof(HasPerception), false)
@@ -209,65 +260,6 @@ namespace GodsWill_ASCIIRPG
             this.stats.IncreaseStat(stat, delta);
             CharacterSheets.ForEach((sheet) => sheet.NotifyStat(stat, stats[stat]));
         }
-
-        //public virtual bool Move(Direction dir, out bool acted)
-        //{
-        //    var candidateCoord = new Coord()
-        //    {
-        //        X = this.Position.X,
-        //        Y = this.Position.Y
-        //    };
-
-        //    switch(dir)
-        //    {
-        //        case Direction.North:
-        //            candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
-        //            break;
-        //        case Direction.NorthEast:
-        //            candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
-        //            candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
-        //            break;
-        //        case Direction.East:
-        //            candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
-        //            break;
-        //        case Direction.SouthEast:
-        //            candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
-        //            candidateCoord.X = Math.Min(this.Map.Width - 1, candidateCoord.X + 1);
-        //            break;
-        //        case Direction.South:
-        //            candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
-        //            break;
-        //        case Direction.SouthWest:
-        //            candidateCoord.Y = Math.Min(this.Map.Height - 1, candidateCoord.Y + 1);
-        //            candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
-        //            break;
-        //        case Direction.West:
-        //            candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
-        //            break;
-        //        case Direction.NorthWest:
-        //            candidateCoord.Y = Math.Max(0, candidateCoord.Y - 1);
-        //            candidateCoord.X = Math.Max(0, candidateCoord.X - 1);
-        //            break;
-        //    }
-
-        //    var moved = false;
-        //    acted = false;
-
-        //    if (this.Map.CanMoveTo(candidateCoord))
-        //    {
-        //        this.Map.MoveAtomTo(this, this.Position, candidateCoord);
-        //        this.Position = candidateCoord;
-
-        //        moved = true;
-        //        acted = true;
-        //    }
-        //    else
-        //    {
-        //        acted = this.Map[candidateCoord].Interaction(this);
-        //    }
-            
-        //    return moved;
-        //}
 
         public void Attack(IDamageable defenderCharachter)
         {

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    [Serializable]
     public abstract class Perception
     {
         protected abstract bool SensingProcess(Character sensor, Atom sensed, int CD);

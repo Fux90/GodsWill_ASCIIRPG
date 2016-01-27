@@ -8,6 +8,7 @@ using GodsWill_ASCIIRPG.View;
 using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.Model.Perceptions;
 using GodsWill_ASCIIRPG.Model.Items;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -91,6 +92,7 @@ namespace GodsWill_ASCIIRPG
         }
     }
 
+    [Serializable]
     [HasPerception(typeof(ListenPerception))]
 	public class Pg : Character, ISpellcaster
 	{
@@ -107,7 +109,7 @@ namespace GodsWill_ASCIIRPG
 
         public Level CurrentLevel { get; private set; }
         private int maxLevel;
-
+        
         private int[] xp;
         public int XP { get { return xp[0]; } private set { xp[0] = value; } }
         public int NextXP { get { return xp[1]; } private set { xp[1] = value; } }
@@ -166,6 +168,17 @@ namespace GodsWill_ASCIIRPG
             this.PerceptionRange = perception;
             this.spellbook = spellbook;
         }
+
+        //public Pg(  SerializationInfo info,
+        //            StreamingContext context)
+        //    : base(info, context)
+        //{
+
+        //}
+        //public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        //{
+        //    base.GetObjectData(info, context);
+        //}
 
         public override void GainExperience(int xp)
         {
@@ -317,26 +330,6 @@ namespace GodsWill_ASCIIRPG
             base.RegisterSheet(sheet);
             NotifyAll();
         }
-
-        //private void NotifyAll()
-        //{
-        //    CharacterSheets.ForEach((sheet) => sheet.NotifyName(this.Name));
-        //    CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(this.CurrentLevel, this.God));
-        //    CharacterSheets.ForEach((sheet) => sheet.NotifyXp(this.XP, this.NextXP));
-        //    CharacterSheets.ForEach((sheet) => sheet.NotifyGold(this.MyGold));
-        //    CharacterSheets.ForEach((sheet) => sheet.NotifyHp(this.Hp, this.MaxHp));
-        //    CharacterSheets.ForEach((sheet) => sheet.NotifyHunger(this.Hunger));
-        //    CharacterSheets.ForEach((sheet) => sheet.NotifyDefences(this.CA, this.CASpecial));
-        //    CharacterSheets.ForEach((sheet) => sheet.NotifyArmor(this.WornArmor));
-        //    CharacterSheets.ForEach((sheet) => sheet.NotifyShield(this.EmbracedShield));
-        //    CharacterSheets.ForEach((sheet) => sheet.NotifyWeapon(this.HandledWepon));
-        //    CharacterSheets.ForEach((sheet) => {
-        //        foreach (var stat in Stats.AllStats)
-        //        {
-        //            sheet.NotifyStat(stat, this.Stats[stat]);
-        //        }
-        //    });
-        //}
 
         protected override void NotifyAll()
         {

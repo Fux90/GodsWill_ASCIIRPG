@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    [Serializable]
     public class Backpack : IEnumerable
     {
         List<Item> items;
+        [NonSerialized]
         List<IBackpackViewer> backPackViewers;
 
         public int Count

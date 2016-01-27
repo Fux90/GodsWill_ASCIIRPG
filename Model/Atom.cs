@@ -111,7 +111,7 @@ namespace GodsWill_ASCIIRPG
             description = (string)info.GetValue(descriptionSerializableName, typeof(string));
             position = (Coord)info.GetValue(positionSerializableName, typeof(Coord));
             //map = (Map)info.GetValue(mapSerializableName, typeof(Map));
-            listeners = (List<IAtomListener>)info.GetValue(listenersSerializableName, typeof(List<IAtomListener>));
+            //listeners = (List<IAtomListener>)info.GetValue(listenersSerializableName, typeof(List<IAtomListener>));
             IsPickable = (bool)info.GetValue(isPickableSerializableName, typeof(bool));
         }
 
@@ -124,7 +124,7 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(descriptionSerializableName, description, typeof(string));
             info.AddValue(positionSerializableName, position, typeof(Coord));
             //info.AddValue(mapSerializableName, map, typeof(Map));
-            info.AddValue(listenersSerializableName, listeners, typeof(List<IAtomListener>));
+            //info.AddValue(listenersSerializableName, listeners, typeof(List<IAtomListener>));
             info.AddValue(isPickableSerializableName, IsPickable, typeof(bool));
         }
 
@@ -177,6 +177,11 @@ namespace GodsWill_ASCIIRPG
                     position)
         {
             Unblockable = unblockable;
+        }
+
+        public MoveableAtom(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
         }
 
         public virtual bool Move(Direction dir, out bool acted)

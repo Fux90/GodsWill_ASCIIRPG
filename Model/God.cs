@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    [Serializable]
     public abstract class God
     {
         public enum PrayResult
@@ -32,6 +33,7 @@ namespace GodsWill_ASCIIRPG.Model
         public static God Ares { get { return new Ares(); } }
     }
 
+    [Serializable]
     public class Ares : God
     {
         public override PrayResult HearPray(out TemporaryModifier mod)

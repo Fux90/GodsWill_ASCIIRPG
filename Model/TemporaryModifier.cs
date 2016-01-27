@@ -19,6 +19,7 @@ namespace GodsWill_ASCIIRPG.Model
         }
     }
 
+    [Serializable]
     public class TemporaryModifierCollection
     {
         List<TemporaryModifier> modifiers;
@@ -64,6 +65,7 @@ namespace GodsWill_ASCIIRPG.Model
         }
     }
 
+    [Serializable]
     public abstract class TemporaryModifier
     {
         public enum ModFor

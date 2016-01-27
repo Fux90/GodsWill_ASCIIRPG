@@ -48,6 +48,7 @@ namespace GodsWill_ASCIIRPG
         }
     }
 
+    [Serializable]
 	public struct Stats
 	{
         int[] _stats;

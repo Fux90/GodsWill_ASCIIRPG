@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace GodsWill_ASCIIRPG
@@ -17,6 +18,13 @@ namespace GodsWill_ASCIIRPG
                             string description = "Base scenario element of the game",
                             Coord position = new Coord())
             : base(name, symbol, color, walkable, blockVision, description, position)
+        {
+
+        }
+
+        public SceneryItem( SerializationInfo info,
+                            StreamingContext context)
+            : base(info, context)
         {
 
         }

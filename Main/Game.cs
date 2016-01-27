@@ -144,6 +144,7 @@ namespace GodsWill_ASCIIRPG
 #else
                 mapBuilder.LoadFromFile("");
 #endif
+                //mapBuilder.MapCreationMode = MapBuilder.TableCreationMode.FromFile;
                 var map = mapBuilder.Create();
 
                 CurrentPg.InsertInMap(map, map.PlayerInitialPosition);

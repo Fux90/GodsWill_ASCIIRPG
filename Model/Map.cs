@@ -22,7 +22,8 @@ namespace GodsWill_ASCIIRPG
         public enum TableCreationMode
         {
             Empty,
-            Random
+            Random,
+            FromFile
         }
 
         #endregion
@@ -56,9 +57,14 @@ namespace GodsWill_ASCIIRPG
 
         public Map LoadFromFile(string mapFilePath)
         {
-            var formatter = new BinaryFormatter();
-            FileStream mapFile = new FileStream(mapFilePath, FileMode.Open);
-            return (Map)formatter.Deserialize(mapFile);
+            if (File.Exists(mapFilePath))
+            {
+                var formatter = new BinaryFormatter();
+                FileStream mapFile = new FileStream(mapFilePath, FileMode.Open);
+                return (Map)formatter.Deserialize(mapFile);
+            }
+
+            return null;
         }
 
         public void AddViewer(IMapViewer viewer)
@@ -212,9 +218,14 @@ namespace GodsWill_ASCIIRPG
             //var table = new BidimensionalArray<Atom>(Height, Width);
             BidimensionalArray<Atom> table;
             var explored = new BidimensionalArray<bool>(Height, Width);
+            Map map = null;
 
-            switch(MapCreationMode)
+            switch (MapCreationMode)
             {
+                case TableCreationMode.FromFile:
+                    map = LoadFromFile(@"currentLevel.map");
+                    table = null;
+                    break;
                 case TableCreationMode.Random:
                     makeMap(out table);
                     break;
@@ -223,22 +234,38 @@ namespace GodsWill_ASCIIRPG
                     createEmptyTable(out table);
                     break;
             }
-            
-            var map = new Map(Name, PlayerInitialPosition, table, Explored, !Lightened);
+
+            if (map == null)
+            {
+                map = new Map(Name, PlayerInitialPosition, table, Explored, !Lightened);
+
+                foreach (var atom in elements)
+                {
+                    //map.Insert(atom);
+                    if (singleMsgListeners != null && atom.SupportsSingleMsgListener())
+                    {
+                        singleMsgListeners.ForEach(l => atom.RegisterListener(l));
+                    }
+                    atom.InsertInMap(map, atom.Position, true);
+                }
+            }
+            else
+            {
+                if (singleMsgListeners != null)
+                {
+                    map.EveryAtom().ForEach(atom =>
+                    {
+                        singleMsgListeners.ForEach(l => atom.RegisterListener(l));
+                    });
+                }
+            }
+
             for (int i = 0; i < views.Count; i++)
             {
                 map.RegisterViewer(views[i]);
             }
             
-            foreach (var atom in elements)
-            {
-                //map.Insert(atom);
-                if (singleMsgListeners!= null && atom.SupportsSingleMsgListener())
-                {
-                    singleMsgListeners.ForEach(l => atom.RegisterListener(l));
-                }
-                atom.InsertInMap(map, atom.Position, true);
-            }
+            
 
             return map;
         }
@@ -516,7 +543,7 @@ namespace GodsWill_ASCIIRPG
             name = (string)info.GetValue(nameSerializableName, typeof(string));
             table = (BidimensionalArray<Atom>)info.GetValue(tableSerializableName, typeof(BidimensionalArray<Atom>));
             buffer = (BidimensionalArray<Atom>)info.GetValue(bufferSerializableName, typeof(BidimensionalArray<Atom>));
-            views = (List<IMapViewer>)info.GetValue(viewsSerializableName, typeof(List<IMapViewer>));
+            //views = (List<IMapViewer>)info.GetValue(viewsSerializableName, typeof(List<IMapViewer>));
         }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -524,8 +551,18 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(nameSerializableName, name, typeof(string));
             info.AddValue(tableSerializableName, table, typeof(BidimensionalArray<Atom>));
             info.AddValue(bufferSerializableName, buffer, typeof(BidimensionalArray<Atom>));
-            info.AddValue(viewsSerializableName, views, typeof(List<IMapViewer>));
+            //info.AddValue(viewsSerializableName, views, typeof(List<IMapViewer>));
         }
+
+        public void Save(string filepath)
+        {
+            Stream outputStream = File.Create(filepath);
+            BinaryFormatter serializer = new BinaryFormatter();
+            serializer.Serialize(outputStream, this);
+            outputStream.Close();
+        }
+
+        #endregion
 
         public void Explore(Coord pos, bool fullyExplored)
         {
@@ -585,7 +622,23 @@ namespace GodsWill_ASCIIRPG
             }
             return str.ToString();
         }
+
+        public List<Atom> EveryAtom()
+        {
+            var lA = new List<Atom>();
+            for (int c = 0; c < table.Cols; c++)
+            {
+                for (int r = 0; r < table.Rows; r++)
+                {
+                    lA.Add(table[r, c]);
+                    lA.Add(buffer[r, c]);
+                    lA.AddRange(untangibles[r, c]);
+                }
+            }
+
+            return lA;
+        }
 #endif
-        #endregion
+
     }
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GodsWill_ASCIIRPG.View;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {

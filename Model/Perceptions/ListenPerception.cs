@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model.Perceptions
 {
+    [Serializable ]
     public class ListenPerception : Perception
     {
         public ListenPerception()

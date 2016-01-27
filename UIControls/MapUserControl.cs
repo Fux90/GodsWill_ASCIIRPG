@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Linq;
+using System.Xml;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -39,6 +40,11 @@ namespace GodsWill_ASCIIRPG.UIControls
         const float charPaintHorPadding = squaredLook ? .0f : 2.0f;
         const string obscuredCell = "░";
         private readonly SelectorCursor selectorCursor = new SelectorCursor();
+
+        const int _Alt = 100;
+        const int _Shift = 10;
+        const int _Ctrl = 1;
+
         #endregion
 
         public delegate bool AfterSelectionOperation(Coord selPos, bool allowOtherSelection = false);
@@ -557,6 +563,12 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                     #endregion
 
+                    #region SAVE
+                    case ControllerCommand.Player_SaveGame:
+                        controlledPg.Map.Save(@"currentLevel.map");
+                        break;
+                    #endregion
+
                     case ControllerCommand.Player_ExitGame:
                         gameForm.Close();
                         break;
@@ -625,9 +637,9 @@ namespace GodsWill_ASCIIRPG.UIControls
         protected override void OnKeyUp(KeyEventArgs e)
         {
             var modifiers = 0;
-            if (e.Alt) modifiers += 100;
-            if (e.Shift) modifiers += 10;
-            if (e.Control) modifiers += 1;
+            if (e.Alt) modifiers += _Alt;
+            if (e.Shift) modifiers += _Shift;
+            if (e.Control) modifiers += _Ctrl;
 
             switch (mode)
             {
@@ -645,8 +657,11 @@ namespace GodsWill_ASCIIRPG.UIControls
                         case Keys.S:
                                 switch(modifiers)
                                 {
-                                    case 10:
+                                    case _Shift:
                                         Notify(ControllerCommand.Player_CastSpell);
+                                        break;
+                                    case _Ctrl:
+                                        Notify(ControllerCommand.Player_SaveGame);
                                         break;
                                     default:
                                         Notify(ControllerCommand.Player_MoveSouth);
