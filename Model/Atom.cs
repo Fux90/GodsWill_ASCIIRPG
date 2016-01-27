@@ -115,7 +115,7 @@ namespace GodsWill_ASCIIRPG
             IsPickable = (bool)info.GetValue(isPickableSerializableName, typeof(bool));
         }
 
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue(nameSerializableName, name, typeof(string));
             info.AddValue(symbolSerializableName, symbol, typeof(string));

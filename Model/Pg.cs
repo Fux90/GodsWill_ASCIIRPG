@@ -96,7 +96,15 @@ namespace GodsWill_ASCIIRPG
     [HasPerception(typeof(ListenPerception))]
 	public class Pg : Character, ISpellcaster
 	{
-        public enum Level
+        #region SERIALIZATION_CONST_NAMES
+        const string currentLevelSerializationName = "";
+        const string maxLevelSerializationName = "";
+        const string xpSerializationName = "";
+        const string perceptionRangeSerializationName = "";
+        const string spellbookSerializationName = "";
+        #endregion
+
+    public enum Level
         {
             Novice,
             Cleric,
@@ -169,16 +177,25 @@ namespace GodsWill_ASCIIRPG
             this.spellbook = spellbook;
         }
 
-        //public Pg(  SerializationInfo info,
-        //            StreamingContext context)
-        //    : base(info, context)
-        //{
+        public Pg(SerializationInfo info,
+                    StreamingContext context)
+            : base(info, context)
+        {
+            CurrentLevel = (Pg.Level)info.GetValue(currentLevelSerializationName, typeof(Pg.Level));
+            maxLevel = (int)info.GetValue(maxLevelSerializationName, typeof(int));
+            xp = (int[])info.GetValue(xpSerializationName, typeof(int[]));
+            PerceptionRange = (int)info.GetValue(perceptionRangeSerializationName, typeof(int));
+            spellbook = (Spellbook)info.GetValue(spellbookSerializationName, typeof(Spellbook));
+        }
 
-        //}
-        //public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        //{
-        //    base.GetObjectData(info, context);
-        //}
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(currentLevelSerializationName, CurrentLevel, typeof(Pg.Level));
+            info.AddValue(maxLevelSerializationName, maxLevel, typeof(int));
+            info.AddValue(xpSerializationName, xp, typeof(int[]));
+            info.AddValue(perceptionRangeSerializationName, PerceptionRange, typeof(int));
+            info.AddValue(spellbookSerializationName, spellbook, typeof(Spellbook));
+        }
 
         public override void GainExperience(int xp)
         {
