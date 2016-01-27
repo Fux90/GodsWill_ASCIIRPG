@@ -194,9 +194,9 @@ namespace GodsWill_ASCIIRPG
             throw new NotImplementedException();
         }
 
-        public override void InsertInMap(Map map, Coord newPos)
+        public override void InsertInMap(Map map, Coord newPos, bool overwrite = false)
         {
-            base.InsertInMap(map, newPos);
+            base.InsertInMap(map, newPos, overwrite);
             Explore();
         }
 

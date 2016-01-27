@@ -72,7 +72,7 @@ namespace GodsWill_ASCIIRPG
         }
 
         #region METHODS
-        public virtual void InsertInMap(Map map, Coord newPos)
+        public virtual void InsertInMap(Map map, Coord newPos, bool overwrite = false)
         {
             this.map = map;
             this.position = newPos;
@@ -82,7 +82,7 @@ namespace GodsWill_ASCIIRPG
             {
                 NotifyListeners(String.Format("Entered {0}", map.Name));
             }
-            this.map.Insert(this);
+            this.map.Insert(this, overwrite);
         }
 
         public void NotifyListeners(string msg)

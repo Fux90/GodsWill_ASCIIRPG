@@ -10,6 +10,7 @@ namespace GodsWill_ASCIIRPG.Model.Core
     public class BidimensionalArray<T>
     {
         public delegate T Instantiator();
+        public delegate T CoordInstantiator(Coord pos);
 
         T[,] content;
         int height;
@@ -28,8 +29,9 @@ namespace GodsWill_ASCIIRPG.Model.Core
         }
 
         public BidimensionalArray(int rows, int cols, T defaultValue)
+            : this(rows, cols)
         {
-            content = new T[rows, cols];
+            //content = new T[rows, cols];
             for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < cols; c++)
@@ -40,13 +42,27 @@ namespace GodsWill_ASCIIRPG.Model.Core
         }
 
         public BidimensionalArray(int rows, int cols, Instantiator instantiator)
+            : this(rows, cols)
         {
-            content = new T[rows, cols];
+            //content = new T[rows, cols];
             for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < cols; c++)
                 {
                     content[r, c] = instantiator();
+                }
+            }
+        }
+
+        public BidimensionalArray(int rows, int cols, CoordInstantiator instantiator)
+            : this(rows, cols)
+        {
+            //content = new T[rows, cols];
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    content[r, c] = instantiator(new Coord(c, r));
                 }
             }
         }

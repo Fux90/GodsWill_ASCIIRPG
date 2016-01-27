@@ -1,4 +1,5 @@
 #define DEBUG_MAP
+#define RANDOM_MAP_GENERATION
 
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
@@ -72,12 +73,21 @@ namespace GodsWill_ASCIIRPG
             {
                 // Map generation
                 var mapBuilder = new MapBuilder();
-#if DEBUG_MAP
-                mapBuilder.Height = 30;
-                mapBuilder.Width = 19;
 
+                mapBuilder.AddViewer(mapViewer);
+                mapBuilder.AddSingleMessageListener(singleMsgListener);
+
+#if DEBUG_MAP
                 mapBuilder.Explored = TernaryValue.Unexplored;
                 mapBuilder.Lightened = true;
+#if RANDOM_MAP_GENERATION
+                mapBuilder.Height = 40;
+                mapBuilder.Width = 30;
+
+                mapBuilder.MapCreationMode = MapBuilder.TableCreationMode.Random;
+#else
+                mapBuilder.Height = 30;
+                mapBuilder.Width = 19;
 
                 //mapBuilder.AddAtom(new Wall(new Coord() { X = 10, Y = 10 }));
                 //mapBuilder.AddAtom(new Wall(new Coord() { X = 11, Y = 10 }));
@@ -97,9 +107,6 @@ namespace GodsWill_ASCIIRPG
                 mapBuilder.AddAtom(new Wall(new Coord() { X = 0, Y = mapBuilder.Height - 1 }));
                 mapBuilder.AddAtom(new Wall(new Coord() { X = mapBuilder.Width - 1, Y = 0 }));
                 mapBuilder.AddAtom(new Wall(new Coord() { X = mapBuilder.Width - 1, Y = mapBuilder.Height - 1 }));
-
-                mapBuilder.AddViewer(mapViewer);
-                mapBuilder.AddSingleMessageListener(singleMsgListener);
 
                 mapBuilder.PlayerInitialPosition = new Coord() { X = 1, Y = 1 };
 
@@ -133,6 +140,7 @@ namespace GodsWill_ASCIIRPG
                 currentPg.Listeners.ForEach(listener => orc2.RegisterListener(listener));
                 aiController.Register(orc1);
                 aiController.Register(orc2);
+#endif
 #else
                 mapBuilder.LoadFromFile("");
 #endif

@@ -3,10 +3,12 @@
 //#define DEBUG_LINE
 #define DEBUG_CIRCLE
 //#define DEBUG_CENTERING
-//#define DEBUG_CENTER_VIEWPORT
+#define DEBUG_CENTER_VIEWPORT
 //#define PREVENT_AI
 //#define DEBUG_ENEMY_SENSING
 //#define DEBUG_SPELL_LAUNCH
+#define DEBUG_PRINT_MAP // On print button, it saves a txt representation of the map
+#define CHECK_SAME_Y_IN_PRITING
 
 using System;
 using System.Collections.Generic;
@@ -184,6 +186,8 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.backpackController = backpackController;
             this.spellbookController = spellbookController;
             this.gameForm = gameForm;
+
+            this.MinimumSize = new Size((int)charSize, this.FontHeight);
 
             this.selectorCursor.RegisterListener(selectorMsgListener);
         }
@@ -696,6 +700,11 @@ namespace GodsWill_ASCIIRPG.UIControls
                                 EnterSelectionMode();
                                 break;
 #endif
+#if DEBUG_PRINT_MAP
+                            case Keys.PrintScreen:
+                                controlledPg.Map.SaveToTxt(@"currentMap.txt");
+                                break;
+#endif
 #region DEITY
                             case Keys.K:
                             Notify(ControllerCommand.Player_Pray);
@@ -833,8 +842,9 @@ namespace GodsWill_ASCIIRPG.UIControls
             var numRows = map.Height;
             var numCols = map.Width;
 
+
             var offSetY = numRows <= h 
-                ? HalfHeight - (float)numRows / 2.0f * charSize 
+                ? HalfHeight - (float)numRows / 2.0f * this.FontHeight//charSize 
                 : 0.0f;
             var offSetX = numCols <= w 
                 ? HalfWidth - (float)numCols / 2.0f * charSize
@@ -846,14 +856,16 @@ namespace GodsWill_ASCIIRPG.UIControls
             for (int r = firstRow; r <= lastRow; r++, yCell++)
             {
                 var coord = new Coord() { Y = r };
-                var yPos = yCell * charSize + offSetY;
+                var yPos = yCell * this.FontHeight/*charSize*/ + offSetY;
                 xCell = 0;
+                var xPos = charSize + offSetX;
 
                 for (int c = firstCol; c <= lastCol; c++, xCell++)
                 {
                     coord.X = c;
-                    var xPos = xCell * charSize + offSetX;
-                    
+                    //var xPos = xCell * charSize + offSetX;
+                    xPos += charSize;
+
                     if (controlledPg.IsLightingCell(coord) && map.IsCellExplored(coord))
                     {
                         var atom = map[coord];
@@ -905,8 +917,8 @@ namespace GodsWill_ASCIIRPG.UIControls
 #if DEBUG_CENTER_VIEWPORT
                             #region CENTER_VIEWPORT
                             var ptCenter = new PointF(  (centerRegion.X - firstCol) * charSize + offSetX,
-                                        (centerRegion.Y - firstRow) * charSize + offSetY);
-            g.DrawString("*", this.Font, Brushes.Orange, ptCenter);
+                                                        (centerRegion.Y - firstRow) * this.FontHeight + offSetY);
+                                                         g.DrawString("*", this.Font, Brushes.Orange, ptCenter);
 #endregion
 #endif
 #if DEBUG_CENTERING

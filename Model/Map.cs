@@ -1,3 +1,5 @@
+#define DEBUG_PRINT_MAP
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,16 @@ namespace GodsWill_ASCIIRPG
 {
     class MapBuilder
     {
+        #region ENUM
+
+        public enum TableCreationMode
+        {
+            Empty,
+            Random
+        }
+
+        #endregion
+
         #region PRIVATE_MEMBERS
         List<IMapViewer> views;
         List<IAtomListener> singleMsgListeners;
@@ -28,6 +40,7 @@ namespace GodsWill_ASCIIRPG
         public Coord PlayerInitialPosition { get; set; }
         public TernaryValue Explored { get; set; }
         public bool Lightened { get; set; }
+        public TableCreationMode MapCreationMode { get; set; }
         #endregion
 
         public MapBuilder()
@@ -83,7 +96,7 @@ namespace GodsWill_ASCIIRPG
         //            objects.append(monster)
         //            monster.insertInMap(map)
 
-        private void create_h_tunnel(BidimensionalArray<Atom> table,
+        private void createHorizontalTunnel(BidimensionalArray<Atom> table,
                                      int x1,
                                      int x2,
                                      int y)
@@ -94,7 +107,7 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
-        private void create_v_tunnel(BidimensionalArray<Atom> table,
+        private void createVerticalTunnel(BidimensionalArray<Atom> table,
                                      int y1,
                                      int y2,
                                      int x)
@@ -105,7 +118,7 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
-        private void create_room(Rectangle room, BidimensionalArray<Atom> map)
+        private void createRoom(Rectangle room, BidimensionalArray<Atom> map)
         {
             for (int x = room.Left + 1; x < room.Right; x++)
 			{
@@ -116,21 +129,22 @@ namespace GodsWill_ASCIIRPG
 			}
         }
 
-        private void make_map(  out BidimensionalArray<Atom> map,
-                                int MAX_ROOMS = 15,
-                                int ROOM_MIN_SIZE = 1,
+        private void makeMap(  out BidimensionalArray<Atom> map,
+                                int MAX_ROOMS = 6,
+                                int ROOM_MIN_SIZE = 3,
                                 int ROOM_MAX_SIZE = 10)
         {
             map = new BidimensionalArray<Atom>(Height, Width, () => new Wall());
             List<Rectangle> rooms = new List<Rectangle>(MAX_ROOMS);
 
             int num_rooms = 0;
+            int maxMinusMin = ROOM_MAX_SIZE - ROOM_MIN_SIZE;
 
             for (int r = 0; r < MAX_ROOMS; r++)
             {
                 //W e H random
-                int w = Dice.Throws(ROOM_MAX_SIZE) + ROOM_MIN_SIZE - 1;
-                int h = Dice.Throws(ROOM_MAX_SIZE) + ROOM_MIN_SIZE - 1;
+                int w = Dice.Throws(maxMinusMin) + ROOM_MIN_SIZE - 1;
+                int h = Dice.Throws(maxMinusMin) + ROOM_MIN_SIZE - 1;
 
                 // Random position into map borders
                 int x = Dice.Throws(Width - w - 1) - 1;
@@ -150,7 +164,7 @@ namespace GodsWill_ASCIIRPG
 
                 if (!failed)
                 {
-                    create_room(new_room, map);
+                    createRoom(new_room, map);
                     var newCoord = new_room.Center();
 
                     if (num_rooms == 0)
@@ -163,34 +177,53 @@ namespace GodsWill_ASCIIRPG
 
                         if (Dice.Throws(2) == 1)
                         {
-                            create_h_tunnel(map, prevCoord.X, newCoord.X, prevCoord.Y);
-                            create_v_tunnel(map, prevCoord.Y, newCoord.Y, newCoord.X);
+                            createHorizontalTunnel(map, prevCoord.X, newCoord.X, prevCoord.Y);
+                            createVerticalTunnel(map, prevCoord.Y, newCoord.Y, newCoord.X);
                         }
                         else
                         {
-                            create_v_tunnel(map, prevCoord.Y, newCoord.Y, newCoord.X);
-                            create_h_tunnel(map, prevCoord.X, newCoord.X, prevCoord.Y);
+                            createVerticalTunnel(map, prevCoord.Y, newCoord.Y, newCoord.X);
+                            createHorizontalTunnel(map, prevCoord.X, newCoord.X, prevCoord.Y);
                         }
-                        rooms.Add(new_room);
-                        num_rooms++;
                     }
+
+                    rooms.Add(new_room);
+                    num_rooms++;
                 }
             }
         }
 
+        private void createEmptyTable(out BidimensionalArray<Atom> table)
+        {
+            table = new BidimensionalArray<Atom>(Height, Width, (pos) => new Floor(pos));
+
+            //for (int r = 0; r < table.Rows; r++)
+            //{
+            //    for (int c = 0; c < table.Cols; c++)
+            //    {
+            //        table[r, c] = new Floor(new Coord() { X = c, Y = r });
+
+            //    }
+            //}
+        }
+
         public Map Create()
         {
-            var table = new BidimensionalArray<Atom>(Height, Width);
+            //var table = new BidimensionalArray<Atom>(Height, Width);
+            BidimensionalArray<Atom> table;
             var explored = new BidimensionalArray<bool>(Height, Width);
 
-            for (int r = 0; r < table.Rows; r++)
+            switch(MapCreationMode)
             {
-                for (int c = 0; c < table.Cols; c++)
-                {
-                    table[r, c] = new Floor(new Coord() { X = c, Y = r });
-                    
-                }
+                case TableCreationMode.Random:
+                    makeMap(out table);
+                    break;
+                case TableCreationMode.Empty:
+                default:
+                    createEmptyTable(out table);
+                    break;
             }
+            
             var map = new Map(Name, PlayerInitialPosition, table, Explored, !Lightened);
             for (int i = 0; i < views.Count; i++)
             {
@@ -204,7 +237,7 @@ namespace GodsWill_ASCIIRPG
                 {
                     singleMsgListeners.ForEach(l => atom.RegisterListener(l));
                 }
-                atom.InsertInMap(map, atom.Position);
+                atom.InsertInMap(map, atom.Position, true);
             }
 
             return map;
@@ -279,13 +312,13 @@ namespace GodsWill_ASCIIRPG
             this.name = name;
             this.playerInitialPosition = playerInitialPosition;
             this.table = table;
-            this.buffer = new BidimensionalArray<Atom>(table.Rows, table.Cols);
+            this.buffer = new BidimensionalArray<Atom>(table.Rows, table.Cols, (pos) => new Floor(pos));
             this.untangibles = new BidimensionalArray<AtomCollection>(table.Rows, table.Cols, () => new AtomCollection());
             this.explored = new BidimensionalArray<TernaryValue>(table.Rows, table.Cols, notToExplore);
             this.dark = new BidimensionalArray<bool>(table.Rows, table.Cols, dark);
             this.views = new List<IMapViewer>();
 
-            table.ForEach(atom => atom.InsertInMap(this, atom.Position));
+            table.ForEach(atom => atom.InsertInMap(this, atom.Position, true));
         }
 
         #region METHODS
@@ -331,20 +364,27 @@ namespace GodsWill_ASCIIRPG
             return explored[pos] == TernaryValue.Explored;
         }
 
-        public void Insert(Atom a)
+        public void Insert(Atom a, bool overwrite = false)
         {
             if (a.Physical)
             {
-                if (CanMoveTo(a.Position))
+                if (overwrite)
                 {
-                    buffer[a.Position] = table[a.Position];
                     table[a.Position] = a;
                 }
                 else
                 {
-                    if(typeof(Floor).IsAssignableFrom(buffer[a.Position].GetType()))
+                    if (CanMoveTo(a.Position))
                     {
-                        buffer[a.Position] = a;
+                        buffer[a.Position] = table[a.Position];
+                        table[a.Position] = a;
+                    }
+                    else
+                    {
+                        if (typeof(Floor).IsAssignableFrom(buffer[a.Position].GetType()))
+                        {
+                            buffer[a.Position] = a;
+                        }
                     }
                 }
             }
@@ -497,6 +537,55 @@ namespace GodsWill_ASCIIRPG
             return dark[coord];
         }
 
+#if DEBUG_PRINT_MAP
+        public void SaveToTxt(string filepath)
+        {
+            var name = String.Format("[DEBUG]{0}", filepath);
+            using (var w = new StreamWriter(name))
+            {
+                w.Write(this.ToString());
+            }
+        }
+
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+            var numByType = new Dictionary<Type, int>();
+
+            str.AppendLine(String.Format("{0} [{1}x{2}]",
+                            this.Name,
+                            this.Width,
+                            this.Height));
+
+            var pos = new Coord();
+            for (int r = 0; r < Height; r++)
+            {
+                pos.Y = r;
+                for (int c = 0; c < Width; c++)
+                {
+                    pos.X = c;
+                    var a = this[pos];
+                    str.Append(a.Symbol);
+                    var type = a.GetType();
+                    if(numByType.ContainsKey(type))
+                    {
+                        numByType[type]++;
+                    }
+                    else
+                    {
+                        numByType[type] = 1;
+                    }
+                }
+                str.AppendLine();
+            }
+            str.AppendLine();
+            foreach (var key in numByType.Keys)
+            {
+                str.AppendLine(String.Format("{0}: {1}", key, numByType[key]));
+            }
+            return str.ToString();
+        }
+#endif
         #endregion
     }
 }
