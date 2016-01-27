@@ -32,6 +32,15 @@ namespace GodsWill_ASCIIRPG.UIControls
     public partial class MapUserControl 
         : UserControl, PgController, AIController, IMapViewer, IAnimationViewer
     {
+        #region CONST
+        const bool squaredLook = false;
+        const float charSize = 10.0f;
+        const float charFontPadding = squaredLook ? 1.5f : .0f;
+        const float charPaintHorPadding = squaredLook ? .0f : 2.0f;
+        const string obscuredCell = "░";
+        private readonly SelectorCursor selectorCursor = new SelectorCursor();
+        #endregion
+
         public delegate bool AfterSelectionOperation(Coord selPos, bool allowOtherSelection = false);
         private readonly AfterSelectionOperation defaultAfterSelectionOp = (selPos, otherSel) => 
         {
@@ -44,10 +53,6 @@ namespace GodsWill_ASCIIRPG.UIControls
             Normal,
             Selection
         }
-        
-        const float charSize = 10.0f;
-        const string obscuredCell = "░";
-        private readonly SelectorCursor selectorCursor = new SelectorCursor(); 
 
         Pg controlledPg;
         Atom currentAtomFollowedByViewport;
@@ -183,7 +188,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
             this.DoubleBuffered = true;
             this.BackColor = Color.Black;
-            this.Font = new Font(FontFamily.GenericMonospace, charSize, FontStyle.Bold);
+            this.Font = new Font(FontFamily.GenericMonospace, charSize + charFontPadding);
 
             this.aiCharacters = new List<AICharacter>();
             this.backpackController = backpackController;
@@ -924,13 +929,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                                                         new PointF(xPos, yPos)));
                     }
 
-                    xPos += charSize;
+                    xPos += charSize - charPaintHorPadding;
                 }
             }
 #endif
 #if DEBUG_CENTER_VIEWPORT
                             #region CENTER_VIEWPORT
-                            var ptCenter = new PointF(  (centerRegion.X - firstCol) * charSize + offSetX,
+                            var ptCenter = new PointF(  (centerRegion.X - firstCol) * charSize + offSetX - charPaintHorPadding,
                                                         (centerRegion.Y - firstRow) * this.FontHeight + offSetY);
                                                          g.DrawString("*", this.Font, Brushes.Orange, ptCenter);
 #endregion
@@ -980,19 +985,19 @@ namespace GodsWill_ASCIIRPG.UIControls
             {
                 foreach (var posY in posHs)
                 {
-                    var ptF = new PointF(   (posX - firstCol) * charSize + offSetX, 
+                    var ptF = new PointF(   (posX - firstCol) * charSize + offSetX - charPaintHorPadding, 
                                             (posY - firstRow) * /*charSize */this.FontHeight + offSetY);
                     g.DrawString("*", this.Font, Brushes.Yellow, ptF);
                 }
             }
-#endregion
+            #endregion
 #endif
 #if DEBUG_LINE
             if (line != null)
             {
                 foreach (Coord pt in line)
                 {
-                    var ptF = new PointF(pt.X * charSize + offSetX, pt.Y * charSize + offSetY);
+                    var ptF = new PointF(pt.X * charSize + offSetX - charPaintHorPadding, pt.Y * charSize + offSetY);
                     g.DrawString("*", this.Font, Brushes.Red, ptF);
                 }
             }
@@ -1003,7 +1008,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 foreach (Coord pt in circle)
                 {
                     var yPos = pt.Y * charSize + offSetY;
-                    var xPos = pt.X * charSize + offSetX;
+                    var xPos = pt.X * charSize + offSetX; - charPaintHorPadding
                     g.DrawString("*",
                                     this.Font,
                                     Brushes.Orange,
@@ -1011,13 +1016,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                 }
             }
 #endif
-            if(currentFrame != null)
+            if (currentFrame != null)
             {
                 currentFrame.ForEach(fI =>
                 {
                     var pt = fI.Position;
                     var yPos = (pt.Y - firstRow) * /*charSize*/this.FontHeight + offSetY;
-                    var xPos = (pt.X - firstCol) * charSize + offSetX;
+                    var xPos = (pt.X - firstCol) * charSize + offSetX - charPaintHorPadding;
                     g.DrawString(   fI.Symbol,
                                     this.Font,
                                     new SolidBrush(fI.Color),

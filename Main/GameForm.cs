@@ -17,7 +17,7 @@ namespace GodsWill_ASCIIRPG
     {
         public const string MyName = "MainForm";
         public const string GameName = "GOD'S WILL";
-
+        public readonly Size InitSize = new Size(909, 569);
         Game game;
         TableLayoutPanel tblGameScreen;
 
@@ -94,6 +94,7 @@ namespace GodsWill_ASCIIRPG
                                             singleMsgConsole,
                                             mapViewControl);
             //Game.Current.RunGame();
+            this.Size = InitSize;
         }
 
         protected override void OnLoad(EventArgs e)
