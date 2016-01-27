@@ -199,7 +199,16 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             if(controlledPg != null)
             {
-                centerRegion = new Coord(controlledPg.Position);
+                var diff = controlledPg.Position - centerRegion;
+                
+                centerRegion.X = Math.Max(  0,
+                                            Math.Min(controlledPg.Map.Width - viewportWidthInCells_2 + 1,
+                                                     controlledPg.Position.X + 1));
+                centerRegion.Y = Math.Max(  0,
+                                            Math.Min(controlledPg.Map.Height - viewportHeightInCells_2 + 1,
+                                                     controlledPg.Position.Y + 1));
+                
+                //centerRegion = new Coord(controlledPg.Position);
                 currentAtomFollowedByViewport = controlledPg;
             }
         }
@@ -1018,7 +1027,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 currentFrame.ForEach(fI =>
                 {
                     var pt = fI.Position;
-                    var yPos = (pt.Y - firstRow) * charSize + offSetY;
+                    var yPos = (pt.Y - firstRow) * /*charSize*/this.FontHeight + offSetY;
                     var xPos = (pt.X - firstCol) * charSize + offSetX;
                     g.DrawString(   fI.Symbol,
                                     this.Font,
