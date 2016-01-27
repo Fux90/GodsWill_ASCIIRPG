@@ -1,5 +1,5 @@
 #define DEBUG_MAP
-//#define RANDOM_MAP_GENERATION
+#define RANDOM_MAP_GENERATION
 
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;

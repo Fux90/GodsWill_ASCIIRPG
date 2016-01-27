@@ -183,7 +183,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
             this.DoubleBuffered = true;
             this.BackColor = Color.Black;
-            this.Font = new Font(FontFamily.GenericMonospace, charSize);
+            this.Font = new Font(FontFamily.GenericMonospace, charSize, FontStyle.Bold);
 
             this.aiCharacters = new List<AICharacter>();
             this.backpackController = backpackController;
@@ -782,17 +782,6 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.Invalidate();
             base.OnResize(e);
             CenterOnPlayer();
-#if LOG_STAMPS
-            System.Windows.Forms.Control p = this;
-            while(p.Parent != null)
-            {
-                p = p.Parent;
-            }
-            if (p != null)
-            {
-                p.Text = this.Size.ToString();
-            }
-#endif
         }
 
         protected override void OnPaint(PaintEventArgs e)

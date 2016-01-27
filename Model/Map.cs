@@ -130,7 +130,7 @@ namespace GodsWill_ASCIIRPG
         }
 
         private void makeMap(  out BidimensionalArray<Atom> map,
-                                int MAX_ROOMS = 6,
+                                int MAX_ROOMS = 20,
                                 int ROOM_MIN_SIZE = 3,
                                 int ROOM_MAX_SIZE = 10)
         {

@@ -51,8 +51,8 @@ namespace GodsWill_ASCIIRPG
             var tblMapAndSheet = new TableLayoutPanel();
             tblMapAndSheet.Size = new Size();
             tblMapAndSheet.ColumnStyles.Clear();
-            tblMapAndSheet.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0.60F));
             tblMapAndSheet.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0.40F));
+            tblMapAndSheet.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0.60F));
             tblMapAndSheet.BackColor = Color.Beige;
             tblMapAndSheet.Margin = new Padding(0);
             tblMapAndSheet.MinimumSize = new Size();
