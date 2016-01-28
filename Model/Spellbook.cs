@@ -14,6 +14,17 @@ namespace GodsWill_ASCIIRPG.Model
         List<SpellBuilder> spells;
         [NonSerialized]
         List<ISpellbookViewer> spellbookViewers;
+        List<ISpellbookViewer> SpellbookViewers
+        {
+            get
+            {
+                if(spellbookViewers == null)
+                {
+                    spellbookViewers = new List<ISpellbookViewer>();
+                }
+                return spellbookViewers;
+            }
+        }
         [NonSerialized]
         IAtomListener spellSecondaryView;
 
@@ -33,7 +44,7 @@ namespace GodsWill_ASCIIRPG.Model
         public Spellbook(List<SpellBuilder> items = null, IAtomListener spellSecondaryView = null)
         {
             this.spells = items != null ? items : new List<SpellBuilder>();
-            spellbookViewers = new List<ISpellbookViewer>();
+            //spellbookViewers = new List<ISpellbookViewer>();
             this.spellSecondaryView = spellSecondaryView;
         }
 
@@ -72,7 +83,7 @@ namespace GodsWill_ASCIIRPG.Model
 
         public void RegisterViewer(ISpellbookViewer viewer)
         {
-            spellbookViewers.Add(viewer);
+            SpellbookViewers.Add(viewer);
             NotifyAdd();
         }
 
@@ -83,7 +94,7 @@ namespace GodsWill_ASCIIRPG.Model
 
         public void NotifyAdd()
         {
-            spellbookViewers.ForEach(viewer => viewer.NotifyAdd(this.ToArray()));
+            SpellbookViewers.ForEach(viewer => viewer.NotifyAdd(this.ToArray()));
         }
 
         IEnumerator IEnumerable.GetEnumerator()

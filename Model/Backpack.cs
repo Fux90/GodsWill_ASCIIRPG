@@ -13,6 +13,17 @@ namespace GodsWill_ASCIIRPG.Model
         List<Item> items;
         [NonSerialized]
         List<IBackpackViewer> backPackViewers;
+        List<IBackpackViewer> BackPackViewers
+        {
+            get
+            {
+                if(backPackViewers == null)
+                {
+                    backPackViewers = new List<IBackpackViewer>();
+                }
+                return backPackViewers;
+            }
+        }
 
         public int Count
         {
@@ -30,7 +41,7 @@ namespace GodsWill_ASCIIRPG.Model
         public Backpack(List<Item> items = null)
         {
             this.items = items != null ? items : new List<Item>();
-            backPackViewers = new List<IBackpackViewer>();
+            //backPackViewers = new List<IBackpackViewer>();
         }
 
         public void Add(Item item)
@@ -41,8 +52,9 @@ namespace GodsWill_ASCIIRPG.Model
 
         public Item Remove(Item item)
         {
-            return RemoveAt(this.items.IndexOf(item));
+            var itemR = RemoveAt(this.items.IndexOf(item));
             NotifyAddRemoval();
+            return itemR;
         }
 
         public Item RemoveAt(int index)
@@ -54,13 +66,13 @@ namespace GodsWill_ASCIIRPG.Model
 
         public void RegisterViewer(IBackpackViewer viewer)
         {
-            backPackViewers.Add(viewer);
+            BackPackViewers.Add(viewer);
             NotifyAddRemoval();
         }
 
         public void NotifyAddRemoval()
         {
-            backPackViewers.ForEach( viewer => viewer.NotifyAddRemoval(this.ToArray()) );
+            BackPackViewers.ForEach( viewer => viewer.NotifyAddRemoval(this.ToArray()) );
         }
 
         IEnumerator IEnumerable.GetEnumerator()

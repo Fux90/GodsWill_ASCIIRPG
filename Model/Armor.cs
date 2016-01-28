@@ -8,6 +8,7 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
+    [Serializable]
     public abstract class Armor : Item
 	{
         public static readonly string DefaultSymbol = "[";

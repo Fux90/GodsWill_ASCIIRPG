@@ -7,6 +7,7 @@ using System.Drawing;
 
 namespace GodsWill_ASCIIRPG.Model.Armors
 {
+    [Serializable]
     class Leather : Armor
     {
         public Leather(string name = "Leather", Coord position = new Coord())

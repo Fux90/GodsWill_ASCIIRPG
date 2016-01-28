@@ -136,6 +136,22 @@ namespace GodsWill_ASCIIRPG.Model.Core
             info.AddValue(heightSerializableName, height, typeof(int));
             info.AddValue(widthSerializableName, width, typeof(int));
         }
+
+        public T First(Func<T, bool> p)
+        {
+            for (int r = 0; r < this.Rows; r++)
+            {
+                for (int c = 0; c < this.Cols; c++)
+                {
+                    if(p(content[r,c]))
+                    {
+                        return content[r, c];
+                    }
+                }
+            }
+
+            return default(T);
+        }
         #endregion
     }
 }

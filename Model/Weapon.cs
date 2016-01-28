@@ -8,6 +8,7 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
+    [Serializable]
 	public abstract class Weapon : Item
 	{
         public static readonly _SpecialAttack NoSpecialAttack = (attacker, defender) => { };

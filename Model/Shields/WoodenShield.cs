@@ -7,6 +7,7 @@ using System.Drawing;
 
 namespace GodsWill_ASCIIRPG.Model.Shields
 {
+    [Serializable]
     class WoodenShield : Shield
     {
         public WoodenShield(string name = "Wooden Shield", Coord position = new Coord())

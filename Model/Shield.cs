@@ -8,6 +8,7 @@ using GodsWill_ASCIIRPG.Model.Core;
 
 namespace GodsWill_ASCIIRPG
 {
+    [Serializable]
     public abstract class Shield : Item
 	{
         public static readonly string DefaultSymbol = "(";

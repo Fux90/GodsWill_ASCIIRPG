@@ -51,25 +51,30 @@ namespace GodsWill_ASCIIRPG
 
             }
 
-            public void InitialMenu(List<IAtomListener> atomListeners,
-                                    List<ISheetViewer> sheetViews,
-                                    List<IBackpackViewer> backpackViewers,
-                                    List<ISpellbookViewer> spellbookViewers,
-                                    List<IAtomListener> secondarySpellsViewers)
+            public void InitialMenu()//List<IAtomListener> atomListeners,
+            //                        List<ISheetViewer> sheetViews,
+            //                        List<IBackpackViewer> backpackViewers,
+            //                        List<ISpellbookViewer> spellbookViewers,
+            //                        List<IAtomListener> secondarySpellsViewers)
             {
-                currentPg = new PgCreator() { God = Gods.Ares }.Create();
-                atomListeners.ForEach( listener => currentPg.RegisterListener(listener));
-                sheetViews.ForEach( sheet => currentPg.RegisterSheet(sheet));
-                backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterViewer(viewer));
-                spellbookViewers.ForEach(viewer => currentPg.Spellbook.RegisterViewer(viewer));
-                secondarySpellsViewers.ForEach(secondarySpellsViewer => currentPg.Spellbook.RegisterSecondaryView(secondarySpellsViewer));
+                //currentPg = new PgCreator() { God = Gods.Ares }.Create();
+                //atomListeners.ForEach( listener => currentPg.RegisterListener(listener));
+                //sheetViews.ForEach( sheet => currentPg.RegisterSheet(sheet));
+                //backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterViewer(viewer));
+                //spellbookViewers.ForEach(viewer => currentPg.Spellbook.RegisterViewer(viewer));
+                //secondarySpellsViewers.ForEach(secondarySpellsViewer => currentPg.Spellbook.RegisterSecondaryView(secondarySpellsViewer));
             }
 
             public void GameInitialization( PgController pgController, 
                                             AIController aiController,
                                             IMapViewer mapViewer,
                                             IAtomListener singleMsgListener,
-                                            IAnimationViewer animationViewer)
+                                            IAnimationViewer animationViewer,
+                                            List<IAtomListener> atomListeners,
+                                            List<ISheetViewer> sheetViews,
+                                            List<IBackpackViewer> backpackViewers,
+                                            List<ISpellbookViewer> spellbookViewers,
+                                            List<IAtomListener> secondarySpellsViewers)
             {
                 // Map generation
                 var mapBuilder = new MapBuilder();
@@ -136,6 +141,8 @@ namespace GodsWill_ASCIIRPG
                 var orc2 = orcBuilder2.Build();
                 mapBuilder.AddAtom(orc2);
 
+                currentPg = new PgCreator() { God = Gods.Ares }.Create();
+                
                 currentPg.Listeners.ForEach(listener => orc1.RegisterListener(listener));
                 currentPg.Listeners.ForEach(listener => orc2.RegisterListener(listener));
                 aiController.Register(orc1);
@@ -146,8 +153,27 @@ namespace GodsWill_ASCIIRPG
 #endif
                 mapBuilder.MapCreationMode = MapBuilder.TableCreationMode.FromFile;
                 var map = mapBuilder.Create();
+#if !DEBUG_MAP
+                CurrentPg.InsertInMap(map, map.PlayerInitialPosition, overwrite: false);
+#else
+                currentPg = map.CurrentPg;
 
-                CurrentPg.InsertInMap(map, map.PlayerInitialPosition);
+                if (currentPg == null)
+                {
+                    currentPg = new PgCreator() { God = Gods.Ares }.Create();
+                    CurrentPg.InsertInMap(map, map.PlayerInitialPosition, overwrite: false);
+                }
+                else
+                {
+                    CurrentPg.InsertInMap(map, currentPg.Position, overwrite: true);
+                }
+#endif
+
+                atomListeners.ForEach(listener => currentPg.RegisterListener(listener));
+                sheetViews.ForEach(sheet => currentPg.RegisterSheet(sheet));
+                backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterViewer(viewer));
+                spellbookViewers.ForEach(viewer => currentPg.Spellbook.RegisterViewer(viewer));
+                secondarySpellsViewers.ForEach(secondarySpellsViewer => currentPg.Spellbook.RegisterSecondaryView(secondarySpellsViewer));
 
                 pgController.Register(CurrentPg);
                 pgController.BackpackController.Register(CurrentPg.Backpack);

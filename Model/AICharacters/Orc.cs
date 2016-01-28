@@ -70,6 +70,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
         }
     }
 
+    [Serializable]
     //[PerceptionCD(typeof(ListenPerception), 15)]
     [Prerequisite(MinimumLevel = Pg.Level.Novice)]
     public class Orc : AICharacter

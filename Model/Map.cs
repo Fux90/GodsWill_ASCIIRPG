@@ -32,6 +32,7 @@ namespace GodsWill_ASCIIRPG
         List<IMapViewer> views;
         List<IAtomListener> singleMsgListeners;
         List<Atom> elements;
+        Pg pgFromFile;
         #endregion
 
         #region PROPERTIES
@@ -42,6 +43,7 @@ namespace GodsWill_ASCIIRPG
         public TernaryValue Explored { get; set; }
         public bool Lightened { get; set; }
         public TableCreationMode MapCreationMode { get; set; }
+        public Pg PgReadFromFile { get { return pgFromFile; } }
         #endregion
 
         public MapBuilder()
@@ -55,16 +57,20 @@ namespace GodsWill_ASCIIRPG
             elements = new List<Atom>();
         }
 
-        public Map LoadFromFile(string mapFilePath)
+        public bool LoadFromFile(string mapFilePath, out Map map)
         {
+            map = null;
+
             if (File.Exists(mapFilePath))
             {
                 var formatter = new BinaryFormatter();
                 FileStream mapFile = new FileStream(mapFilePath, FileMode.Open);
-                return (Map)formatter.Deserialize(mapFile);
+                map = (Map)formatter.Deserialize(mapFile);
+                mapFile.Close();
+                return true;
             }
 
-            return null;
+            return false;
         }
 
         public void AddViewer(IMapViewer viewer)
@@ -223,7 +229,7 @@ namespace GodsWill_ASCIIRPG
             switch (MapCreationMode)
             {
                 case TableCreationMode.FromFile:
-                    map = LoadFromFile(@"currentLevel.map");
+                    LoadFromFile(@"currentLevel.map", out map);
                     table = null;
                     break;
                 case TableCreationMode.Random:
@@ -288,6 +294,7 @@ namespace GodsWill_ASCIIRPG
         private const string darkSerializableName = "dark";
         private const string untangiblesSerializableName = "untangibles";
         private const string viewsSerializableName = "views";
+        private const string playerInitialPosSerializableName = "playerInitialPos";
         #endregion
 
         #region PRIVATE_MEMBERS
@@ -306,6 +313,14 @@ namespace GodsWill_ASCIIRPG
         public int Width { get { return table.Width; } }
         public int Height { get { return table.Height; } }
         public Coord PlayerInitialPosition { get { return playerInitialPosition; } }
+        public Pg CurrentPg
+        {
+            get
+            {
+                var typeOfPg = typeof(Pg);
+                return (Pg)table.First(a => a.GetType() == typeOfPg);
+            }
+        }
         #endregion
 
         #region ITERATORS
@@ -549,6 +564,7 @@ namespace GodsWill_ASCIIRPG
             dark = (BidimensionalArray<bool>)info.GetValue(darkSerializableName, typeof(BidimensionalArray<bool>));
             explored = (BidimensionalArray<TernaryValue>)info.GetValue(exploredSerializableName, typeof(BidimensionalArray<TernaryValue>));
             untangibles = (BidimensionalArray<AtomCollection>)info.GetValue(untangiblesSerializableName, typeof(BidimensionalArray<AtomCollection>));
+            playerInitialPosition = (Coord)info.GetValue(playerInitialPosSerializableName, typeof(Coord));
             //views = (List<IMapViewer>)info.GetValue(viewsSerializableName, typeof(List<IMapViewer>));
             this.views = new List<IMapViewer>();
         }
@@ -561,6 +577,7 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(exploredSerializableName, explored, typeof(BidimensionalArray<TernaryValue>));
             info.AddValue(darkSerializableName, dark, typeof(BidimensionalArray<bool>));
             info.AddValue(untangiblesSerializableName, untangibles, typeof(BidimensionalArray<AtomCollection>));
+            info.AddValue(playerInitialPosSerializableName, playerInitialPosition, typeof(Coord));
             //info.AddValue(viewsSerializableName, views, typeof(List<IMapViewer>));
         }
 
@@ -625,6 +642,8 @@ namespace GodsWill_ASCIIRPG
                 }
                 str.AppendLine();
             }
+            str.AppendLine();
+            str.AppendLine(String.Format("Player Pos: {0}", PlayerInitialPosition.ToString()));
             str.AppendLine();
             foreach (var key in numByType.Keys)
             {

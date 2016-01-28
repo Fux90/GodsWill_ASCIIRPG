@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model.Items
 {
+    [Serializable]
     public class Gold : Atom
     {
         public int Amount { get; private set; }

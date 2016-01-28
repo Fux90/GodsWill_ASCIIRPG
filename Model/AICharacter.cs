@@ -40,6 +40,7 @@ namespace GodsWill_ASCIIRPG
         }
     }
 
+    [Serializable]
 	public abstract class AICharacter : Character
 	{
         public delegate int XPCalculationMethod(Character pg, Character monster);

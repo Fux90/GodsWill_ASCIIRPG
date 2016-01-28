@@ -5,9 +5,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using GodsWill_ASCIIRPG.Model.Core;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG
 {
+    [Serializable]
     abstract public class Item : Atom, Descriptionable
     {
         public const int _UnlimitedUses = -1;
@@ -48,6 +50,12 @@ namespace GodsWill_ASCIIRPG
             this.uses = uses;
 
             IsPickable = true;
+        }
+
+        public Item(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
         }
 
         protected bool ConsumeUse()

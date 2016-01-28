@@ -52,7 +52,8 @@ namespace GodsWill_ASCIIRPG
 
         public int MyGold { get; protected set; }
 
-        protected List<ISheetViewer> CharacterSheets { get; private set; }
+        private List<ISheetViewer> characterSheets;
+        protected List<ISheetViewer> CharacterSheets{ get { return characterSheets; }}
 
         public abstract Dice HealthDice { get; }
         public abstract Dice HungerDice { get; }
@@ -93,7 +94,19 @@ namespace GodsWill_ASCIIRPG
         public Backpack Backpack { get { return backpack; } }
         //public Spellbook Spellbook{ get { return spellbook; } }
 
-        public TemporaryModifierCollection TempModifiers { get; private set; }
+        private TemporaryModifierCollection tempModifiers;
+        public TemporaryModifierCollection TempModifiers
+        {
+            get
+            {
+                return tempModifiers;
+            }
+
+            private set
+            {
+                tempModifiers = value;
+            }
+        }
 
         public string RaceType
         {
@@ -105,7 +118,12 @@ namespace GodsWill_ASCIIRPG
 
         public God God { get; private set; }
 
-        public List<Perception> Perceptions { get; private set; }
+        public List<Perception> perceptions;
+        public List<Perception> Perceptions
+        {
+            get { return perceptions; }
+            private set { perceptions = value; }
+        }
 
         public int BlockedTurns { get; private set; }
 
@@ -138,10 +156,7 @@ namespace GodsWill_ASCIIRPG
 
             this.God = god;
 
-            this.CharacterSheets = new List<ISheetViewer>();
-
-            this.Perceptions = initPerceptions();
-            this.TempModifiers = new TemporaryModifierCollection();
+            Init();
         }
 
         public Character(   SerializationInfo info,
@@ -160,6 +175,24 @@ namespace GodsWill_ASCIIRPG
             God = (God)info.GetValue(godSerializableName, typeof(God));
             Perceptions = (List<Perception>)info.GetValue(perceptionsSerializableName, typeof(List<Perception>));
             BlockedTurns = (int)info.GetValue(blockedTurnsSerializableName, typeof(int));
+
+            Init();
+        }
+
+        private void Init()
+        {
+            CreateIfNull(ref this.characterSheets, () => new List<ISheetViewer>());
+            CreateIfNull(ref this.perceptions, () => initPerceptions());
+            CreateIfNull(ref this.tempModifiers, () => new TemporaryModifierCollection());
+        }
+
+        private delegate T Create<T>();
+        private void CreateIfNull<T>(ref T obj, Create<T> creation)
+        {
+            if(obj == null)
+            {
+                obj = creation();
+            }
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

@@ -61,6 +61,7 @@ namespace GodsWill_ASCIIRPG.Model
 
         public void Add(Atom atom)
         {
+            atoms.Remove(atom); //Prevent duplication
             atoms.Add(atom);
         }
 

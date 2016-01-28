@@ -3,6 +3,7 @@ using GodsWill_ASCIIRPG.Model.Spells;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -104,6 +105,7 @@ namespace GodsWill_ASCIIRPG.Model.Items
         }
     }
 
+    [Serializable]
     public class PrayerBook : Item
     {
         SpellBuilder spell;
@@ -126,6 +128,12 @@ namespace GodsWill_ASCIIRPG.Model.Items
         {
             this.spell = spell;
             this.percOfSuccess = percOfSuccess;
+        }
+
+        public PrayerBook(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
         }
 
         public override string FullDescription

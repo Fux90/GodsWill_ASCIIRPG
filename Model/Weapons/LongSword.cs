@@ -8,6 +8,7 @@ using GodsWill_ASCIIRPG.Model.Core;
 
 namespace GodsWill_ASCIIRPG.Model.Weapons
 {
+    [Serializable]
     class LongSword : Weapon
     {
         public LongSword(string name = "Long Sword", Coord position = new Coord())
