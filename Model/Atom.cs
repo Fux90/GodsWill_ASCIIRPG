@@ -154,6 +154,11 @@ namespace GodsWill_ASCIIRPG
             
             return satisfied;
         }
+
+        public void SetMap(Map map)
+        {
+            this.map = map;
+        }
         #endregion
     }
 

@@ -567,6 +567,10 @@ namespace GodsWill_ASCIIRPG
             playerInitialPosition = (Coord)info.GetValue(playerInitialPosSerializableName, typeof(Coord));
             //views = (List<IMapViewer>)info.GetValue(viewsSerializableName, typeof(List<IMapViewer>));
             this.views = new List<IMapViewer>();
+
+            table.ForEach(a => a.SetMap(this));
+            buffer.ForEach(a => a.SetMap(this));
+            untangibles.ForEach(uL => uL.ForEach(a => a.SetMap(this)));
         }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)

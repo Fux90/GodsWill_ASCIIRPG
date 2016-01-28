@@ -1,5 +1,6 @@
 #define DEBUG_MAP
 //#define RANDOM_MAP_GENERATION
+#define DEBUG_MAP_FROM_FILE
 
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
@@ -91,6 +92,7 @@ namespace GodsWill_ASCIIRPG
 
                 mapBuilder.MapCreationMode = MapBuilder.TableCreationMode.Random;
 #else
+#if !DEBUG_MAP_FROM_FILE
                 mapBuilder.Height = 30;
                 mapBuilder.Width = 19;
 
@@ -148,14 +150,15 @@ namespace GodsWill_ASCIIRPG
                 aiController.Register(orc1);
                 aiController.Register(orc2);
 #endif
+#endif
 #else
                 mapBuilder.LoadFromFile("");
 #endif
-#if DEBUG_READ_MAP_FROM_FILE
+#if DEBUG_MAP_FROM_FILE
                 mapBuilder.MapCreationMode = MapBuilder.TableCreationMode.FromFile;
 #endif
                 var map = mapBuilder.Create();
-#if !DEBUG_READ_MAP_FROM_FILE
+#if !DEBUG_MAP_FROM_FILE
                 CurrentPg.InsertInMap(map, map.PlayerInitialPosition, overwrite: false);
 #else
                 currentPg = map.CurrentPg;
