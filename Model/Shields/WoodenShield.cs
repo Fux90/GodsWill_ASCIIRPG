@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG.Model.Shields
 {
@@ -20,6 +21,12 @@ namespace GodsWill_ASCIIRPG.Model.Shields
                     cost: 1,
                     weight: 2,
                     position: position)
+        {
+
+        }
+
+        public WoodenShield(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
 
         }

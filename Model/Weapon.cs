@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace GodsWill_ASCIIRPG
@@ -93,6 +94,12 @@ namespace GodsWill_ASCIIRPG
             this.damage = damage;
             this.specialAttack = specialAttack;
             this.specialAttackDescription = specialAttackDescription;
+        }
+
+        public Weapon(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
         }
 
         public void ActivateSpecialAttack()

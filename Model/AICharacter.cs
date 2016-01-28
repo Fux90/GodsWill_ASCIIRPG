@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace GodsWill_ASCIIRPG
@@ -128,6 +129,12 @@ namespace GodsWill_ASCIIRPG
             this.intelligence.ControlledCharacter = this;
             this.PerceptionDistance = perceptionDistance;
             this.AlliedTo = hostile;
+        }
+
+        public AICharacter(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
         }
 
         private static XPCalculationMethod xpCalculation;

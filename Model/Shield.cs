@@ -5,6 +5,7 @@ using System.Text;
 using System.Drawing;
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -56,6 +57,12 @@ namespace GodsWill_ASCIIRPG
         {
             this.bonusCA = bonusCA;
             this.bonusSpecialCA = bonusSpecialCA;
+        }
+
+        public Shield(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
         }
 
         public override string FullDescription

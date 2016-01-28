@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GodsWill_ASCIIRPG.Model.Core;
 using System.Drawing;
 using GodsWill_ASCIIRPG.Model.Perceptions;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG.Model.AICharacters
 {
@@ -121,6 +122,12 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
                     description,
                     position,
                     hostile)
+        {
+
+        }
+
+        public Orc(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
 
         }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace GodsWill_ASCIIRPG
@@ -64,6 +65,12 @@ namespace GodsWill_ASCIIRPG
         {
             this.damageReduction = damageReduction;
             this.ArmorType = armorType;
+        }
+
+        public Armor(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
         }
 
         public override string FullDescription

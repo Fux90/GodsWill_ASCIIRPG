@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG.Model.Armors
 {
@@ -25,6 +26,12 @@ namespace GodsWill_ASCIIRPG.Model.Armors
                   weight: 5,
                   position: position)
 
+        {
+
+        }
+
+        public Leather(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
 
         }

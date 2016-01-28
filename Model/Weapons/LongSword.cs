@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using GodsWill_ASCIIRPG.Model.Core;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG.Model.Weapons
 {
@@ -24,6 +25,12 @@ namespace GodsWill_ASCIIRPG.Model.Weapons
                    cost: 10,
                    weight: 2,
                    position: position)
+        {
+
+        }
+
+        public LongSword(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
 
         }

@@ -1,5 +1,5 @@
 #define DEBUG_MAP
-#define RANDOM_MAP_GENERATION
+//#define RANDOM_MAP_GENERATION
 
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
@@ -151,9 +151,11 @@ namespace GodsWill_ASCIIRPG
 #else
                 mapBuilder.LoadFromFile("");
 #endif
+#if DEBUG_READ_MAP_FROM_FILE
                 mapBuilder.MapCreationMode = MapBuilder.TableCreationMode.FromFile;
+#endif
                 var map = mapBuilder.Create();
-#if !DEBUG_MAP
+#if !DEBUG_READ_MAP_FROM_FILE
                 CurrentPg.InsertInMap(map, map.PlayerInitialPosition, overwrite: false);
 #else
                 currentPg = map.CurrentPg;
