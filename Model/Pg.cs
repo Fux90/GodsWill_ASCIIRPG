@@ -97,11 +97,11 @@ namespace GodsWill_ASCIIRPG
 	public class Pg : Character, ISpellcaster
 	{
         #region SERIALIZATION_CONST_NAMES
-        const string currentLevelSerializationName = "";
-        const string maxLevelSerializationName = "";
-        const string xpSerializationName = "";
-        const string perceptionRangeSerializationName = "";
-        const string spellbookSerializationName = "";
+        const string currentLevelSerializationName = "level";
+        const string maxLevelSerializationName = "maxLevel";
+        const string xpSerializationName = "xp";
+        const string perceptionRangeSerializationName = "perceptionRange";
+        const string spellbookSerializationName = "spellbook";
         #endregion
 
     public enum Level
@@ -188,8 +188,10 @@ namespace GodsWill_ASCIIRPG
             spellbook = (Spellbook)info.GetValue(spellbookSerializationName, typeof(Spellbook));
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            base.GetObjectData(info, context);
+
             info.AddValue(currentLevelSerializationName, CurrentLevel, typeof(Pg.Level));
             info.AddValue(maxLevelSerializationName, maxLevel, typeof(int));
             info.AddValue(xpSerializationName, xp, typeof(int[]));

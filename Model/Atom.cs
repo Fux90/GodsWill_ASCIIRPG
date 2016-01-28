@@ -112,10 +112,11 @@ namespace GodsWill_ASCIIRPG
             position = (Coord)info.GetValue(positionSerializableName, typeof(Coord));
             //map = (Map)info.GetValue(mapSerializableName, typeof(Map));
             //listeners = (List<IAtomListener>)info.GetValue(listenersSerializableName, typeof(List<IAtomListener>));
+            this.listeners = new List<IAtomListener>();
             IsPickable = (bool)info.GetValue(isPickableSerializableName, typeof(bool));
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue(nameSerializableName, name, typeof(string));
             info.AddValue(symbolSerializableName, symbol, typeof(string));
@@ -156,6 +157,7 @@ namespace GodsWill_ASCIIRPG
         #endregion
     }
 
+    [Serializable]
     public abstract class MoveableAtom : Atom
     {
         public bool Unblockable { get; private set; }

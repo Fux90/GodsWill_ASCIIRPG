@@ -284,6 +284,9 @@ namespace GodsWill_ASCIIRPG
         private const string nameSerializableName = "name";
         private const string tableSerializableName = "table";
         private const string bufferSerializableName = "buffer";
+        private const string exploredSerializableName = "explored";
+        private const string darkSerializableName = "dark";
+        private const string untangiblesSerializableName = "untangibles";
         private const string viewsSerializableName = "views";
         #endregion
 
@@ -543,7 +546,11 @@ namespace GodsWill_ASCIIRPG
             name = (string)info.GetValue(nameSerializableName, typeof(string));
             table = (BidimensionalArray<Atom>)info.GetValue(tableSerializableName, typeof(BidimensionalArray<Atom>));
             buffer = (BidimensionalArray<Atom>)info.GetValue(bufferSerializableName, typeof(BidimensionalArray<Atom>));
+            dark = (BidimensionalArray<bool>)info.GetValue(darkSerializableName, typeof(BidimensionalArray<bool>));
+            explored = (BidimensionalArray<TernaryValue>)info.GetValue(exploredSerializableName, typeof(BidimensionalArray<TernaryValue>));
+            untangibles = (BidimensionalArray<AtomCollection>)info.GetValue(untangiblesSerializableName, typeof(BidimensionalArray<AtomCollection>));
             //views = (List<IMapViewer>)info.GetValue(viewsSerializableName, typeof(List<IMapViewer>));
+            this.views = new List<IMapViewer>();
         }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -551,6 +558,9 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(nameSerializableName, name, typeof(string));
             info.AddValue(tableSerializableName, table, typeof(BidimensionalArray<Atom>));
             info.AddValue(bufferSerializableName, buffer, typeof(BidimensionalArray<Atom>));
+            info.AddValue(exploredSerializableName, explored, typeof(BidimensionalArray<TernaryValue>));
+            info.AddValue(darkSerializableName, dark, typeof(BidimensionalArray<bool>));
+            info.AddValue(untangiblesSerializableName, untangibles, typeof(BidimensionalArray<AtomCollection>));
             //info.AddValue(viewsSerializableName, views, typeof(List<IMapViewer>));
         }
 

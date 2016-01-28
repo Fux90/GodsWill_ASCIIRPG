@@ -162,8 +162,10 @@ namespace GodsWill_ASCIIRPG
             BlockedTurns = (int)info.GetValue(blockedTurnsSerializableName, typeof(int));
         }
 
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            base.GetObjectData(info, context);
+
             info.AddValue(hpSerializableName, hp, typeof(int[]));
             info.AddValue(hungerSerializableName, hunger, typeof(int));
             info.AddValue(wornArmorSerializableName, wornArmor, typeof(Armor));

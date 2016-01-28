@@ -120,6 +120,7 @@ namespace GodsWill_ASCIIRPG.Model
         }
     }
 
+    [Serializable]
     public abstract class SpellBuilder : Atom, Descriptionable
     {
         public ISpellcaster Caster { get; set; }
@@ -134,7 +135,7 @@ namespace GodsWill_ASCIIRPG.Model
         {
         }
 
-        public abstract string Name { get; }
+        public new abstract string Name { get; }
         public abstract Target Target { get; }
         public abstract Spell Create(out bool issues);
 

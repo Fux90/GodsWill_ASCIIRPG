@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    [Serializable]
     public class Spellbook : IEnumerable
     {
         List<SpellBuilder> spells;
+        [NonSerialized]
         List<ISpellbookViewer> spellbookViewers;
+        [NonSerialized]
         IAtomListener spellSecondaryView;
 
         public int Count

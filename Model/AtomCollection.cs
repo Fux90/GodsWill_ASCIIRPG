@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Collections;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    [Serializable]
     public class AtomCollection : Atom, ICollection<Atom>
     {
+        const string atomsSerializeableName = "atoms";
+
         List<Atom> atoms;
 
         public int Count
@@ -32,6 +36,19 @@ namespace GodsWill_ASCIIRPG.Model
             : base("Collection", "C", Color.White, true, false)
         {
             atoms = new List<Atom>();
+        }
+
+        public AtomCollection(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            atoms = (List<Atom>)info.GetValue(atomsSerializeableName, typeof(List<Atom>));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue(atomsSerializeableName, atoms, typeof(List<Atom>));
         }
 
         public Atom this[int index]
