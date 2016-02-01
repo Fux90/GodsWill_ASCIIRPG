@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -134,6 +135,18 @@ namespace GodsWill_ASCIIRPG.Model.Core
             var y = (rect.Top + rect.Bottom) / 2;
 
             return new Coord(x, y);
+        }
+
+        public static TDelegate ToDelegate<TAlgorythms, TDelegate>(this string methodName)
+        {
+            var regex = new Regex(@"<get_(?<mName>.*)>.*");
+            var match = regex.Match(methodName);
+            var name = match.Groups["mName"].Value;
+            var m = typeof(TAlgorythms).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            var a = m.Where(mI => mI.Name == name).Select(mI => mI.GetMethod).Single();
+            var res =(TDelegate)a.Invoke(null, null);
+
+            return res;
         }
     }
 }

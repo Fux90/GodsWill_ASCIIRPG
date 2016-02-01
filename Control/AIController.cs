@@ -7,5 +7,6 @@ namespace GodsWill_ASCIIRPG
 {
 	interface AIController : Controller<AICharacter>
 	{
+        void RegisterAll(IEnumerable<AICharacter> characters);
 	}
 }

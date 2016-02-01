@@ -42,8 +42,17 @@ namespace GodsWill_ASCIIRPG
     }
 
     [Serializable]
-	public abstract class AICharacter : Character
+	public abstract class AICharacter : Character, ISerializable
 	{
+        #region SERIALIZATION_CONST_NAMES
+        const string hostileSerializationName = "hostile";
+        const string aiTypeSerializationName = "type";
+        const string aiSerializationName = "ai";
+        const string sensingSerializationName = "sensing";
+        const string perceptionDistanceSerializationName = "perceptionDist";
+        const string squaredPerceptionDistanceSerializationName = "sqrPerceptionDist";
+        #endregion
+
         public delegate int XPCalculationMethod(Character pg, Character monster);
 
         private AI intelligence;
@@ -134,7 +143,29 @@ namespace GodsWill_ASCIIRPG
         public AICharacter(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+            var typeName = (string)info.GetValue(aiTypeSerializationName, typeof(string));
+            var type = Type.GetType(typeName);
+            intelligence = (AI)Activator.CreateInstance(type, new object[] { info, context});
+            this.intelligence.ControlledCharacter = this;
+            var senseMethodName = (string)info.GetValue(sensingSerializationName, typeof(string));
+            SensePg = senseMethodName.ToDelegate<AI.SensingAlgorythms, AI.SensingMethod>();
+            perceptionDistance = (int)info.GetValue(perceptionDistanceSerializationName, typeof(int));
+            squaredPerceptionDistance =  (int)info.GetValue(squaredPerceptionDistanceSerializationName, typeof(int));
+        }
 
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue(aiTypeSerializationName, intelligence.GetType().FullName, typeof(string));
+            //This way doesn't work
+            //info.AddValue(aiSerializationName, intelligence.ToString(), typeof(string));
+            intelligence.GetObjectData(info, context);
+            info.AddValue(  sensingSerializationName,
+                            SensePg.Method.Name,
+                            typeof(string));
+            info.AddValue(perceptionDistanceSerializationName, perceptionDistance, typeof(int));
+            info.AddValue(squaredPerceptionDistanceSerializationName, squaredPerceptionDistance, typeof(int));
         }
 
         private static XPCalculationMethod xpCalculation;
@@ -178,10 +209,6 @@ namespace GodsWill_ASCIIRPG
             return false;
         }
 
-        //public virtual bool SensePg(Pg pg)
-        //{
-        //    return pg.Position.SquaredDistanceFrom(this.Position) < SquaredPerceptionDistance;
-        //}
         public AI.SensingMethod SensePg { get; protected set; }
 
         public override void Die(IFighter pg)

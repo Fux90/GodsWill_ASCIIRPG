@@ -147,8 +147,8 @@ namespace GodsWill_ASCIIRPG
                 
                 currentPg.Listeners.ForEach(listener => orc1.RegisterListener(listener));
                 currentPg.Listeners.ForEach(listener => orc2.RegisterListener(listener));
-                aiController.Register(orc1);
-                aiController.Register(orc2);
+                //aiController.Register(orc1);
+                //aiController.Register(orc2);
 #endif
 #endif
 #else
@@ -162,6 +162,7 @@ namespace GodsWill_ASCIIRPG
                 CurrentPg.InsertInMap(map, map.PlayerInitialPosition, overwrite: false);
 #else
                 currentPg = map.CurrentPg;
+                //var aiCharacters = map.AICharacters;
 
                 if (currentPg == null)
                 {
@@ -173,6 +174,7 @@ namespace GodsWill_ASCIIRPG
                     CurrentPg.InsertInMap(map, currentPg.Position, overwrite: true);
                 }
 #endif
+                var aiCharacters = map.AICharacters;
 
                 atomListeners.ForEach(listener => currentPg.RegisterListener(listener));
                 sheetViews.ForEach(sheet => currentPg.RegisterSheet(sheet));
@@ -184,8 +186,7 @@ namespace GodsWill_ASCIIRPG
                 pgController.BackpackController.Register(CurrentPg.Backpack);
                 pgController.SpellbookController.Register(CurrentPg.Spellbook);
 
-                
-
+                aiController.RegisterAll(aiCharacters);
                 Animation.RegisterAnimationViewer(animationViewer);
             }
 

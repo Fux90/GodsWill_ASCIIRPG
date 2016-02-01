@@ -28,6 +28,7 @@ namespace GodsWill_ASCIIRPG
         const string godSerializableName = "god";
         const string perceptionsSerializableName = "perceptions";
         const string blockedTurnsSerializableName = "blockedTurns";
+        const string alliedToSerializableName = "alliedTo";
         #endregion
 
         protected enum HpType
@@ -175,7 +176,7 @@ namespace GodsWill_ASCIIRPG
             God = (God)info.GetValue(godSerializableName, typeof(God));
             Perceptions = (List<Perception>)info.GetValue(perceptionsSerializableName, typeof(List<Perception>));
             BlockedTurns = (int)info.GetValue(blockedTurnsSerializableName, typeof(int));
-
+            AlliedTo = (Allied)info.GetValue(alliedToSerializableName, typeof(Allied));
             Init();
         }
 
@@ -211,6 +212,7 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(godSerializableName, God, typeof(God));
             info.AddValue(perceptionsSerializableName, Perceptions, typeof(List<Perception>));
             info.AddValue(blockedTurnsSerializableName, BlockedTurns, typeof(int));
+            info.AddValue(alliedToSerializableName, AlliedTo, typeof(Allied));
         }
 
         private List<Perception> initPerceptions()

@@ -137,6 +137,24 @@ namespace GodsWill_ASCIIRPG.Model.Core
             info.AddValue(widthSerializableName, width, typeof(int));
         }
 
+        public IEnumerable<T> Where(Func<T, bool> predicate)
+        {
+            var lst = new List<T>();
+
+            for (int r = 0; r < this.Rows; r++)
+            {
+                for (int c = 0; c < this.Cols; c++)
+                {
+                    if (predicate(content[r, c]))
+                    {
+                        lst.Add(content[r, c]);
+                    }
+                }
+            }
+
+            return lst;
+        }
+
         public T First(Func<T, bool> p)
         {
             for (int r = 0; r < this.Rows; r++)

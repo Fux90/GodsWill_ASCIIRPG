@@ -321,6 +321,14 @@ namespace GodsWill_ASCIIRPG
                 return (Pg)table.First(a => a.GetType() == typeOfPg);
             }
         }
+        public IEnumerable<AICharacter> AICharacters
+        {
+            get
+            {
+                var typeOfAIChar = typeof(AICharacter);
+                return table.Where(a => a.GetType().IsSubclassOf(typeOfAIChar)).Select(a => (AICharacter)a);
+            }
+        }
         #endregion
 
         #region ITERATORS

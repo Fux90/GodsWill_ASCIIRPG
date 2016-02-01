@@ -1053,6 +1053,14 @@ namespace GodsWill_ASCIIRPG.UIControls
             aiCharacters.Add(character);
         }
 
+        public void RegisterAll(IEnumerable<AICharacter> characters)
+        {
+            foreach (var character in characters)
+            {
+                aiCharacters.Add(character);
+            }
+        }
+
         public void Unregister(AICharacter character)
         {
             aiCharacters.Remove(character);

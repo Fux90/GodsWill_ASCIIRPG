@@ -4,42 +4,79 @@ using GodsWill_ASCIIRPG.Model.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
-
-
-	public abstract class AI
+    [Serializable]
+	public abstract class AI : ISerializable
 	{
-        public static class DirectionFindingAlgorithms
+        #region SERIALIZABLE_CONST
+        const string findDirectionSerializableName = "findDirection";
+        const string randomDirectionChangeSerializableName = "randomDirection";
+        #endregion
+
+        public class DirectionFindingAlgorithms
         {
-            public static AI.FindDirectionMethod SimpleChase = (me, pg) =>
+            public static AI.FindDirectionMethod SimpleChase
             {
-                var firstStepPos = new Line(me.Position, pg.Position)[1];
-                return me.Position.DirectionFromOffset(firstStepPos);
-            };
+                get
+                {
+                    return (me, pg) =>
+                    {
+                        var firstStepPos = new Line(me.Position, pg.Position)[1];
+                        return me.Position.DirectionFromOffset(firstStepPos);
+                    };
+                }
+            }
+
+            public static AI.FindDirectionMethod Stupid
+            {
+                get
+                {
+                    return (me, pg) => Direction.North;
+                }
+            }
         }
 
-        public static class RandomDirectionChangeAlgorithms
+        public class RandomDirectionChangeAlgorithms
         {
-            public static AI.RandomDirectionChangeMethod AlwaysAhead = (currDir, p) =>
+            public static AI.RandomDirectionChangeMethod AlwaysAhead
             {
-                return currDir;
-            };
+                get
+                {
+                    return (currDir, p) =>
+                    {
+                        return currDir;
+                    };
+                }
+            }
 
-            public static AI.RandomDirectionChangeMethod RandomAtPerc = (currDir, paces) =>
+            public static AI.RandomDirectionChangeMethod RandomAtPerc
             {
-                return Dice.Throws(100) <= paces ? currDir.RandomDifferentFromThis() : currDir;
-            };
+                get
+                {
+                    return (currDir, paces) =>
+                    {
+                        return Dice.Throws(100) <= paces ? currDir.RandomDifferentFromThis() : currDir;
+                    };
+                }
+            }
 
-            public static AI.RandomDirectionChangeMethod TurnBackAtPerc = (currDir, paces) =>
+            public static AI.RandomDirectionChangeMethod TurnBackAtPerc
             {
-                return Dice.Throws(100) <= paces ? currDir.Opposite() : currDir;
-            };
+                get
+                {
+                    return (currDir, paces) =>
+                    {
+                        return Dice.Throws(100) <= paces ? currDir.Opposite() : currDir;
+                    };
+                }
+            }
         }
 
-        public static class SensingAlgorythms
+        public class SensingAlgorythms
         {
             public static AI.SensingMethod AllAround
             {
@@ -100,7 +137,35 @@ namespace GodsWill_ASCIIRPG
         {
             FindDirection = DirectionFindingAlgorithms.SimpleChase;
             RandomDirectionChange = RandomDirectionChangeAlgorithms.AlwaysAhead;
-            
+        }
+
+        public AI(SerializationInfo info, StreamingContext context)
+        {
+            FindDirection = DirectionFindingAlgorithms.SimpleChase;
+            RandomDirectionChange = RandomDirectionChangeAlgorithms.AlwaysAhead;
+
+            var fdName = (string)info.GetValue(findDirectionSerializableName, typeof(string));
+            //var m1 = typeof(DirectionFindingAlgorithms).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            //FindDirection = m1.Where(mi => ((FindDirectionMethod)mi.GetValue(mi)).Method.Name == fdName)
+            //                .Select( mI => ((FindDirectionMethod)mI.GetValue(mI))).Single();
+            FindDirection = fdName.ToDelegate<DirectionFindingAlgorithms, FindDirectionMethod>();
+
+            //RandomDirectionChange = (RandomDirectionChangeMethod)info.GetValue(randomDirectionChangeSerializableName, typeof(RandomDirectionChangeMethod));
+            var rdName = (string)info.GetValue(randomDirectionChangeSerializableName, typeof(string));
+            //var m2 = typeof(RandomDirectionChangeAlgorithms).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            //RandomDirectionChange = m2.Where(mi => ((RandomDirectionChangeMethod)mi.GetValue(mi)).Method.Name == rdName)
+            //                        .Select(mI => ((RandomDirectionChangeMethod)mI.GetValue(mI))).Single();
+            RandomDirectionChange = rdName.ToDelegate<RandomDirectionChangeAlgorithms, RandomDirectionChangeMethod>();
+        }
+
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(  findDirectionSerializableName, 
+                            FindDirection.Method.Name, 
+                            typeof(string));
+            info.AddValue(  randomDirectionChangeSerializableName, 
+                            RandomDirectionChange.Method.Name, 
+                            typeof(string));
         }
 
         public FindDirectionMethod FindDirection { get; protected set; }
@@ -121,8 +186,14 @@ namespace GodsWill_ASCIIRPG
         }
     }
 
-    public class SimpleAI : AI
+    [Serializable]
+    public class SimpleAI : AI, ISerializable
     {
+        #region SERIALIZABLE_CONST
+        const string currentStatusSerializableName = "currStatus";
+        const string currentDirectionSerializableName = "currDirection";
+        #endregion
+
         Status currentStatus;
         Direction currentDirection;
 
@@ -131,6 +202,21 @@ namespace GodsWill_ASCIIRPG
         {
             currentStatus = Status.Wandering;
             RandomDirectionChange = RandomDirectionChangeAlgorithms.RandomAtPerc;
+        }
+
+        public SimpleAI(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            currentStatus = (Status)info.GetValue(currentStatusSerializableName, typeof(Status));
+            currentDirection = (Direction)info.GetValue(currentDirectionSerializableName, typeof(Direction));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue(currentStatusSerializableName, currentStatus, typeof(Status));
+            info.AddValue(currentDirectionSerializableName, currentDirection, typeof(Direction));
         }
 
         public override void ActionDescription( out bool moved,
