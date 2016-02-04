@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model.Core
 {
+    public enum ThrowModifier
+    {
+        Normal,
+        Maximized,
+        Minimized,
+        Averaged,
+    }
+
     public class Dice
     {
         static Random rnd;
@@ -22,12 +30,18 @@ namespace GodsWill_ASCIIRPG.Model.Core
             NumDice = nDice;
         }
 
-        public static int Throws(Dice dice, int nThrows = 1, CountingMethod countingMethod = null)
+        public static int Throws(Dice dice, 
+                                 int nThrows = 1, 
+                                 CountingMethod countingMethod = null, 
+                                 ThrowModifier mod = ThrowModifier.Normal)
         {
-            return Throws(dice.NumFaces, dice.NumDice, nThrows, countingMethod);
+            return Throws(dice.NumFaces, dice.NumDice, nThrows, countingMethod, mod);
         }
 
-        public static int Throws(int nFaces, int nDice = 1, int nThrows = 1, CountingMethod countingMethod = null)
+        public static int Throws(   int nFaces, 
+                                    int nDice, 
+                                    int nThrows, 
+                                    CountingMethod countingMethod)
         {
             if(rnd == null)
             {
@@ -50,6 +64,22 @@ namespace GodsWill_ASCIIRPG.Model.Core
             return countingMethod == null
                 ? partial.Sum()
                 : countingMethod(partial);
+        }
+
+        public static int Throws(int nFaces, int nDice = 1, int nThrows = 1, CountingMethod countingMethod = null, ThrowModifier mod = ThrowModifier.Normal)
+        {
+            switch(mod)
+            {
+                case ThrowModifier.Minimized:
+                    return nDice * nThrows;
+                case ThrowModifier.Maximized:
+                    return nFaces * nDice * nThrows;
+                case ThrowModifier.Averaged:
+                    return (int)Math.Floor((((nDice * nThrows) * (1 + nFaces)) / 2.0) * nThrows);
+                case ThrowModifier.Normal:
+                default:
+                    return Throws(nFaces, nDice, nThrows, countingMethod);
+            }
         }
     }
 }

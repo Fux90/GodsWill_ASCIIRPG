@@ -61,6 +61,7 @@
     <Compile Include="Model\Animation.cs" />
     <Compile Include="Model\Circle.cs" />
     <Compile Include="Model\Core\TernaryValue.cs" />
+    <Compile Include="Model\Description.cs" />
     <Compile Include="Model\Descriptionable.cs" />
     <Compile Include="Model\GeometricItem.cs" />
     <Compile Include="Model\IBlockable.cs" />

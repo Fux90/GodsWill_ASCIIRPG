@@ -10,9 +10,45 @@ using System.Text;
 namespace GodsWill_ASCIIRPG
 {
     [Serializable]
-	public abstract class Weapon : Item
+	public abstract class Weapon : Item, ISerializable
 	{
-        public static readonly _SpecialAttack NoSpecialAttack = (attacker, defender) => { };
+        #region CONST_SERIALIZATION_NAMES
+
+        const string _damageSerializableName = "damage";
+        const string _specialAttackSerializationName = "specialAttack";
+
+        #endregion
+
+        public partial class WeaponSpecialAttacks
+        {
+            public static _SpecialAttack NoSpecialAttack
+            {
+                get
+                {
+                    return (attacker, defender) => { };
+                }
+            }
+
+            [WeaponDescription("A magical flame inflicts d6 damage.")]
+            public static _SpecialAttack Flaming
+            {
+                get
+                {
+                    return (attacker, defender) => 
+                    {
+                        var dmgAmount = Dice.Throws(1, 6);
+
+                        var dmg = new Damage(new Dictionary<DamageType, int>()
+                        {
+                            { DamageType.Fire, dmgAmount}
+                        });
+
+                        defender.SufferDamage(dmg);
+                    };
+                }
+            }
+        }
+
         public static readonly string DefaultSymbol = "/";
 
         public abstract int BonusOnTPC { get; }
@@ -26,9 +62,9 @@ namespace GodsWill_ASCIIRPG
                       "p",
                       Color.White,
                       new DamageCalculator( new Dictionary<DamageType, 
-                                            DamageCalculator.DamageCalculatorMethod>(){ { DamageType.Physical, () => 1 } }),
+                                            DamageCalculator.DamageCalculatorMethod>(){ { DamageType.Physical, (mod) => 1 } }),
                       null,
-                      Weapon.NoSpecialAttack,
+                      WeaponSpecialAttacks.NoSpecialAttack,
                       "A punch, a bite, whatever creature can do without weapons",
                       new Coord())
             {
@@ -56,8 +92,9 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
+                this.ConsumeUse();
                 return specialAttack == null
-                ? Weapon.NoSpecialAttack
+                ? WeaponSpecialAttacks.NoSpecialAttack
                 : specialAttack;
             }
         }
@@ -67,7 +104,6 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                this.ConsumeUse();
                 return specialAttackDescription == null
                 ? ""
                 : specialAttackDescription;
@@ -99,9 +135,23 @@ namespace GodsWill_ASCIIRPG
         public Weapon(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-
+            damage = (DamageCalculator)info.GetValue(   _damageSerializableName, 
+                                                        typeof(DamageCalculator));
+            specialAttack = (_SpecialAttack)info.GetValue(  _specialAttackSerializationName,
+                                                            typeof(_SpecialAttack));
         }
 
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue(  _damageSerializableName, 
+                            damage, 
+                            typeof(DamageCalculator));
+            info.AddValue(  _specialAttackSerializationName, 
+                            specialAttack, 
+                            typeof(_SpecialAttack));
+        }
         public void ActivateSpecialAttack()
         {
             SpecialAttackActivated = true;
@@ -122,7 +172,7 @@ namespace GodsWill_ASCIIRPG
                                              Cost,
                                              Weight));
                 str.AppendLine();
-                str.AppendLine("Qui i danni normali");
+                str.AppendLine(damage.ToString());
                 if (HasSpecialAttack)
                 {
                     str.AppendLine();
@@ -144,6 +194,7 @@ namespace GodsWill_ASCIIRPG
                                          ItemTypeName));
             str.AppendLine(String.Format("Bonus: {0}", BonusOnTPC));
             str.AppendLine(Damage.ToString());
+            str.AppendLine(SpecialAttackDescription);
             return str.ToString();
         }
     }

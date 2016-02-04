@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -117,6 +118,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         }
     }
 
+    [Serializable]
     public abstract class HealSpellBuilder<SpellToBuild> : SpellBuilder<ISpellcaster, SpellToBuild>
         where SpellToBuild : HealSpell
     {
@@ -124,8 +126,14 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         {
             this.Targets = new List<ISpellcaster>() { Caster };
         }
+
+        public HealSpellBuilder(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
     }
 
+    [Serializable]
     public abstract class UtilitySpellBuilder<SpellToBuild> : SpellBuilder<Atom, SpellToBuild>
         where SpellToBuild : UtilitySpell
     {
@@ -133,8 +141,14 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         {
 
         }
+
+        public UtilitySpellBuilder(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
     }
 
+    [Serializable]
     public abstract class AttackSpellBuilder<SpellToBuild> : SpellBuilder<IDamageable, SpellToBuild>
         where SpellToBuild : AttackSpell
     {
@@ -143,11 +157,15 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 
         }
 
+        public AttackSpellBuilder(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
         public override void SetTargets<T>(List<T> targets)
         {
             Targets.Clear();
             targets.ForEach(target => Targets.Add((IDamageable)target));
         }
     }
-
 }

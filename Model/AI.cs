@@ -145,16 +145,9 @@ namespace GodsWill_ASCIIRPG
             RandomDirectionChange = RandomDirectionChangeAlgorithms.AlwaysAhead;
 
             var fdName = (string)info.GetValue(findDirectionSerializableName, typeof(string));
-            //var m1 = typeof(DirectionFindingAlgorithms).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-            //FindDirection = m1.Where(mi => ((FindDirectionMethod)mi.GetValue(mi)).Method.Name == fdName)
-            //                .Select( mI => ((FindDirectionMethod)mI.GetValue(mI))).Single();
             FindDirection = fdName.ToDelegate<DirectionFindingAlgorithms, FindDirectionMethod>();
 
-            //RandomDirectionChange = (RandomDirectionChangeMethod)info.GetValue(randomDirectionChangeSerializableName, typeof(RandomDirectionChangeMethod));
             var rdName = (string)info.GetValue(randomDirectionChangeSerializableName, typeof(string));
-            //var m2 = typeof(RandomDirectionChangeAlgorithms).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-            //RandomDirectionChange = m2.Where(mi => ((RandomDirectionChangeMethod)mi.GetValue(mi)).Method.Name == rdName)
-            //                        .Select(mI => ((RandomDirectionChangeMethod)mI.GetValue(mI))).Single();
             RandomDirectionChange = rdName.ToDelegate<RandomDirectionChangeAlgorithms, RandomDirectionChangeMethod>();
         }
 

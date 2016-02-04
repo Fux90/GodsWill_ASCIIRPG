@@ -1038,7 +1038,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                 {
                     var pt = fI.Position;
                     var yPos = (pt.Y - firstRow) * /*charSize*/this.FontHeight + offSetY;
-                    var xPos = (pt.X - firstCol) * charSize + offSetX - charPaintHorPadding;
+                    //var xPos = (pt.X - firstCol) * charSize + offSetX - charPaintHorPadding;
+                    var xPos = (pt.X - firstCol) * (charSize - charPaintHorPadding) + offSetX;
+                    
                     g.DrawString(   fI.Symbol,
                                     this.Font,
                                     new SolidBrush(fI.Color),

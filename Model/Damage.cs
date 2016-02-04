@@ -1,6 +1,9 @@
+using GodsWill_ASCIIRPG.Model.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace GodsWill_ASCIIRPG
@@ -104,16 +107,22 @@ namespace GodsWill_ASCIIRPG
         }
     }
 
-    public class DamageCalculator
+    [Serializable]
+    public class DamageCalculator : ISerializable
     {
-        public delegate int DamageCalculatorMethod();
+        #region CONST_SERIALIZABLE_NAMES
+        const string _damagesSerializableName = "damagesCalculations";
+        #endregion
+
+        [Serializable]
+        public delegate int DamageCalculatorMethod(ThrowModifier mod = ThrowModifier.Normal);
         Dictionary<DamageType, DamageCalculatorMethod> dmgs;
 
         public DamageCalculatorMethod this[DamageType dmgType]
         {
             get
             {
-                return dmgs.ContainsKey(dmgType) ? dmgs[dmgType] : () => 0;
+                return dmgs.ContainsKey(dmgType) ? dmgs[dmgType] : (mod) => 0;
             }
 
             set
@@ -133,6 +142,15 @@ namespace GodsWill_ASCIIRPG
 
         }
 
+        public DamageCalculator(SerializationInfo info, StreamingContext context)
+            : this(new Dictionary<DamageType, DamageCalculatorMethod>())
+        {
+            var a = 0;
+            a++;
+
+            dmgs = (Dictionary<DamageType, DamageCalculatorMethod>)info.GetValue(_damagesSerializableName, typeof(Dictionary<DamageType, DamageCalculatorMethod>));
+        }
+
         public Damage CalculateDamage()
         {
             var dm = new Dictionary<DamageType, int>();
@@ -142,6 +160,24 @@ namespace GodsWill_ASCIIRPG
             }
 
             return new Damage(dm);
-        } 
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(_damagesSerializableName, dmgs, typeof(Dictionary<DamageType, DamageCalculatorMethod>));
+        }
+
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+            foreach (var dmgType in dmgs.Keys)
+            {
+                var min = dmgs[dmgType](ThrowModifier.Minimized);
+                var max = dmgs[dmgType](ThrowModifier.Maximized);
+                var maxStr = min == max ? "" : String.Format(" - {0}", max);
+                str.AppendLine(String.Format("{0}: {1}{2}", dmgType, min, maxStr));
+            }
+            return str.ToString();
+        }
     }
 }

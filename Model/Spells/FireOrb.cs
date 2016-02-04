@@ -3,17 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model.Spells
 {
     [PercentageOfSuccess(100)]
+    [Serializable]
     public class FireOrbBuilder : AttackSpellBuilder<FireOrb>
     {
         public FireOrbBuilder()
         {
 
+        }
+
+        public FireOrbBuilder(SerializationInfo info, StreamingContext context)
+            :base(info, context)
+        {
         }
 
         public override FireOrb InnerCreate(out bool issues)
@@ -29,12 +36,6 @@ namespace GodsWill_ASCIIRPG.Model.Spells
                 return null;
             }
         }
-
-        //public override void SetTargets<T>(List<T> targets)
-        //{
-        //    Targets.Clear();
-        //    targets.ForEach( target => Targets.Add((IDamageable)target));
-        //}
 
         public override string FullDescription
         {
@@ -54,7 +55,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
                     new DamageCalculator(
                        new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
                        {
-                           { DamageType.Fire, () => Dice.Throws(8) }
+                           { DamageType.Fire, (mod) => Dice.Throws(8, mod: mod) }
                        }),
                     new FireBallAnimation(((Atom)caster).Position, ((Atom)target).Position, Color.Red))
         {

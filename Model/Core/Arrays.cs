@@ -17,7 +17,7 @@ namespace GodsWill_ASCIIRPG.Model.Core
         #endregion
 
         #region SERIALIZATION_CONST_NAMES
-        private const string contentSerializableName = "name";
+        private const string contentSerializableName = "content";
         private const string heightSerializableName = "height";
         private const string widthSerializableName = "width";
         #endregion
@@ -84,9 +84,17 @@ namespace GodsWill_ASCIIRPG.Model.Core
 
         public BidimensionalArray(SerializationInfo info, StreamingContext context)
         {
-            content = (T[,])info.GetValue(contentSerializableName, typeof(T[,]));
+            //content = (T[,])info.GetValue(contentSerializableName, typeof(T[,]));
             height = (int)info.GetValue(heightSerializableName, typeof(int));
             width = (int)info.GetValue(widthSerializableName, typeof(int));
+            content = new T[height, width];
+            for (int r = 0; r < this.Rows; r++)
+            {
+                for (int c = 0; c < this.Cols; c++)
+                {
+                    content[r, c] = (T)info.GetValue(contentSerializableName + r + "_" + c, typeof(T));
+                }
+            }
         }
         #endregion
 
@@ -132,9 +140,16 @@ namespace GodsWill_ASCIIRPG.Model.Core
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue(contentSerializableName, content, typeof(T[,]));
+            //info.AddValue(contentSerializableName, content, typeof(T[,]));
             info.AddValue(heightSerializableName, height, typeof(int));
             info.AddValue(widthSerializableName, width, typeof(int));
+            for (int r = 0; r < this.Rows; r++)
+            {
+                for (int c = 0; c < this.Cols; c++)
+                {
+                    info.AddValue(contentSerializableName + r + "_" + c, content[r, c], content[r, c].GetType());
+                }
+            }
         }
 
         public IEnumerable<T> Where(Func<T, bool> predicate)

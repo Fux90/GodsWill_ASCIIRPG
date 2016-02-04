@@ -142,11 +142,21 @@ namespace GodsWill_ASCIIRPG.Model.Core
             var regex = new Regex(@"<get_(?<mName>.*)>.*");
             var match = regex.Match(methodName);
             var name = match.Groups["mName"].Value;
-            var m = typeof(TAlgorythms).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-            var a = m.Where(mI => mI.Name == name).Select(mI => mI.GetMethod).Single();
-            var res =(TDelegate)a.Invoke(null, null);
+            var properties = typeof(TAlgorythms).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            return (TDelegate)properties.Where(mI => mI.Name == name).Select(mI => mI.GetMethod).Single().Invoke(null, null);
+        }
 
-            return res;
+        public static string WeaponDescription(this Weapon._SpecialAttack obj)
+        {
+            var regex = new Regex(@"<get_(?<mName>.*)>.*");
+            var match = regex.Match(obj.Method.Name);
+            var name = match.Groups["mName"].Value;
+            
+            var desc =  (WeaponDescription)typeof(Weapon.WeaponSpecialAttacks)
+                        .GetProperty(name)
+                        .GetCustomAttributes(typeof(WeaponDescription), false).FirstOrDefault();
+
+            return desc == null ? "" : desc.Description;
         }
     }
 }

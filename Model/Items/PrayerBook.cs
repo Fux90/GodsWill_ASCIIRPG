@@ -106,8 +106,11 @@ namespace GodsWill_ASCIIRPG.Model.Items
     }
 
     [Serializable]
-    public class PrayerBook : Item
+    public class PrayerBook : Item, ISerializable
     {
+        const string spellSerializableName = "spell";
+        const string percOfSuccessSerializableName = "percSuccess";
+
         SpellBuilder spell;
         int percOfSuccess;
 
@@ -133,7 +136,20 @@ namespace GodsWill_ASCIIRPG.Model.Items
         public PrayerBook(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+            this.spell = (SpellBuilder)info.GetValue(spellSerializableName, typeof(SpellBuilder));
+            this.percOfSuccess = (int)info.GetValue(percOfSuccessSerializableName, typeof(int));
+        }
 
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue(  spellSerializableName,
+                            spell,
+                            typeof(SpellBuilder));
+            info.AddValue(  percOfSuccessSerializableName,
+                            percOfSuccess,
+                            typeof(int));
         }
 
         public override string FullDescription

@@ -1,6 +1,6 @@
 #define DEBUG_MAP
 //#define RANDOM_MAP_GENERATION
-#define DEBUG_MAP_FROM_FILE
+//#define DEBUG_MAP_FROM_FILE
 
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
@@ -124,7 +124,14 @@ namespace GodsWill_ASCIIRPG
                 {
                     for (int j = 4; j < 14; j++)
                     {
-                        mapBuilder.AddAtom(new LongSword(position: new Coord() { X = i, Y = j }));
+                        if (i % 2 == 0)
+                        {
+                            mapBuilder.AddAtom(new LongSword(position: new Coord() { X = i, Y = j }));
+                        }
+                        else
+                        {
+                            mapBuilder.AddAtom(new FlamingLongSword(position: new Coord() { X = i, Y = j }));
+                        }
                     }
                 }
 
@@ -162,7 +169,6 @@ namespace GodsWill_ASCIIRPG
                 CurrentPg.InsertInMap(map, map.PlayerInitialPosition, overwrite: false);
 #else
                 currentPg = map.CurrentPg;
-                //var aiCharacters = map.AICharacters;
 
                 if (currentPg == null)
                 {

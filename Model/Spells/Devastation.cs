@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,11 +11,17 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 {
     [PercentageOfSuccess(80)]
     [Prerequisite(MinimumLevel = Pg.Level.Cleric)]
+    [Serializable]
     public class DevastationBuilder : AttackSpellBuilder<Devastation>
     {
         public DevastationBuilder()
         {
 
+        }
+
+        public DevastationBuilder(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
         }
 
         public override Devastation InnerCreate(out bool issues)
@@ -30,12 +37,6 @@ namespace GodsWill_ASCIIRPG.Model.Spells
                 return null;
             }
         }
-
-        //public override void SetTargets<T>(List<T> targets)
-        //{
-        //    Targets.Clear();
-        //    targets.ForEach(target => Targets.Add((IDamageable)target));
-        //}
 
         public override string FullDescription
         {
@@ -54,7 +55,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
                     new DamageCalculator(
                        new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
                        {
-                           { DamageType.Necrotic, () => Dice.Throws(6, 2) }
+                           { DamageType.Necrotic, (mod) => Dice.Throws(6, 2, mod: mod) }
                        }),
                     new FireBallAnimation(((Atom)caster).Position, ((Atom)target).Position, Color.Red))
         {

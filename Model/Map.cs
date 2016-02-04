@@ -480,7 +480,9 @@ namespace GodsWill_ASCIIRPG
         public void RemoveAt(Coord coord)
         {
             table[coord] = buffer[coord];
-            buffer[coord] = new Floor(coord);
+            var floor = new Floor(coord);
+            floor.SetMap(this);
+            buffer[coord] = floor;
             NotifyViewersOfRemoval(coord);
         }
 

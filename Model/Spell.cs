@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Runtime.Serialization;
 
 namespace GodsWill_ASCIIRPG.Model
 {
@@ -121,8 +122,10 @@ namespace GodsWill_ASCIIRPG.Model
     }
 
     [Serializable]
-    public abstract class SpellBuilder : Atom, Descriptionable
+    public abstract class SpellBuilder : Atom, Descriptionable, ISerializable
     {
+        const string casterSerializableName = "caster";
+
         public ISpellcaster Caster { get; set; }
         public abstract string FullDescription { get; }
 
@@ -134,6 +137,12 @@ namespace GodsWill_ASCIIRPG.Model
                     false)
         {
         }
+        
+        public SpellBuilder(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            Caster = (ISpellcaster)info.GetValue(casterSerializableName, typeof(ISpellcaster));
+        }
 
         public new abstract string Name { get; }
         public abstract Target Target { get; }
@@ -143,14 +152,33 @@ namespace GodsWill_ASCIIRPG.Model
         public abstract void SetTargets<T>(List<T> targets);
 
         public abstract string Prerequisites { get; }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue(casterSerializableName, Caster, typeof(ISpellcaster));
+        }
     }
 
+    [Serializable]
     public abstract class SpellBuilder<T, SpellToBuild> : SpellBuilder
         where SpellToBuild : Spell
     {
         public List<T> Targets { get; protected set; }
 
         public SpellBuilder()
+        {
+            init();
+        }
+
+        public SpellBuilder(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            init();
+        }
+
+        private void init()
         {
             Targets = new List<T>();
         }
