@@ -112,6 +112,31 @@ namespace GodsWill_ASCIIRPG.Model.Core
             }
         }
 
+        public static Coord CoordFromDirection(this Coord ptFrom, Direction dir)
+        {
+            switch(dir)
+            {
+                case Direction.North:
+                    return new Coord(ptFrom.X, ptFrom.Y - 1);
+                case Direction.NorthEast:
+                    return new Coord(ptFrom.X + 1, ptFrom.Y - 1);
+                case Direction.East:
+                    return new Coord(ptFrom.X + 1 , ptFrom.Y);
+                case Direction.SouthEast:
+                    return new Coord(ptFrom.X + 1, ptFrom.Y + 1);
+                case Direction.South:
+                    return new Coord(ptFrom.X, ptFrom.Y + 1);
+                case Direction.SouthWest:
+                    return new Coord(ptFrom.X - 1, ptFrom.Y + 1);
+                case Direction.West:
+                    return new Coord(ptFrom.X - 1, ptFrom.Y);
+                case Direction.NorthWest:
+                    return new Coord(ptFrom.X - 1, ptFrom.Y - 1);
+                default:
+                    return new Coord(ptFrom);
+            }
+        }
+
         public static bool SupportsSingleMsgListener(this Atom atom)
         {
             var result = false;
@@ -157,6 +182,17 @@ namespace GodsWill_ASCIIRPG.Model.Core
                         .GetCustomAttributes(typeof(WeaponDescription), false).FirstOrDefault();
 
             return desc == null ? "" : desc.Description;
+        }
+
+        public static bool IsAttackable(this Atom atom)
+        {
+            if(atom.GetType().IsSubclassOf(typeof(Character))
+                && ((Character)atom).AlliedTo == Allied.Pg)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

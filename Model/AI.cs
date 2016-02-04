@@ -1,6 +1,7 @@
 using GodsWill_ASCIIRPG.Main;
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model.PathFinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,22 @@ namespace GodsWill_ASCIIRPG
         #region SERIALIZABLE_CONST
         const string findDirectionSerializableName = "findDirection";
         const string randomDirectionChangeSerializableName = "randomDirection";
+        const string memorizedStepsSerializableName = "steps";
         #endregion
+
+        List<Direction> steps;
+        public List<Direction> Steps
+        {
+            get
+            {
+                if(steps == null)
+                {
+                    steps = new List<Direction>();
+                }
+
+                return steps;
+            }
+        }
 
         public class DirectionFindingAlgorithms
         {
@@ -36,6 +52,53 @@ namespace GodsWill_ASCIIRPG
                 get
                 {
                     return (me, pg) => Direction.North;
+                }
+            }
+
+            public static AI.FindDirectionMethod AStar
+            {
+                get
+                {
+                    return (me, pg) =>
+                    {
+                        if (me.AI.Steps.Count == 0)
+                        {
+                            var aS = new AStar(me.Map, me.Position, pg.Position);
+                            me.AI.Steps.AddRange(aS.GetDirections(me.Position, 8));
+                        }
+
+                        var dir = me.AI.Steps[0];
+                        me.AI.Steps.RemoveAt(0);
+
+                        return dir;
+                    };
+                }
+            }
+
+            public static AI.FindDirectionMethod SmartAStar
+            {
+                get
+                {
+                    return (me, pg) =>
+                    {
+                        if (me.Position.ManhattanDistance(pg.Position) < 3)
+                        {
+                            var firstStepPos = new Line(me.Position, pg.Position)[1];
+                            return me.Position.DirectionFromOffset(firstStepPos);
+                        }
+                        else
+                        {
+                            if (me.AI.Steps.Count == 0)
+                            {
+                                var aS = new AStar(me.Map, me.Position, pg.Position);
+                                me.AI.Steps.AddRange(aS.GetDirections(me.Position, 8));
+                            }
+
+                            var dir = me.AI.Steps[0];
+                            me.AI.Steps.RemoveAt(0);
+                            return dir;
+                        }
+                    };
                 }
             }
         }
@@ -159,6 +222,9 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(  randomDirectionChangeSerializableName, 
                             RandomDirectionChange.Method.Name, 
                             typeof(string));
+            info.AddValue( memorizedStepsSerializableName,
+                           steps,
+                           typeof(List<Direction>));
         }
 
         public FindDirectionMethod FindDirection { get; protected set; }
@@ -179,6 +245,9 @@ namespace GodsWill_ASCIIRPG
         }
     }
 
+    /*
+        Uses AStar as pathfinding
+    */
     [Serializable]
     public class SimpleAI : AI, ISerializable
     {
@@ -191,9 +260,10 @@ namespace GodsWill_ASCIIRPG
         Direction currentDirection;
 
         public SimpleAI()
-            : base ()
+            : base()
         {
             currentStatus = Status.Wandering;
+            FindDirection = DirectionFindingAlgorithms.SmartAStar;
             RandomDirectionChange = RandomDirectionChangeAlgorithms.RandomAtPerc;
         }
 
@@ -212,23 +282,91 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(currentDirectionSerializableName, currentDirection, typeof(Direction));
         }
 
-        public override void ActionDescription( out bool moved,
+        public override void ActionDescription(out bool moved,
                                                 out bool acted)
         {
             moved = false;
             acted = false;
 
-            switch(currentStatus)
+            switch (currentStatus)
             {
                 case Status.Wandering:
                     // Movement in last direction
-                    if(ControlledCharacter.SensePg(ControlledCharacter, Game.Current.CurrentPg))
+                    if (ControlledCharacter.SensePg(ControlledCharacter, Game.Current.CurrentPg))
                     {
                         currentStatus = Status.Chasing;
                         ControlledCharacter.Talk();
                     }
                     currentDirection = RandomDirectionChange(currentDirection, 5);
-                    if(!(moved = ControlledCharacter.Move(currentDirection, out acted)))
+                    if (!(moved = ControlledCharacter.Move(currentDirection, out acted)))
+                    {
+                        // Change direction
+                        currentDirection = currentDirection.RandomDifferentFromThis();
+                        ControlledCharacter.Move(currentDirection, out acted);
+                    }
+                    break;
+                case Status.Chasing:
+                    var direction = FindDirection(ControlledCharacter, Game.Current.CurrentPg);
+                    moved = ControlledCharacter.Move(direction, out acted);
+                    break;
+            }
+        }
+    }
+
+    /*
+        Walks in straight lines, doesn't dodge walls/obstacles
+    */
+    [Serializable]
+    public class SimplestAI : AI, ISerializable
+    {
+        #region SERIALIZABLE_CONST
+        const string currentStatusSerializableName = "currStatus";
+        const string currentDirectionSerializableName = "currDirection";
+        #endregion
+
+        Status currentStatus;
+        Direction currentDirection;
+
+        public SimplestAI()
+            : base()
+        {
+            currentStatus = Status.Wandering;
+            FindDirection = DirectionFindingAlgorithms.SimpleChase;
+            RandomDirectionChange = RandomDirectionChangeAlgorithms.RandomAtPerc;
+        }
+
+        public SimplestAI(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            currentStatus = (Status)info.GetValue(currentStatusSerializableName, typeof(Status));
+            currentDirection = (Direction)info.GetValue(currentDirectionSerializableName, typeof(Direction));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue(currentStatusSerializableName, currentStatus, typeof(Status));
+            info.AddValue(currentDirectionSerializableName, currentDirection, typeof(Direction));
+        }
+
+        public override void ActionDescription(out bool moved,
+                                                out bool acted)
+        {
+            moved = false;
+            acted = false;
+
+            switch (currentStatus)
+            {
+                case Status.Wandering:
+                    // Movement in last direction
+                    if (ControlledCharacter.SensePg(ControlledCharacter, Game.Current.CurrentPg))
+                    {
+                        currentStatus = Status.Chasing;
+                        ControlledCharacter.Talk();
+                    }
+                    currentDirection = RandomDirectionChange(currentDirection, 5);
+                    if (!(moved = ControlledCharacter.Move(currentDirection, out acted)))
                     {
                         // Change direction
                         currentDirection = currentDirection.RandomDifferentFromThis();

@@ -40,6 +40,11 @@ namespace GodsWill_ASCIIRPG.Model
             return minusX * minusX + minusY * minusY;
         }
 
+        public int ManhattanDistance(Coord other)
+        {
+            return Math.Abs(this.Y - other.Y) + Math.Abs(this.X - other.X);
+        }
+
         public static Coord operator +(Coord pt1, Coord pt2)
         {
             return new Coord()

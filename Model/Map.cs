@@ -329,6 +329,15 @@ namespace GodsWill_ASCIIRPG
                 return table.Where(a => a.GetType().IsSubclassOf(typeOfAIChar)).Select(a => (AICharacter)a);
             }
         }
+
+        public int Size
+        {
+            get
+            {
+                return Height * Width;
+            }
+        }
+
         #endregion
 
         #region ITERATORS
