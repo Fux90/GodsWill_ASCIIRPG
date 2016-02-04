@@ -1,6 +1,6 @@
 #define DEBUG_MAP
 //#define RANDOM_MAP_GENERATION
-//#define DEBUG_MAP_FROM_FILE
+#define DEBUG_MAP_FROM_FILE
 
 using GodsWill_ASCIIRPG.Control;
 using GodsWill_ASCIIRPG.Model;
@@ -180,9 +180,10 @@ namespace GodsWill_ASCIIRPG
                     CurrentPg.InsertInMap(map, currentPg.Position, overwrite: true);
                 }
 #endif
-                var aiCharacters = map.AICharacters;
+                var aiCharacters = map.AICharacters.ToList();
 
                 atomListeners.ForEach(listener => currentPg.RegisterListener(listener));
+                aiCharacters.ForEach(aiC => currentPg.Listeners.ForEach(listener => aiC.RegisterListener(listener)));
                 sheetViews.ForEach(sheet => currentPg.RegisterSheet(sheet));
                 backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterViewer(viewer));
                 spellbookViewers.ForEach(viewer => currentPg.Spellbook.RegisterViewer(viewer));

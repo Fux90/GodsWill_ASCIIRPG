@@ -309,6 +309,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                     case ControllerCommand.Player_UnhandleWeapon:
                         controlledPg.UnhandleWeapon();
                         break;
+                    case ControllerCommand.Player_ActivateWeaponPower:
+                        controlledPg.ActivateSpecialAttack();
+                        break;
                     case ControllerCommand.Player_PutOn:
                         backpackController.Notify(ControllerCommand.Backpack_Open);
                         this.WaitForRefocusThenDo(() =>
@@ -451,8 +454,6 @@ namespace GodsWill_ASCIIRPG.UIControls
                                             }
 
                                             // If target is of the expected family type
-                                            
-                                            
                                             if (permittedType.IsAssignableFrom(selTarget.GetType()))
                                             {
                                                 if (!targets.Contains(selTarget))
@@ -479,7 +480,6 @@ namespace GodsWill_ASCIIRPG.UIControls
                                                     return !issues;
                                                 }
                                             }
-                                           
                                             //else
                                             {
                                                 spellBuilder.NotifyListeners("Select next target");
@@ -492,61 +492,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                                             return acted;
                                         };
                                         CurrentAfterValidSelectionOperation = op;
-                                            //CurrentAfterValidSelectionOperation = (selPos, allowOtherSel) =>
-                                            //{
-                                            //    var selTarget = controlledPg.Map[selPos];
-                                            //    var op = (AfterSelectionOperation)CurrentAfterValidSelectionOperation.Clone();
-                                            //    var spellType = spellBuilder.SpellToBuildType;
-                                            //    var permittedType = typeof(Atom);
-
-                                            //    if (typeof(HealSpell).IsAssignableFrom(spellType))
-                                            //    {
-                                            //    }
-                                            //    else if (typeof(UtilitySpell).IsAssignableFrom(spellType))
-                                            //    {
-                                            //    }
-                                            //    else if (typeof(AttackSpell).IsAssignableFrom(spellType))
-                                            //    {
-                                            //        permittedType = typeof(IDamageable);
-                                            //    }
-
-                                            //    // If target is of the expected family type
-                                            //    if (permittedType.IsAssignableFrom(selTarget.GetType()))
-                                            //    {
-                                            //        if (!targets.Contains(selTarget))
-                                            //        {
-                                            //            chosenEnemies++;
-                                            //            targets.Add(selTarget);
-                                            //            if (!allowOtherSel || maxEnemies == chosenEnemies)
-                                            //            {
-                                            //                spellBuilder.SetTargets(targets);
-                                            //                var spell = spellBuilder.Create(out issues);
-                                            //                if (!issues)
-                                            //                {
-                                            //                    controlledPg.CastSpell(spell, out acted);
-                                            //                    this.Refresh();
-                                            //                    return acted;
-                                            //                }
-
-                                            //                return !issues;
-                                            //            }
-                                            //        }
-                                            //        else
-                                            //        {
-                                            //            spellBuilder.NotifyListeners("Target already selected");
-                                            //        }
-                                            //    }
-                                            //    //else
-                                            //    {
-                                            //        // Select next target
-                                            //        CurrentAfterValidSelectionOperation = (AfterSelectionOperation)op.Clone();
-                                            //        EnterSelectionMode();
-                                            //    }
-
-
-                                            //    return acted;
-                                            //};
-                                            CurrentAfterInvalidSelectionOperation = (selPos, allowOtherSel) =>
+                                        CurrentAfterInvalidSelectionOperation = (selPos, allowOtherSel) =>
                                         {
                                             acted = false;
                                             targets.Clear();
@@ -681,22 +627,48 @@ namespace GodsWill_ASCIIRPG.UIControls
                         case Keys.I:
                             Notify(ControllerCommand.Backpack_Open);
                             break;
-                                // TODO: If pressed Alt activate ActivePower of weapon, shield, armor
                         case Keys.H:
-                            Notify(e.Control
-                                    ? ControllerCommand.Player_UnhandleWeapon
-                                    : ControllerCommand.Player_HandleWeapon);
+                            switch(modifiers)
+                            {
+                                case _Ctrl:
+                                    Notify(ControllerCommand.Player_UnhandleWeapon);
+                                    break;
+                                case _Shift:
+                                    Notify(ControllerCommand.Player_ActivateWeaponPower);
+                                    break;
+                                default:
+                                    Notify(ControllerCommand.Player_HandleWeapon);
+                                    break;
+                            }
                             break;
                         case Keys.P:
-                            Notify(e.Control
-                                    ? ControllerCommand.Player_PutOff
-                                    : ControllerCommand.Player_PutOn);
+                            switch (modifiers)
+                            {
+                                case _Ctrl:
+                                    Notify(ControllerCommand.Player_PutOff);
+                                    break;
+                                case _Shift:
+                                    //??? Notify(ControllerCommand.Player_ActivateArmorPower);
+                                    break;
+                                default:
+                                    Notify(ControllerCommand.Player_PutOn);
+                                    break;
+                            }
                             break;
                         case Keys.B:
-                            Notify(e.Control
-                                    ? ControllerCommand.Player_PutAwayShield
-                                    : ControllerCommand.Player_EmbraceShield);
-                            break;
+                                switch (modifiers)
+                                {
+                                    case _Ctrl:
+                                        Notify(ControllerCommand.Player_PutAwayShield);
+                                        break;
+                                    case _Shift:
+                                        // ?? Notify(ControllerCommand.Player_ActivateWeaponPower);
+                                        break;
+                                    default:
+                                        Notify(ControllerCommand.Player_EmbraceShield);
+                                        break;
+                                }
+                                break;
                             case Keys.U:
                                 Notify(ControllerCommand.Player_UseItem);
                                 break;

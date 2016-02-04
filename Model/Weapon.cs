@@ -189,11 +189,12 @@ namespace GodsWill_ASCIIRPG
         public override string ToString()
         {
             var str = new StringBuilder();
-            str.AppendLine(String.Format("{0}[{1}]",
+            str.AppendLine(String.Format("{0}[{1}]{2}",
                                          Name,
-                                         ItemTypeName));
+                                         ItemTypeName,
+                                         SpecialAttackActivated ? "*" : ""));
             str.AppendLine(String.Format("Bonus: {0}", BonusOnTPC));
-            str.AppendLine(Damage.ToString());
+            str.AppendLine(damage.ToString()); //Damage calculates random damage
             str.AppendLine(SpecialAttackDescription);
             return str.ToString();
         }

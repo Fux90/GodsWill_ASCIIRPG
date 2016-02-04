@@ -479,6 +479,28 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
+        public void ActivateSpecialAttack()
+        {
+            if(HandledWepon.HasSpecialAttack)
+            {
+                if (HandledWepon.SpecialAttackActivated)
+                {
+                    HandledWepon.DectivateSpecialAttack();
+                    NotifyListeners(String.Format("Dectivated {0}'s special power", HandledWepon.Name));
+                }
+                else
+                {
+                    HandledWepon.ActivateSpecialAttack();
+                    NotifyListeners(String.Format("Activated {0}'s special power", HandledWepon.Name));
+                }
+                CharacterSheets.ForEach((sheet) => sheet.NotifyWeapon(HandledWepon));
+            }
+            else
+            {
+                NotifyListeners(String.Format("{0} has no special attacks", HandledWepon.Name));
+            }
+        }
+
         public void UnhandleWeapon()
         {
             UnhandleCurrent();

@@ -52,5 +52,6 @@ namespace GodsWill_ASCIIRPG
         Backpack_HandleWeapon,
         Player_UseItem,
         Player_SaveGame,
+        Player_ActivateWeaponPower,
     }
 }
