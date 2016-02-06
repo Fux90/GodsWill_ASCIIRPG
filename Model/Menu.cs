@@ -88,6 +88,14 @@ namespace GodsWill_ASCIIRPG
         {
             return new MenuEnum(items.ToArray());
         }
+
+        public void ExecuteSelected(object parameters = null)
+        {
+            if (SelectedEntry != -1)
+            {
+                this[SelectedEntry].Action(parameters);
+            }
+        }
     }
 
     public class MenuItem

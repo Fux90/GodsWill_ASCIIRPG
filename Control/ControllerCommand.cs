@@ -53,5 +53,8 @@ namespace GodsWill_ASCIIRPG
         Player_UseItem,
         Player_SaveGame,
         Player_ActivateWeaponPower,
+        Menu_PreviousItem,
+        Menu_NextItem,
+        Menu_ExecuteSelectItem,
     }
 }
