@@ -52,6 +52,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.Controls.Add(descriptionList);
 
             descriptionList.Title = "__--== SPELL BOOK ==--__";
+            descriptionList.HelpString = "W: Previous - S: Next - A: Previous Page - D: Next Page - Enter: Select Spell";
         }
 
         public void Notify(ControllerCommand cmd)

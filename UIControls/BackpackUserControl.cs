@@ -53,6 +53,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.Controls.Add(descriptionList);
 
             descriptionList.Title = "__--== INVENTORY ==--__";
+            descriptionList.HelpString = "W: Previous - S: Next - A: Previous Page - D: Next Page - U: Use - H: Handle Weapon - P: Put on Armor - B: Embrace Shield";
         }
 
         public void Notify(ControllerCommand cmd)

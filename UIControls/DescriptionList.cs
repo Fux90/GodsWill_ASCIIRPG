@@ -22,6 +22,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         Label lblDescription;
         Label lblTitle;
         Label lblPageNumber;
+        Label lblHelp;
 
         private int initialWidth;
         private int initialHeight;
@@ -47,6 +48,20 @@ namespace GodsWill_ASCIIRPG.UIControls
             set
             {
                 lblTitle.Text = value;
+                UpdateDescription();
+            }
+        }
+
+        public string HelpString
+        {
+            get
+            {
+                return lblHelp.Text;
+            }
+
+            set
+            {
+                lblHelp.Text = value;
                 UpdateDescription();
             }
         }
@@ -84,7 +99,8 @@ namespace GodsWill_ASCIIRPG.UIControls
             tblPanel.BackColor = Color.LightGray;
             tblPanel.RowStyles.Clear();
             tblPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0f)); // Title
-            tblPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 90.0f));
+            tblPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 85.0f));
+            tblPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 5.0f)); // Help
 
             var tblListAndDescription = new TableLayoutPanel();
             tblListAndDescription.Dock = DockStyle.Fill;
@@ -118,12 +134,17 @@ namespace GodsWill_ASCIIRPG.UIControls
             lblTitle = this.DockFillLabel("lblTitle", Color.Red);
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             lblTitle.Margin = new Padding(PaddingValue);
+
+            lblHelp = this.DockFillLabel("lblHelp", Color.Yellow);
+            lblHelp.TextAlign = ContentAlignment.MiddleCenter;
+            lblHelp.Margin = new Padding(PaddingValue);
+
             tblPanel.Controls.Add(lblTitle, 0, 0);
             tblPanel.Controls.Add(tblListAndDescription, 0, 1);
+            tblPanel.Controls.Add(lblHelp, 0, 2);
 
             this.Controls.Add(tblPanel);
 
-            //lblTitle.Text = "__--== INVENTORY ==--__";
             initialWidth = Width;
             initialHeight = Height;
             initialFontSize = lblTitle.Font.Size;

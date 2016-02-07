@@ -20,6 +20,9 @@ namespace GodsWill_ASCIIRPG.UIControls
         private const float separatorHeight = 1.0f;
         private const float paddingBetweenEntries = 4.0f;
 
+        private const string helpString = "W: Up - S: Down - Enter: Select";
+        private readonly Brush helpBrush = Brushes.Yellow;
+         
         private int selectedIndex;
         private string[] menuLabels;
         private bool[] activeLabels;
@@ -208,6 +211,18 @@ namespace GodsWill_ASCIIRPG.UIControls
                                         Brushes.Orange,
                                         new PointF(posX, posY));
 #endif
+                var len = g.MeasureString(helpString, Font).Width;
+                var posHelp = new PointF((this.Width - len) / 2.0f, 
+                                          this.Height - paddingBetweenEntries - FontHeight);
+
+                g.FillRectangle(Brushes.DarkGray,
+                                new RectangleF(new PointF(.0f, posHelp.Y - paddingBetweenEntries),
+                                               new Size(this.Width, (int)separatorHeight)));
+
+                g.DrawString(   helpString,
+                                Font,
+                                helpBrush,
+                                posHelp);
             }
         }
 
