@@ -82,6 +82,7 @@ namespace GodsWill_ASCIIRPG
             List<ISpellbookViewer> spellbookViewers;
             List<IAtomListener> secondarySpellsViewers;
             List<IMerchantViewer> merchantViewers;
+            List<IPgViewer> pgViewers;
 
             public void Init(   PgController pgController,
                                 AIController aiController,
@@ -89,6 +90,7 @@ namespace GodsWill_ASCIIRPG
                                 IMapViewer mapViewer,
                                 IAtomListener singleMsgListener,
                                 IAnimationViewer animationViewer,
+                                List<IPgViewer> pgViewers,
                                 List<IAtomListener> atomListeners,
                                 List<ISheetViewer> sheetViews,
                                 List<IBackpackViewer> backpackViewers,
@@ -105,6 +107,7 @@ namespace GodsWill_ASCIIRPG
                 this.mapViewer = mapViewer;
                 this.singleMsgListener = singleMsgListener;
                 this.animationViewer = animationViewer;
+                this.pgViewers = pgViewers;
                 this.atomListeners = atomListeners;
                 this.sheetViews = sheetViews;
                 this.backpackViewers = backpackViewers;
@@ -267,6 +270,8 @@ namespace GodsWill_ASCIIRPG
 //#endif
                 var aiCharacters = map.AICharacters.ToList();
                 var merchants = map.Merchants.ToList();
+
+                pgViewers.ForEach(pgViewer => CurrentPg.RegisterView(pgViewer));
 
                 atomListeners.ForEach(listener => currentPg.RegisterListener(listener));
                 aiCharacters.ForEach(aiC => currentPg.Listeners.ForEach(listener => aiC.RegisterListener(listener)));

@@ -94,7 +94,7 @@ namespace GodsWill_ASCIIRPG
 
     [Serializable]
     [HasPerception(typeof(ListenPerception))]
-	public class Pg : Character, ISpellcaster
+	public class Pg : Character, ISpellcaster, IViewable<IPgViewer>
 	{
         #region SERIALIZATION_CONST_NAMES
         const string currentLevelSerializationName = "level";
@@ -104,7 +104,7 @@ namespace GodsWill_ASCIIRPG
         const string spellbookSerializationName = "spellbook";
         #endregion
 
-    public enum Level
+        public enum Level
         {
             Novice,
             Cleric,
@@ -137,6 +137,8 @@ namespace GodsWill_ASCIIRPG
 
         private Spellbook spellbook;
         public Spellbook Spellbook { get { return spellbook; } }
+
+        public IPgViewer view;
 
         public Pg(  string name,
                     Level level,
@@ -292,6 +294,8 @@ namespace GodsWill_ASCIIRPG
 
         public override void Die(IFighter killer)
         {
+            view.NotifyDeath();
+
             // Save story ?
             // delete all world
             // Message of death
@@ -410,6 +414,11 @@ namespace GodsWill_ASCIIRPG
         public void ForgetSpell(SpellBuilder spell)
         {
             this.Spellbook.Remove(spell);
+        }
+
+        public void RegisterView(IPgViewer viewer)
+        {
+            view = viewer;
         }
     }
 }

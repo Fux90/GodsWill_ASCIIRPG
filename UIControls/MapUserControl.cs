@@ -32,7 +32,7 @@ using GodsWill_ASCIIRPG.Main;
 namespace GodsWill_ASCIIRPG.UIControls
 {
     public partial class MapUserControl 
-        : UserControl, PgController, AIController, IMapViewer, IAnimationViewer
+        : UserControl, PgController, AIController, IMapViewer, IAnimationViewer, IPgViewer
     {
         #region CONST
         const bool squaredLook = false;
@@ -58,7 +58,8 @@ namespace GodsWill_ASCIIRPG.UIControls
         public enum Modes
         {
             Normal,
-            Selection
+            Selection,
+            AfterDeath
         }
 
         Pg controlledPg;
@@ -76,6 +77,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         //MapController mapController;
         GameForm gameForm;
+        TransparentPanel transparentPanel;
 
         private int viewportWidthInCells
         {
@@ -205,6 +207,56 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.MinimumSize = new Size((int)charSize, this.FontHeight);
             
             this.selectorCursor.RegisterListener(selectorMsgListener);
+
+            TransparentPanelCreation();
+        }
+
+        private void TransparentPanelCreation()
+        {
+            transparentPanel = new TransparentPanel();
+
+            this.Controls.Add(transparentPanel);
+            //transparentPanel.Transparency = 100;
+
+            transparentPanel.Paint += TransparentPanel_Paint;
+        }
+
+        private void GameForm_Resize(object sender, EventArgs e)
+        {
+            transparentPanel.Size = gameForm.ClientSize;
+        }
+
+        private void TransparentPanel_Paint(object sender, PaintEventArgs e)
+        {
+            if (controlledPg != null)
+            {
+                if (controlledPg.Dead)
+                {
+                    var g = e.Graphics;
+
+                    var deadStr = "YOU'RE DEAD";
+
+                    var font = new Font(FontFamily.GenericMonospace,
+                                        30.0f,
+                                        FontStyle.Bold);
+
+                    var len = g.MeasureString(deadStr, font);
+
+                    var pos = new PointF((this.Width - len.Width) / 2.0f,
+                                            (this.Height - len.Height) / 2.0f);
+                    var posShadow = pos.Offset(0, 5.0f);
+
+                    g.DrawString(deadStr,
+                                 font,
+                                 Brushes.Yellow,
+                                 posShadow);
+
+                    g.DrawString(deadStr,
+                                 font,
+                                 Brushes.Red,
+                                 pos);
+                }
+            }
         }
 
         public void CenterOnPlayer()
@@ -791,6 +843,18 @@ namespace GodsWill_ASCIIRPG.UIControls
                     }    
                 }
                 break;
+
+                case Modes.AfterDeath:
+                    switch(e.KeyCode)
+                    {
+                        case Keys.Enter:
+                            Notify(ControllerCommand.Player_BackToMainMenu);
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                    break;
             }
         }
 
@@ -799,6 +863,11 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.Invalidate();
             base.OnResize(e);
             CenterOnPlayer();
+
+            if (transparentPanel != null)
+            {
+                transparentPanel.Size = this.ClientSize;
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -1074,6 +1143,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                 this.Refresh();
                 Thread.Sleep(Animation._InterFrameDelay);
             }
+        }
+
+        public void NotifyDeath()
+        {
+            mode = Modes.AfterDeath;
+            transparentPanel.Transparency = 100;
+            this.Refresh();
         }
     }
 }

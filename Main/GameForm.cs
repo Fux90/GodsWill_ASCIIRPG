@@ -45,6 +45,7 @@ namespace GodsWill_ASCIIRPG
             var merchantControl = new MerchantUserControl(tblGameScreen);
 
             tblGameScreen.Dock = DockStyle.Fill;
+
             tblGameScreen.RowStyles.Clear();
             tblGameScreen.RowStyles.Add(new RowStyle(SizeType.Percent, 0.75F));
             tblGameScreen.RowStyles.Add(new RowStyle(SizeType.Absolute, 30.0f));
@@ -100,6 +101,7 @@ namespace GodsWill_ASCIIRPG
                                 mapViewer: mapViewControl,
                                 singleMsgListener: singleMsgConsole,
                                 animationViewer: mapViewControl,
+                                pgViewers: new List<IPgViewer>() { mapViewControl },
                                 atomListeners: new List<IAtomListener> { logConsole },
                                 sheetViews: new List<ISheetViewer> { characterSheet },
                                 backpackViewers: new List<IBackpackViewer> { backpackControl },
