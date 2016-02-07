@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GodsWill_ASCIIRPG.View
+namespace GodsWill_ASCIIRPG.Model
 {
-    public interface IMerchantViewer : IViewer
+    public interface IMerchant
     {
-        void BringUpAndFocus();
+        void BeginTransaction();
     }
 }

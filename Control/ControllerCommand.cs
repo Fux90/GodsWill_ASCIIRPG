@@ -57,5 +57,14 @@ namespace GodsWill_ASCIIRPG
         Menu_NextItem,
         Menu_ExecuteSelectItem,
         Player_BackToMainMenu,
+        Merchant_SelectNext,
+        Merchant_SelectNextPage,
+        Merchant_SelectPrevious,
+        Merchant_SelectPreviousPage,
+        Merchant_Open,
+        Merchant_Close,
+        Merchant_SelectPreviousList,
+        Merchant_SelectNextList,
+        Merchant_PurchaseSell,
     }
 }

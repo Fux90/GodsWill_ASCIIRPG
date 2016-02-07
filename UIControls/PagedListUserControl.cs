@@ -14,6 +14,8 @@ namespace GodsWill_ASCIIRPG.UIControls
     {
         public const float FontSize = 10.0f;
 
+        private bool showSelection;
+
         public int SelectedIndex { get; private set; }
         public int SelectedPage { get; private set; }
         public int PagesCount
@@ -68,6 +70,8 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.DoubleBuffered = true;
             this.BackColor = Color.Black;
             this.Font = new Font(FontFamily.GenericMonospace, FontSize);
+
+            this.showSelection = true;
         }
 
         public void SelectPrevious()
@@ -111,7 +115,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                 var pos = new PointF();
                 for (int r = indexToShow; r < finalIndex; r++, indexToShow++)
                 {
-                    if(SelectedIndex == indexToShow)
+                    if(showSelection && SelectedIndex == indexToShow)
                     {
                         g.FillRectangle(Brushes.Blue, new RectangleF(pos, new SizeF(this.Width, FontHeight)));
                     }
@@ -122,6 +126,16 @@ namespace GodsWill_ASCIIRPG.UIControls
                     pos.Y += Font.Height;
                 }
             }
+        }
+
+        public void HideSelection()
+        {
+            showSelection = false;
+        }
+
+        public void ShowSelection()
+        {
+            showSelection = true;
         }
     }
 }

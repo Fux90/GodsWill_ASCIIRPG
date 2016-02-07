@@ -228,6 +228,16 @@ namespace GodsWill_ASCIIRPG.UIControls
             base.OnResize(e);
         }
 
+        public void ShowSelection()
+        {
+            itemList.ShowSelection();
+        }
+
+        public void HideSelection()
+        {
+            itemList.HideSelection();
+        }
+
         protected override void OnParentChanged(EventArgs e)
         {
             this.Dock = DockStyle.Fill;

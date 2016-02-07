@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace GodsWill_ASCIIRPG.UIControls
+﻿namespace GodsWill_ASCIIRPG.UIControls
 {
-    partial class PagedListUserControl<T>
+    partial class MerchantUserControl
     {
         /// <summary> 
         /// Variabile di progettazione necessaria.

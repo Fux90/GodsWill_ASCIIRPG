@@ -229,18 +229,18 @@ namespace GodsWill_ASCIIRPG
             
         }
 
+        public virtual void UseItem(Item item)
+        {
+            item.ActiveUse(this);
+        }
+
         public virtual void PickUpGold(Gold gold)
         {
             this.MyGold += gold.Amount;
             this.Map.Remove(gold);
             this.NotifyListeners(String.Format("Gained {0} gold pieces", gold.Amount));
         }
-
-        public virtual void UseItem(Item item)
-        {
-            item.ActiveUse(this);
-        }
-
+        
         public bool GiveAwayGold(int amount, out Gold gold)
         {
             gold = new Gold(Math.Min(MyGold, amount));
