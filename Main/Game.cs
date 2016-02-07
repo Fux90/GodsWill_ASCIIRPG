@@ -72,6 +72,7 @@ namespace GodsWill_ASCIIRPG
 
             PgController pgController;
             AIController aiController;
+            MerchantController merchantController;
             IMapViewer mapViewer;
             IAtomListener singleMsgListener;
             IAnimationViewer animationViewer;
@@ -80,9 +81,11 @@ namespace GodsWill_ASCIIRPG
             List<IBackpackViewer> backpackViewers;
             List<ISpellbookViewer> spellbookViewers;
             List<IAtomListener> secondarySpellsViewers;
+            List<IMerchantViewer> merchantViewers;
 
             public void Init(   PgController pgController,
                                 AIController aiController,
+                                MerchantController merchantController,
                                 IMapViewer mapViewer,
                                 IAtomListener singleMsgListener,
                                 IAnimationViewer animationViewer,
@@ -91,11 +94,14 @@ namespace GodsWill_ASCIIRPG
                                 List<IBackpackViewer> backpackViewers,
                                 List<ISpellbookViewer> spellbookViewers,
                                 List<IAtomListener> secondarySpellsViewers,
+                                List<IMerchantViewer> merchantViewers,
                                 IMenuViewer mainMenuViewer,
                                 MenuController mainMenuController)
             {
                 this.pgController = pgController;
                 this.aiController = aiController;
+                this.merchantController = merchantController;
+
                 this.mapViewer = mapViewer;
                 this.singleMsgListener = singleMsgListener;
                 this.animationViewer = animationViewer;
@@ -104,6 +110,7 @@ namespace GodsWill_ASCIIRPG
                 this.backpackViewers = backpackViewers;
                 this.spellbookViewers = spellbookViewers;
                 this.secondarySpellsViewers = secondarySpellsViewers;
+                this.merchantViewers = merchantViewers;
 
                 menuViewers = new Dictionary<MenuType, IMenuViewer>();
                 menuControllers = new Dictionary<MenuType, MenuController>();
@@ -205,10 +212,19 @@ namespace GodsWill_ASCIIRPG
                 var orc2 = orcBuilder2.Build();
                 MapBuilder.AddAtom(orc2);
 
+                var book2 = new PrayerBookBuilder().GenerateRandom(Pg.Level.Novice, new Coord());
+
+                var merchantBuilder = new MerchantBuilder();
+                merchantBuilder.AddItem(new LongSword());
+                merchantBuilder.AddItem(book2);
+                merchantBuilder.Position = new Coord(4, 4);
+
+                MapBuilder.AddAtom(merchantBuilder.Build());
+
                 currentPg = new PgCreator() { God = Gods.Ares }.Create();
 
-                currentPg.Listeners.ForEach(listener => orc1.RegisterListener(listener));
-                currentPg.Listeners.ForEach(listener => orc2.RegisterListener(listener));
+                //currentPg.Listeners.ForEach(listener => orc1.RegisterListener(listener));
+                //currentPg.Listeners.ForEach(listener => orc2.RegisterListener(listener));
             }
 
             public void Exit()
@@ -250,10 +266,14 @@ namespace GodsWill_ASCIIRPG
                 }
 //#endif
                 var aiCharacters = map.AICharacters.ToList();
+                var merchants = map.Merchants.ToList();
 
                 atomListeners.ForEach(listener => currentPg.RegisterListener(listener));
                 aiCharacters.ForEach(aiC => currentPg.Listeners.ForEach(listener => aiC.RegisterListener(listener)));
                 currentPg.RegisterListener(singleMsgListener);
+
+                merchantViewers.ForEach(mV => merchants.ForEach(m => m.RegisterView(mV)));
+                merchants.ForEach(m => merchantController.Register(m));
 
                 sheetViews.ForEach(sheet => currentPg.RegisterView(sheet));
                 backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterView(viewer));

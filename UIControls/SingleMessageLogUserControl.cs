@@ -21,7 +21,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             get
             {
-                return (this.Height - charSize) / 2.0f;
+                return (this.Height - font.Height) / 2.0f;
             }
         }
 

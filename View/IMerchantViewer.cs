@@ -8,6 +8,9 @@ namespace GodsWill_ASCIIRPG.View
 {
     public interface IMerchantViewer : IViewer
     {
-        void BringUpAndFocus();
+        void NotifyMerchantName(string merchantName);
+        void NotifyBuyerGold(int gold);
+        void BringUpAndFocus(Pg interactor);
+        void NotifyExcange();
     }
 }

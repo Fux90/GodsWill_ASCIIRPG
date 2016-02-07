@@ -83,6 +83,7 @@ namespace GodsWill_ASCIIRPG
                     {
                         if (me.Position.ManhattanDistance(pg.Position) < 3)
                         {
+                            me.AI.Steps.Clear();
                             var firstStepPos = new Line(me.Position, pg.Position)[1];
                             return me.Position.DirectionFromOffset(firstStepPos);
                         }

@@ -98,6 +98,11 @@ namespace GodsWill_ASCIIRPG
             listeners.Add(listener);
         }
 
+        public void UnregisterListener(IAtomListener listener)
+        {
+            listeners.Remove(listener);
+        }
+
         public abstract bool Interaction(Atom interactor);
         #endregion
 

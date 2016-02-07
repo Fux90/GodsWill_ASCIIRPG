@@ -40,7 +40,9 @@ namespace GodsWill_ASCIIRPG
                                                     spellbookControl, 
                                                     singleMsgConsole);
             var characterSheet = new CharacterSheetUserControl();
-            var logConsole = new LogUserControl();            
+            var logConsole = new LogUserControl();
+
+            var merchantControl = new MerchantUserControl(tblGameScreen);
 
             tblGameScreen.Dock = DockStyle.Fill;
             tblGameScreen.RowStyles.Clear();
@@ -77,10 +79,13 @@ namespace GodsWill_ASCIIRPG
             logConsole.Dock = DockStyle.Fill;
 
             backpackControl.Hide();
+            spellbookControl.Hide();
+            merchantControl.Hide();
 
             this.Controls.Add(tblGameScreen);
             this.Controls.Add(backpackControl);
             this.Controls.Add(spellbookControl);
+            this.Controls.Add(merchantControl);
 
             this.Text = GameName;
 
@@ -89,18 +94,20 @@ namespace GodsWill_ASCIIRPG
 
             this.Size = InitSize;
 
-            Game.Current.Init(  mapViewControl,
-                                mapViewControl,
-                                mapViewControl,
-                                singleMsgConsole,
-                                mapViewControl,
-                                new List<IAtomListener> { logConsole },
-                                new List<ISheetViewer> { characterSheet },
-                                new List<IBackpackViewer> { backpackControl },
-                                new List<ISpellbookViewer> { spellbookControl },
-                                new List<IAtomListener> { singleMsgConsole },
-                                mainMenuViewer,
-                                mainMenuViewer);
+            Game.Current.Init(  pgController: mapViewControl,
+                                aiController: mapViewControl,
+                                merchantController: merchantControl,
+                                mapViewer: mapViewControl,
+                                singleMsgListener: singleMsgConsole,
+                                animationViewer: mapViewControl,
+                                atomListeners: new List<IAtomListener> { logConsole },
+                                sheetViews: new List<ISheetViewer> { characterSheet },
+                                backpackViewers: new List<IBackpackViewer> { backpackControl },
+                                spellbookViewers: new List<ISpellbookViewer> { spellbookControl },
+                                secondarySpellsViewers: new List<IAtomListener> { singleMsgConsole },
+                                merchantViewers: new List <IMerchantViewer> { merchantControl },
+                                mainMenuViewer: mainMenuViewer,
+                                mainMenuController: mainMenuViewer);
         }
 
         protected override void OnLoad(EventArgs e)

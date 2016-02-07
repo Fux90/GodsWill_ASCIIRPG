@@ -330,6 +330,15 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
+        public IEnumerable<Merchant> Merchants
+        {
+            get
+            {
+                var typeOfMerchant = typeof(Merchant);
+                return table.Where(a => typeOfMerchant.IsAssignableFrom(a.GetType())).Select(a => (Merchant)a);
+            }
+        }
+
         public int Size
         {
             get

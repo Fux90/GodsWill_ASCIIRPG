@@ -36,13 +36,14 @@ namespace GodsWill_ASCIIRPG.Model.Core
 
         public static Label DockFillLabel(  this System.Windows.Forms.Control control, 
                                             string name, 
-                                            Color color)
+                                            Color color,
+                                            Font font = null)
         {
             return new Label()
             {
                 Name = name,
                 AutoSize = false,
-                Font = control.Font,
+                Font = font == null ? control.Font : font,
                 ForeColor = color,
                 BackColor = control.BackColor,
                 Dock = DockStyle.Fill,

@@ -11,10 +11,59 @@ using GodsWill_ASCIIRPG.Model.Core;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    public class MerchantBuilder
+    {
+        public string Name { get; set; }
+        public string Symbol { get; set; }
+        public Color Color { get; set; }
+        public Backpack Backpack { get; set; }
+        public string Description { get; set; }
+        public Coord Position { get; set; }
+
+        public MerchantBuilder()
+        {
+            Name = RandomName();
+            Symbol = Merchant.defaultSymbol;
+            Color = Merchant.defaultColor;
+            Backpack = new Backpack();
+            Description = "A Merchant";
+            Position = new Coord();
+        }
+
+        private string RandomName()
+        {
+            return "Dalek, the Innkeeper";
+        }
+
+        public bool AddItem(Item item)
+        {
+            if(Backpack == null)
+            {
+                return false;
+            }
+
+            Backpack.Add(item);
+            return true;
+        }
+
+        public Merchant Build()
+        {
+            return new Merchant(Name,
+                                Symbol,
+                                Color,
+                                Backpack,
+                                Description,
+                                Position);
+        }
+    }
+
     [Serializable]
     public class Merchant : Atom, 
         IGoldDealer, IViewable<IMerchantViewer>, ISerializable, IMerchant
     {
+        public const string defaultSymbol = "M";
+        public static readonly Color defaultColor = Color.Purple;
+
         public enum MerchantInclination
         {
             Friendly,
@@ -85,9 +134,9 @@ namespace GodsWill_ASCIIRPG.Model
                         string symbol,
                         Color color,
                         Backpack backpack,
-                        string description = "A Merchant",
-                        Coord position = new Coord())
-            : base(name, symbol, color, true, false, description, position)
+                        string description,
+                        Coord position)
+            : base(name, symbol, color, false, true, description, position)
         {
             Backpack = backpack;
         }
@@ -116,6 +165,67 @@ namespace GodsWill_ASCIIRPG.Model
             return true;
         }
 
+        public void ProposeSell(Item item)
+        {
+            var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Sell * item.Cost);
+            NotifyListeners(String.Format("{0}: \"I can give you this for {1} gold pieces\"", this.Name, cost));
+        }
+
+        public void ProposePurchase(Item item)
+        {
+            var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Purchase * item.Cost);
+            NotifyListeners(String.Format("{0}: \"For this I can give you {1} gold pieces\"", this.Name, cost));
+        }
+
+        public void NoProposal()
+        {
+            NotifyListeners("");
+        }
+
+        public bool Sell(Item item, Pg to)
+        {
+            var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Sell * item.Cost);
+
+            Gold gold;
+            if(to.GiveAwayGold(cost, out gold))
+            {
+                this.PickUpGold(gold);
+
+                this.Backpack.Remove(item);
+                to.Backpack.Add(item);
+
+                merchantView.NotifyBuyerGold(to.MyGold);
+                NotifyExcange();
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void Purchase(Item item, Pg from)
+        {
+            var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Purchase * item.Cost);
+
+            Gold gold;
+            this.GiveAwayGold(cost, out gold);
+            
+            from.PickUpGold(gold);
+
+            from.Backpack.Remove(item);
+            this.Backpack.Add(item);
+
+            merchantView.NotifyBuyerGold(from.MyGold);
+            NotifyExcange();
+        }
+
+        private void NotifyExcange()
+        {
+            merchantView.NotifyExcange();
+        }
+
         public override bool Interaction(Atom interactor)
         {
             if(typeof(Pg).IsAssignableFrom(interactor.GetType()))
@@ -127,7 +237,7 @@ namespace GodsWill_ASCIIRPG.Model
 
                 // 2) Bring up view
                 // 3) Focus on merchant controller
-                BeginTransaction();
+                BeginTransaction(pgInteractor);
             }
 
             return false;
@@ -158,9 +268,25 @@ namespace GodsWill_ASCIIRPG.Model
             // Nothing...
         }
 
-        public void BeginTransaction()
+        public void BeginTransaction(Pg interactor)
         {
-            merchantView.BringUpAndFocus();
+            merchantView.NotifyMerchantName(this.Name);
+            merchantView.BringUpAndFocus(interactor);
+        }
+
+        public virtual void BadSellSpeech()
+        {
+            NotifyListeners("Mmm... That's not enough gold");
+        }
+
+        public virtual void GoodSellSpeech()
+        {
+            NotifyListeners("It's a deal");
+        }
+
+        public virtual void PurchaseSpeech()
+        {
+            NotifyListeners("Here you are");
         }
     }
 }

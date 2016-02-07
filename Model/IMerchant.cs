@@ -8,6 +8,6 @@ namespace GodsWill_ASCIIRPG.Model
 {
     public interface IMerchant
     {
-        void BeginTransaction();
+        void BeginTransaction(Pg Interactor);
     }
 }

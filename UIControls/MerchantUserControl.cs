@@ -17,6 +17,11 @@ namespace GodsWill_ASCIIRPG.UIControls
     public partial class MerchantUserControl : UserControl, MerchantController, IMerchantViewer
     {
         private const int PaddingValue = 4;
+
+        private const float penWidth = 4.0f;
+        private const float charSize = 10.0f;
+        private const float charHelpSize = charSize / 2.5f;
+
         const int _Alt = 100;
         const int _Shift = 10;
         const int _Ctrl = 1;
@@ -43,11 +48,19 @@ namespace GodsWill_ASCIIRPG.UIControls
         SingleMessageLogUserControl singleLogMerchant;
 
         TableLayoutPanel gamePanel;
+        TableLayoutPanel structure;
+        TransparentPanel transparentPanel;
+
         DescriptionList<Item>[] descriptionList;
 
         public bool ValidIndex { get; private set; }
 
         private int selectedListIndex;
+        private int initialWidth;
+        private int initialHeight;
+        private float initialTitleFontSize;
+        private float initialHelpFontSize;
+
         public int SelectedListIndex
         {
             get
@@ -59,11 +72,11 @@ namespace GodsWill_ASCIIRPG.UIControls
             {
                 if(value < 0)
                 {
-                    selectedListIndex = (selectedListIndex + descriptionList.Length - 1) % descriptionList.Length;
+                    selectedListIndex = (value + descriptionList.Length) % descriptionList.Length;
                 }
                 else
                 {
-                    selectedListIndex = (selectedListIndex + 1) % descriptionList.Length;
+                    selectedListIndex = (value) % descriptionList.Length;
                 }
             }
         }
@@ -112,8 +125,8 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.gamePanel = gamePanel;
             this.BackColor = Color.Black;
 
-            var structure = new TableLayoutPanel();
-
+            structure = new TableLayoutPanel();
+            
             structure.RowStyles.Clear();
             structure.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0f)); // Title
             structure.RowStyles.Add(new RowStyle(SizeType.Percent, 80.0f));
@@ -122,30 +135,35 @@ namespace GodsWill_ASCIIRPG.UIControls
 
             lblTitle = this.DockFillLabel("lblTitle", Color.Red);
             lblTitle.Margin = new Padding(PaddingValue);
-            
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+
             descriptionList = new DescriptionList<Item>[2];
             for (int i = 0; i < descriptionList.Length; i++)
             {
                 descriptionList[i] = new DescriptionList<Item>();
                 descriptionList[i].KeyUp += OnKeyUp;
                 descriptionList[i].Dock = DockStyle.Fill;
+                var locI = i;
                 descriptionList[i].Stringify = (item) => String.Format("[{0}] {1}",
-                                                                    descriptionList[i].Items.IndexOf(item),
+                                                                    descriptionList[locI].Items.IndexOf(item),
                                                                     item.Name);
 
                 descriptionList[i].Title = i == 0 
                                     ? "You"
                                     : "Merchant";
-                descriptionList[i].HelpString = "W: Previous - S: Next - A: Previous Page - D: Next Page - U: Use - H: Handle Weapon - P: Put on Armor - B: Embrace Shield";
+                descriptionList[i].HelpString = "W: Previous - S: Next - A: Previous Page - D: Next Page";
             }
 
             var descriptionListPanel = new TableLayoutPanel();
             descriptionListPanel.ColumnStyles.Clear();
-            descriptionListPanel.ColumnStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
-            descriptionListPanel.ColumnStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            descriptionListPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            descriptionListPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            descriptionListPanel.Margin = new Padding(PaddingValue);
+            descriptionListPanel.Dock = DockStyle.Fill;
 
-            lblHelp = this.DockFillLabel("lblHelp", Color.Yellow);
+            lblHelp = this.DockFillLabel("lblHelp", Color.Yellow, new Font(FontFamily.GenericMonospace, charHelpSize));
             lblHelp.Margin = new Padding(PaddingValue);
+            lblHelp.TextAlign = ContentAlignment.MiddleCenter;
 
             singleLogMerchant = new SingleMessageLogUserControl();
             singleLogMerchant.Dock = DockStyle.Fill;
@@ -153,18 +171,61 @@ namespace GodsWill_ASCIIRPG.UIControls
             descriptionListPanel.Controls.Add(descriptionList[0], 0, 0);
             descriptionListPanel.Controls.Add(descriptionList[1], 1, 0);
 
+            transparentPanel = new TransparentPanel();
+            transparentPanel.BackColor = Color.Transparent;
+            //transparentPanel.Transparency = 128;
+            transparentPanel.Paint += TransparentPanel_Paint; ;
+            singleLogMerchant.KeyUp += OnKeyUp;
+
             structure.Controls.Add(lblTitle, 0, 0);
             structure.Controls.Add(descriptionListPanel, 0, 1);
             structure.Controls.Add(lblHelp, 0, 2);
             structure.Controls.Add(singleLogMerchant, 0, 3);
 
             this.Controls.Add(structure);
+            this.Controls.Add(transparentPanel);
+
+            HelpString = "Tab - Switch List";
+
+            initialWidth = Width;
+            initialHeight = Height;
+            initialTitleFontSize = lblTitle.Font.Size;
+            initialHelpFontSize = lblHelp.Font.Size;
+
+            structure.Parent.Resize += (sender, e) => Controll_FillParent(sender, e, structure);
+            transparentPanel.Parent.Resize += (sender, e) => Controll_FillParent(sender, e, transparentPanel);
+
+            transparentPanel.BringToFront();
+        }
+
+        private void Controll_FillParent(object sender, EventArgs e, System.Windows.Forms.Control ctrl)
+        {
+            var parent = (System.Windows.Forms.Control)sender;
+
+            ctrl.Size = parent.ClientSize;
+        }
+
+        private void TransparentPanel_Paint(object sender, PaintEventArgs e)
+        {
+            var g = e.Graphics;
+
+            var ctrl = (System.Windows.Forms.Control)descriptionList[SelectedListIndex];
+            var pos = ctrl.Location;
+            pos.Offset(Margin.Left, lblTitle.Height + 2 * (Margin.Top + Margin.Bottom));
+            var size = ctrl.Size;
+            size.Width += Padding.Left + Padding.Right;
+            size.Height += Padding.Top + Padding.Bottom;
+
+            g.DrawRectangle(new Pen(Brushes.Orange, penWidth),
+                            new Rectangle(pos, size));
         }
 
         public void Notify(ControllerCommand cmd)
         {
-            if (controlledBackpack[selectedListIndex] != null)
-            {
+            var tryedExchange = false;
+
+            if (ControlledBackpack[selectedListIndex] != null)
+            {                
                 switch (cmd)
                 {
                     case ControllerCommand.Merchant_SelectNext:
@@ -183,11 +244,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                         descriptionList[selectedListIndex].HideSelection();
                         SelectedListIndex = SelectedListIndex - 1;
                         descriptionList[selectedListIndex].ShowSelection();
+                        this.Refresh();
                         break;
                     case ControllerCommand.Merchant_SelectNextList:
                         descriptionList[selectedListIndex].HideSelection();
                         SelectedListIndex = SelectedListIndex + 1;
                         descriptionList[selectedListIndex].ShowSelection();
+                        this.Refresh();
                         break;
                     case ControllerCommand.Merchant_Close:
                         ValidIndex = false;
@@ -197,17 +260,47 @@ namespace GodsWill_ASCIIRPG.UIControls
                         Opened = false;
                         break;
                     case ControllerCommand.Merchant_PurchaseSell:
-                        ValidIndex = true;
-                        this.Hide();
-                        FocusOnMap();
-                        Opened = false;
+                        if (SelectedIndex != -1)
+                        {
+                            var item = ControlledBackpack[SelectedListIndex][SelectedIndex];
+                            var locIx = SelectedIndex;
+
+                            if (selectedListIndex == 0) // Merchant buy from Pg
+                            {
+                                controlledMerchant.Purchase(item, controlledPg);
+                                controlledMerchant.PurchaseSpeech();
+                            }
+                            else // Merchant sell to Pg
+                            {
+                                if (controlledMerchant.Sell(item, controlledPg))
+                                {
+                                    Notify(ControllerCommand.Merchant_SelectPrevious);
+                                    controlledMerchant.GoodSellSpeech();
+                                }
+                                else
+                                {
+                                    controlledMerchant.BadSellSpeech();
+                                }
+                            }
+
+                            tryedExchange = true;
+                        }
                         break;
                     case ControllerCommand.Merchant_Open:
                         Opened = true;
                         gamePanel.Hide();
+                        SelectedListIndex = 0;
                         this.Show();
                         for (int i = 0; i < controlledBackpack.Length; i++)
                         {
+                            if(i == 0)
+                            {
+                                descriptionList[i].ShowSelection();
+                            }
+                            else
+                            {
+                                descriptionList[i].HideSelection();
+                            }
                             descriptionList[i].Items = controlledBackpack[i].ToList();
                         }
                         this.Refresh();
@@ -216,6 +309,29 @@ namespace GodsWill_ASCIIRPG.UIControls
                 }
             }
 
+            if (!tryedExchange)
+            {
+                var ix = descriptionList[selectedListIndex].SelectedIndex;
+                if (ix != -1)
+                {
+                    if (SelectedListIndex == 0)
+                    {
+                        controlledMerchant.ProposePurchase(controlledBackpack[selectedListIndex][ix]);
+                    }
+                    else
+                    {
+                        controlledMerchant.ProposeSell(controlledBackpack[selectedListIndex][ix]);
+                    }
+                }
+                else
+                {
+                    controlledMerchant.NoProposal();
+                }
+
+                
+            }
+
+            tryedExchange = false;
             descriptionList[selectedListIndex].Refresh();
         }
 
@@ -284,6 +400,11 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         public void UnregisterAll()
         {
+            if(controlledMerchant != null)
+            {
+                controlledMerchant.UnregisterListener(singleLogMerchant);
+            }
+
             controlledPg = null;
             controlledMerchant = null;
 
@@ -299,6 +420,36 @@ namespace GodsWill_ASCIIRPG.UIControls
             descriptionList[selectedListIndex].Items = itemsInBackpack.ToList();
         }
 
+        protected override void OnResize(EventArgs e)
+        {
+            SuspendLayout();
+            // Get the proportionality of the resize
+            float proportionalNewWidth = (float)Width / initialWidth;
+            float proportionalNewHeight = (float)Height / initialHeight;
+
+            if (proportionalNewWidth > 0 && proportionalNewHeight > 0)
+            {
+                // Calculate the current font size
+                lblTitle.Font = new Font(lblTitle.Font.FontFamily,
+                                    initialTitleFontSize *
+                                    (proportionalNewWidth > proportionalNewHeight
+                                    ? proportionalNewHeight
+                                    : proportionalNewWidth),
+                                    lblTitle.Font.Style);
+
+                lblHelp.Font = new Font(lblHelp.Font.FontFamily,
+                                    initialHelpFontSize *
+                                    (proportionalNewWidth > proportionalNewHeight
+                                    ? proportionalNewHeight
+                                    : proportionalNewWidth),
+                                    lblHelp.Font.Style);
+            }
+
+            ResumeLayout();
+
+            base.OnResize(e);
+        }
+
         protected override void OnParentChanged(EventArgs e)
         {
             this.Dock = DockStyle.Fill;
@@ -308,12 +459,14 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             controlledMerchant = merchant;
             ControlledBackpack[1] = merchant.Backpack;
+            controlledMerchant.RegisterListener(singleLogMerchant);
         }
 
         public void Unregister(Merchant merchant)
         {
             if (controlledMerchant == merchant)
             {
+                controlledMerchant.UnregisterListener(singleLogMerchant);
                 controlledMerchant = null;
                 ControlledBackpack[1] = null;
             }
@@ -323,6 +476,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             controlledPg = pg;
             ControlledBackpack[0] = pg.Backpack;
+            NotifyBuyerGold(pg.MyGold);
         }
 
         public void Unregister(Pg pg)
@@ -334,10 +488,29 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
         }
 
-        public void BringUpAndFocus()
+        public void BringUpAndFocus(Pg interactor)
         {
-            Notify(ControllerCommand.Backpack_Open);
+            Register(interactor);
+            Notify(ControllerCommand.Merchant_Open);
         }
-        
+
+        public void NotifyMerchantName(string merchantName)
+        {
+            Text = merchantName;
+        }
+
+        public void NotifyExcange()
+        {
+            for (int i = 0; i < ControlledBackpack.Length; i++)
+            {
+                descriptionList[i].Items = controlledBackpack[i].ToList();
+            }
+            this.Refresh();
+        }
+
+        public void NotifyBuyerGold(int gold)
+        {
+            descriptionList[0].Title = String.Format("You - {0} $", gold);
+        }
     }
 }
