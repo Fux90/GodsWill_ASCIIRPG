@@ -13,7 +13,7 @@ namespace GodsWill_ASCIIRPG
 {
     [Serializable]
     [StraightSightNeededForPerception]
-    public abstract class Character : MoveableAtom, IFighter, IDamageable, IBlockable, IMerchant, ISerializable
+    public abstract class Character : MoveableAtom, IFighter, IDamageable, IBlockable, IGoldDealer, ISerializable
     {
         #region SERIALIZABLE_CONST_NAMES
         const string hpSerializableName = "hp";
@@ -231,6 +231,7 @@ namespace GodsWill_ASCIIRPG
         {
             this.MyGold += gold.Amount;
             this.Map.Remove(gold);
+            this.NotifyListeners(String.Format("Gained {0} gold pieces", gold.Amount));
         }
 
         public virtual void UseItem(Item item)
@@ -243,6 +244,8 @@ namespace GodsWill_ASCIIRPG
             gold = new Gold(Math.Min(MyGold, amount));
             if (MyGold >= amount)
             {
+                MyGold -= amount;
+                this.NotifyListeners(String.Format("Gived away {0} gold pieces", gold.Amount));
                 return true;
             }
             this.NotifyListeners("Not enough gold to fullfil the request...");

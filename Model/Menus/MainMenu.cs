@@ -51,6 +51,7 @@ namespace GodsWill_ASCIIRPG.Model.Menus
         {
             MenuItem.MenuAction debugMap = (pars) => {
                 currGame.ResetMapBuilder();
+                currGame.CleanMsgs();
                 currGame.DebugMap();
                 ActivateByName("Resume");
                 currGame.GameInitialization();
@@ -66,6 +67,7 @@ namespace GodsWill_ASCIIRPG.Model.Menus
         {
             MenuItem.MenuAction newGame = (pars) => {
                 currGame.ResetMapBuilder();
+                currGame.CleanMsgs();
                 var builder = currGame.MapBuilder;
                 builder.MapCreationMode = MapBuilder.TableCreationMode.FromFile;
                 ActivateByName("Resume");
@@ -83,6 +85,7 @@ namespace GodsWill_ASCIIRPG.Model.Menus
             MenuItem.MenuAction newGame = (pars) =>
             {
                 currGame.ResetMapBuilder();
+                currGame.CleanMsgs();
                 var builder = currGame.MapBuilder;
 
                 builder.Height = 40;

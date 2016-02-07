@@ -202,14 +202,14 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             controlledBackpack = null;
             //itemList.Items = null;
-            descriptionList.Items = null;
+            descriptionList.Items.Clear();
         }
 
         public void UnregisterAll()
         {
             controlledBackpack = null;
             //itemList.Items = null;
-            descriptionList.Items = null;
+            descriptionList.Items.Clear();
         }
 
         public void NotifyAddRemoval(Item[] itemsInBackpack)

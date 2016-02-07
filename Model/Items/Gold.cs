@@ -38,9 +38,9 @@ namespace GodsWill_ASCIIRPG.Model.Items
 
         public override bool Interaction(Atom interactor)
         {
-            if (typeof(IMerchant).IsAssignableFrom(interactor.GetType()))
+            if (typeof(IGoldDealer).IsAssignableFrom(interactor.GetType()))
             {
-                ((IMerchant)interactor).PickUpGold(this);
+                ((IGoldDealer)interactor).PickUpGold(this);
                 return true;
             }
             else

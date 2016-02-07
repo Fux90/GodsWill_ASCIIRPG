@@ -216,16 +216,13 @@ namespace GodsWill_ASCIIRPG
                 pgController.Notify(ControllerCommand.Player_ExitGame);
             }
 
-            public void GameInitialization( //PgController pgController,           //                                AIController aiController,
-            //                                IMapViewer mapViewer,
-            //                                IAtomListener singleMsgListener,
-            //                                IAnimationViewer animationViewer,
-            //                                List<IAtomListener> atomListeners,
-            //                                List<ISheetViewer> sheetViews,
-            //                                List<IBackpackViewer> backpackViewers,
-            //                                List<ISpellbookViewer> spellbookViewers,
-            //                                List<IAtomListener> secondarySpellsViewers
-            )
+            public void CleanMsgs()
+            {
+                atomListeners.ForEach(aL => aL.CleanPreviousMessages());
+                singleMsgListener.CleanPreviousMessages();
+            }
+
+            public void GameInitialization()
             {
                 Maps.Clear();
 
@@ -256,6 +253,8 @@ namespace GodsWill_ASCIIRPG
 
                 atomListeners.ForEach(listener => currentPg.RegisterListener(listener));
                 aiCharacters.ForEach(aiC => currentPg.Listeners.ForEach(listener => aiC.RegisterListener(listener)));
+                currentPg.RegisterListener(singleMsgListener);
+
                 sheetViews.ForEach(sheet => currentPg.RegisterSheet(sheet));
                 backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterViewer(viewer));
                 spellbookViewers.ForEach(viewer => currentPg.Spellbook.RegisterViewer(viewer));

@@ -68,7 +68,7 @@
     <Compile Include="Model\IDamageable.cs" />
     <Compile Include="Model\IDescriptionable.cs" />
     <Compile Include="Model\IFighter.cs" />
-    <Compile Include="Model\IMerchant.cs" />
+    <Compile Include="Model\IGoldDealer.cs" />
     <Compile Include="Model\ISpellcaster.cs" />
     <Compile Include="Model\IStatsProvided.cs" />
     <Compile Include="Model\Items\Gold.cs" />

@@ -42,6 +42,12 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.Refresh();
         }
 
+        public void CleanPreviousMessages()
+        {
+            currentMsg = "";
+            this.Refresh();
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics;

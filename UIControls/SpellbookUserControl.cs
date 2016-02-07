@@ -156,14 +156,14 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             controlledSpellbook = null;
             //itemList.Items = null;
-            descriptionList.Items = null;
+            descriptionList.Items.Clear();
         }
 
         public void UnregisterAll()
         {
             controlledSpellbook = null;
             //itemList.Items = null;
-            descriptionList.Items = null;
+            descriptionList.Items.Clear();
         }
 
         public void NotifyAdd(SpellBuilder[] spellsInSpellbook)

@@ -565,6 +565,9 @@ namespace GodsWill_ASCIIRPG.UIControls
         public void UnregisterAll()
         {
             controlledPg = null;
+            aiCharacters.Clear();
+            backpackController.UnregisterAll();
+            spellbookController.UnregisterAll();
         }
 
         public void NotifyMovement(Atom movedAtom, Coord freedCell, Coord occupiedCell)
@@ -943,10 +946,11 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
 #endif
 #if DEBUG_CENTER_VIEWPORT
-                            #region CENTER_VIEWPORT
-                            var ptCenter = new PointF(  (centerRegion.X - firstCol) * charSize + offSetX - charPaintHorPadding,
-                                                        (centerRegion.Y - firstRow) * this.FontHeight + offSetY);
-                                                         g.DrawString("*", this.Font, Brushes.Orange, ptCenter);
+            #region CENTER_VIEWPORT
+            
+            var ptCenter = new PointF(  (centerRegion.X - firstCol) * charSize + offSetX - charPaintHorPadding,
+                                        (centerRegion.Y - firstRow) * this.FontHeight + offSetY);
+            g.DrawString("*", this.Font, Brushes.Orange, ptCenter);
 #endregion
 #endif
 #if DEBUG_CENTERING

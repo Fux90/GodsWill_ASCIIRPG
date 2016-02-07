@@ -9,5 +9,6 @@ namespace GodsWill_ASCIIRPG.View
     public interface IAtomListener
     {
         void NotifyMessage(Atom who, string msg);
+        void CleanPreviousMessages();
     }
 }

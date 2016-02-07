@@ -49,7 +49,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             get
             {
-                return items;
+                return items == null ? new T[] { } : items;
             }
 
             set

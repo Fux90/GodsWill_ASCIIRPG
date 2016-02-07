@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
-    public interface IMerchant
+    public interface IGoldDealer
     {
         void PickUpGold(Gold gold);
         bool GiveAwayGold(int amount, out Gold gold);

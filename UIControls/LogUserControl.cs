@@ -34,12 +34,6 @@ namespace GodsWill_ASCIIRPG.UIControls
             currentLastShown = 0;
         }
 
-        //public void AppendText(LogRow row)
-        //{
-        //    rows.Add(row);
-        //    currentLastShown++;
-        //}
-
         public void NotifyMessage(Atom who, string msg)
         {
             //TODO: different colors, given different actions/monster
@@ -48,6 +42,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                 Color = who.Color,
             });
             currentLastShown++;
+            this.Refresh();
+        }
+
+        public void CleanPreviousMessages()
+        {
+            rows.Clear();
+            currentLastShown = 0;
             this.Refresh();
         }
 
