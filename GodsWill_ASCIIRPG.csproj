@@ -55,6 +55,7 @@
     <Compile Include="Control\BackpackController.cs" />
     <Compile Include="Control\MapController.cs" />
     <Compile Include="Control\MenuController.cs" />
+    <Compile Include="Control\MerchantController.cs" />
     <Compile Include="Control\PgController.cs" />
     <Compile Include="Control\SpellbookController.cs" />
     <Compile Include="Model\Allied.cs" />
@@ -74,7 +75,9 @@
     <Compile Include="Model\Items\Gold.cs" />
     <Compile Include="Model\Items\ItemGenerator.cs" />
     <Compile Include="Model\Items\PrayerBook.cs" />
+    <Compile Include="Model\IViewable.cs" />
     <Compile Include="Model\Menus\MainMenu.cs" />
+    <Compile Include="Model\Merchant.cs" />
     <Compile Include="Model\PathFinding\AStar.cs" />
     <Compile Include="Model\PercentageOfSuccess.cs" />
     <Compile Include="Model\Perception.cs" />
@@ -192,6 +195,7 @@
     <Compile Include="View\IAnimationViewer.cs" />
     <Compile Include="View\IAtomListener.cs" />
     <Compile Include="View\IBackpackViewer.cs" />
+    <Compile Include="View\IMerchantViewer.cs" />
     <Compile Include="View\IScrollable.cs" />
     <Compile Include="View\ISheetViewer.cs" />
     <Compile Include="View\IMapViewer.cs" />

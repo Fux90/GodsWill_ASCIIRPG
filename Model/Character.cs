@@ -13,7 +13,9 @@ namespace GodsWill_ASCIIRPG
 {
     [Serializable]
     [StraightSightNeededForPerception]
-    public abstract class Character : MoveableAtom, IFighter, IDamageable, IBlockable, IGoldDealer, ISerializable
+    public abstract class Character : MoveableAtom, 
+        IFighter, IDamageable, IBlockable, IGoldDealer, ISerializable,
+        IViewable<ISheetViewer>
     {
         #region SERIALIZABLE_CONST_NAMES
         const string hpSerializableName = "hp";
@@ -623,7 +625,7 @@ namespace GodsWill_ASCIIRPG
                             mod.TimeToLive));
         }
 
-        public virtual void RegisterSheet(ISheetViewer sheet)
+        public virtual void RegisterView(ISheetViewer sheet)
         {
             CharacterSheets.Add(sheet);
         }

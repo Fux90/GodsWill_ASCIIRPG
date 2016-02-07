@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace GodsWill_ASCIIRPG.Model
 {
     [Serializable]
-    public class Spellbook : IEnumerable
+    public class Spellbook : IEnumerable, IViewable<ISpellbookViewer>
     {
         List<SpellBuilder> spells;
         [NonSerialized]
@@ -81,7 +81,7 @@ namespace GodsWill_ASCIIRPG.Model
             return removedSpell;
         }
 
-        public void RegisterViewer(ISpellbookViewer viewer)
+        public void RegisterView(ISpellbookViewer viewer)
         {
             SpellbookViewers.Add(viewer);
             NotifyAdd();

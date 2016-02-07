@@ -255,9 +255,9 @@ namespace GodsWill_ASCIIRPG
                 aiCharacters.ForEach(aiC => currentPg.Listeners.ForEach(listener => aiC.RegisterListener(listener)));
                 currentPg.RegisterListener(singleMsgListener);
 
-                sheetViews.ForEach(sheet => currentPg.RegisterSheet(sheet));
-                backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterViewer(viewer));
-                spellbookViewers.ForEach(viewer => currentPg.Spellbook.RegisterViewer(viewer));
+                sheetViews.ForEach(sheet => currentPg.RegisterView(sheet));
+                backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterView(viewer));
+                spellbookViewers.ForEach(viewer => currentPg.Spellbook.RegisterView(viewer));
                 secondarySpellsViewers.ForEach(secondarySpellsViewer => currentPg.Spellbook.RegisterSecondaryView(secondarySpellsViewer));
 
                 pgController.Register(CurrentPg);

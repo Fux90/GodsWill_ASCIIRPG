@@ -344,9 +344,9 @@ namespace GodsWill_ASCIIRPG
             base.RegisterTemporaryMod(mod);
             NotifyAll();
         }
-        public override void RegisterSheet(ISheetViewer sheet)
+        public override void RegisterView(ISheetViewer sheet)
         {
-            base.RegisterSheet(sheet);
+            base.RegisterView(sheet);
             NotifyAll();
         }
 

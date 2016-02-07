@@ -1,3 +1,4 @@
+using GodsWill_ASCIIRPG.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Windows.Forms;
 
 namespace GodsWill_ASCIIRPG
 {
-	public abstract class Menu : IEnumerable
+	public abstract class Menu : IEnumerable, IViewable<IMenuViewer>
 	{
         List<MenuItem> items;
         List<IMenuViewer> menuViewers;

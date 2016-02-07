@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.View
 {
-    public interface ISheetViewer
+    public interface ISheetViewer : IViewer
     {
         void NotifyName(string name);
         void NotifyLevel(Pg.Level level, God god);

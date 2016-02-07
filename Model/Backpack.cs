@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace GodsWill_ASCIIRPG.Model
 {
     [Serializable]
-    public class Backpack : IEnumerable
+    public class Backpack : IEnumerable, IViewable<IBackpackViewer>
     {
         List<Item> items;
         [NonSerialized]
@@ -64,7 +64,7 @@ namespace GodsWill_ASCIIRPG.Model
             return removedObject;
         }
 
-        public void RegisterViewer(IBackpackViewer viewer)
+        public void RegisterView(IBackpackViewer viewer)
         {
             BackPackViewers.Add(viewer);
             NotifyAddRemoval();

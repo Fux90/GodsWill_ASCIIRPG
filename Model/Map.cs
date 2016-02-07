@@ -268,7 +268,7 @@ namespace GodsWill_ASCIIRPG
 
             for (int i = 0; i < views.Count; i++)
             {
-                map.RegisterViewer(views[i]);
+                map.RegisterView(views[i]);
             }
             
             
@@ -278,7 +278,7 @@ namespace GodsWill_ASCIIRPG
     }
 
     [Serializable]
-    public class Map : ISerializable
+    public class Map : ISerializable, IViewable<IMapViewer>
     {
         public enum LevelType
         {
@@ -385,7 +385,7 @@ namespace GodsWill_ASCIIRPG
 
         #region METHODS
 
-        public void RegisterViewer(IMapViewer viewer)
+        public void RegisterView(IMapViewer viewer)
         {
             views.Add(viewer);
         }
