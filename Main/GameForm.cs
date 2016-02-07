@@ -18,8 +18,10 @@ namespace GodsWill_ASCIIRPG
         public const string MyName = "MainForm";
         public const string GameName = "GOD'S WILL";
         public readonly Size InitSize = new Size(909, 569);
-        Game game;
+
         TableLayoutPanel tblGameScreen;
+
+        MenuUserControl mainMenuViewer;
 
         public GameForm()
         {
@@ -82,29 +84,42 @@ namespace GodsWill_ASCIIRPG
 
             this.Text = GameName;
 
-            Game.Current.Init();
-            Game.Current.InitialMenu();//   new List<IAtomListener> { logConsole },
-            //                            new List<ISheetViewer> { characterSheet },
-            //                            new List<IBackpackViewer> { backpackControl },
-            //                            new List<ISpellbookViewer> { spellbookControl },
-            //                            new List<IAtomListener> { singleMsgConsole });
-            Game.Current.GameInitialization(mapViewControl, 
-                                            mapViewControl, 
-                                            mapViewControl,
-                                            singleMsgConsole,
-                                            mapViewControl,
-                                            new List<IAtomListener> { logConsole },
-                                            new List<ISheetViewer> { characterSheet },
-                                            new List<IBackpackViewer> { backpackControl },
-                                            new List<ISpellbookViewer> { spellbookControl },
-                                            new List<IAtomListener> { singleMsgConsole });
-            //Game.Current.RunGame();
+            mainMenuViewer = new MenuUserControl();
+            this.Controls.Add(mainMenuViewer);
+
             this.Size = InitSize;
+
+            Game.Current.Init(  mapViewControl,
+                                mapViewControl,
+                                mapViewControl,
+                                singleMsgConsole,
+                                mapViewControl,
+                                new List<IAtomListener> { logConsole },
+                                new List<ISheetViewer> { characterSheet },
+                                new List<IBackpackViewer> { backpackControl },
+                                new List<ISpellbookViewer> { spellbookControl },
+                                new List<IAtomListener> { singleMsgConsole },
+                                mainMenuViewer,
+                                mainMenuViewer);
         }
 
         protected override void OnLoad(EventArgs e)
         {
-            
+            base.OnActivated(e);
+
+            Game.Current.InitialMenu();
+
+            //Game.Current.GameInitialization(mapViewControl, 
+            //                                mapViewControl, 
+            //                                mapViewControl,
+            //                                singleMsgConsole,
+            //                                mapViewControl,
+            //                                new List<IAtomListener> { logConsole },
+            //                                new List<ISheetViewer> { characterSheet },
+            //                                new List<IBackpackViewer> { backpackControl },
+            //                                new List<ISpellbookViewer> { spellbookControl },
+            //                                new List<IAtomListener> { singleMsgConsole });
+            //Game.Current.RunGame(); 
         }
 
         protected override void OnClosing(CancelEventArgs e)

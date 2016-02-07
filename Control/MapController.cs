@@ -29,5 +29,10 @@ namespace GodsWill_ASCIIRPG
         {
             controlledMap = null;
         }
+
+        public void UnregisterAll()
+        {
+            controlledMap = null;
+        }
     }
 }

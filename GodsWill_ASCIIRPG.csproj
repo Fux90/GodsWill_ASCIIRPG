@@ -74,6 +74,7 @@
     <Compile Include="Model\Items\Gold.cs" />
     <Compile Include="Model\Items\ItemGenerator.cs" />
     <Compile Include="Model\Items\PrayerBook.cs" />
+    <Compile Include="Model\Menus\MainMenu.cs" />
     <Compile Include="Model\PathFinding\AStar.cs" />
     <Compile Include="Model\PercentageOfSuccess.cs" />
     <Compile Include="Model\Perception.cs" />

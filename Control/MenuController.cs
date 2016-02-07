@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
-	interface MenuController : Controller<Menu>
+	public interface MenuController : Controller<Menu>
 	{
 	}
 }

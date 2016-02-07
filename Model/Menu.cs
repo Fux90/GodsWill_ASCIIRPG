@@ -3,13 +3,34 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace GodsWill_ASCIIRPG
 {
-	public class Menu : IEnumerable
+	public abstract class Menu : IEnumerable
 	{
         List<MenuItem> items;
         List<IMenuViewer> menuViewers;
+
+        private string title;
+        public string Title
+        {
+            get
+            {
+                if(title == null)
+                {
+                    title = "";
+                }
+
+                return title;
+            }
+
+            protected set
+            {
+                title = value;
+                NotifyTitleChange();
+            }
+        }
 
         private int selectedEntry;
         public int SelectedEntry
@@ -71,12 +92,49 @@ namespace GodsWill_ASCIIRPG
         private void NotifyLabels()
         {
             var labels = items.Select(mI => mI.Label).ToArray();
-            menuViewers.ForEach(mV => mV.NotifyLabels(labels));
+            var actives = items.Select(mI => mI.Active).ToArray();
+            menuViewers.ForEach(mV => mV.NotifyLabels(labels, actives));
         }
 
         private void NotifyChangeSelection()
         {
             menuViewers.ForEach(mV => mV.NotifyChangeSelection(SelectedEntry));
+        }
+
+        private void NotifyTitleChange()
+        {
+            var t = Title;
+            menuViewers.ForEach(mV => mV.NotifyTitleChange(t));
+        }
+
+        public void NotifyAll()
+        {
+            NotifyLabels();
+            NotifyTitleChange();
+            NotifyChangeSelection();
+        }
+
+        public void RegisterView(IMenuViewer viewer)
+        {
+            this.menuViewers.Add(viewer);
+
+            NotifyAll();
+        }
+
+        public void Open()
+        {
+            if(menuViewers.Count > 0)
+            {
+                menuViewers[0].UpmostBring();
+            }
+        }
+
+        public void Close()
+        {
+            if (menuViewers.Count > 0)
+            {
+                menuViewers[0].Close();
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -93,7 +151,20 @@ namespace GodsWill_ASCIIRPG
         {
             if (SelectedEntry != -1)
             {
-                this[SelectedEntry].Action(parameters);
+                var entry = this[SelectedEntry];
+                if (entry.Active)
+                {
+                    entry.Action(parameters);
+                }
+            }
+        }
+
+        protected void ActivateByName(string name)
+        {
+            var mItem = this.items.Where(mI => mI.Label == name).FirstOrDefault();
+            if(mItem != null)
+            {
+                mItem.Activate();
             }
         }
     }
@@ -103,14 +174,27 @@ namespace GodsWill_ASCIIRPG
         public delegate void MenuAction(object parameters);
 
         public string Label { get; private set; }
+        public bool Active { get; private set; }
         public MenuAction Action { get; private set; }
 
         public MenuItem(string label,
-                        MenuAction action)
+                        MenuAction action,
+                        bool active = true)
         {
             Label = label;
+            Active = active;
             Action = action;
-        } 
+        }
+
+        public void Activate()
+        {
+            Active = true;
+        }
+
+        public void Deactivate()
+        {
+            Active = false;
+        }
     }
 
     public class MenuEnum : IEnumerator

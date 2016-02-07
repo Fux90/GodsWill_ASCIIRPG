@@ -56,5 +56,6 @@ namespace GodsWill_ASCIIRPG
         Menu_PreviousItem,
         Menu_NextItem,
         Menu_ExecuteSelectItem,
+        Player_BackToMainMenu,
     }
 }

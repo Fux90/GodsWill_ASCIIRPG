@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Control
 {
-    interface PgController : Controller<Pg>
+    public interface PgController : Controller<Pg>
     {
         //MapController MapController { get; }
         BackpackController BackpackController { get; }

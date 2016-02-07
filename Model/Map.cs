@@ -15,7 +15,7 @@ using GodsWill_ASCIIRPG.Model.SceneryItems;
 
 namespace GodsWill_ASCIIRPG
 {
-    class MapBuilder
+    public class MapBuilder
     {
         #region ENUM
 

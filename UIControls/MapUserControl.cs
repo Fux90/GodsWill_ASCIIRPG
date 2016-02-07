@@ -27,6 +27,7 @@ using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.View;
 using GodsWill_ASCIIRPG.Model.Spells;
 using System.Threading;
+using GodsWill_ASCIIRPG.Main;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
@@ -516,6 +517,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                     #endregion
 
+                    case ControllerCommand.Player_BackToMainMenu:
+                        Game.Current.InitialMenu(true);
+                        break;
                     case ControllerCommand.Player_ExitGame:
                         gameForm.Close();
                         break;
@@ -536,6 +540,15 @@ namespace GodsWill_ASCIIRPG.UIControls
                     }
                 }
             }
+            else // Some commands work without player too
+            {
+                switch (cmd)
+                {
+                    case ControllerCommand.Player_ExitGame:
+                        gameForm.Close();
+                        break;
+                }
+            }
         }
 
         public void Register(Pg pg)
@@ -545,6 +558,11 @@ namespace GodsWill_ASCIIRPG.UIControls
         }
 
         public void Unregister(Pg pg)
+        {
+            controlledPg = null;
+        }
+
+        public void UnregisterAll()
         {
             controlledPg = null;
         }
@@ -727,6 +745,9 @@ namespace GodsWill_ASCIIRPG.UIControls
 
                         case Keys.Escape:
                             Notify(ControllerCommand.Player_ExitGame);
+                            break;
+                        case Keys.Home:
+                            Notify(ControllerCommand.Player_BackToMainMenu);
                             break;
 
                         case Keys.X:

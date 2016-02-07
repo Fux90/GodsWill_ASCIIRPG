@@ -205,6 +205,13 @@ namespace GodsWill_ASCIIRPG.UIControls
             descriptionList.Items = null;
         }
 
+        public void UnregisterAll()
+        {
+            controlledBackpack = null;
+            //itemList.Items = null;
+            descriptionList.Items = null;
+        }
+
         public void NotifyAddRemoval(Item[] itemsInBackpack)
         {
             descriptionList.Items = itemsInBackpack.ToList();
