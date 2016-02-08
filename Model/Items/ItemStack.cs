@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model.Items
 {
-    public abstract class ItemStack : Item
+    [Serializable]
+    public abstract class ItemStack : Item, ISerializable
     {
         public abstract int Count { get; }
         public abstract Type Containing { get; }
@@ -32,9 +34,12 @@ namespace GodsWill_ASCIIRPG.Model.Items
         public abstract bool Contains(Item item);
     }
 
-    public class ItemStack<TItem> : ItemStack
+    [Serializable]
+    public class ItemStack<TItem> : ItemStack, ISerializable
         where TItem : Item
     {
+        private const string stackedSerializationName = "stacked";
+
         public override Item this[int ix]
         {
             get
@@ -73,6 +78,18 @@ namespace GodsWill_ASCIIRPG.Model.Items
             : base()
         {
             stacked = new List<TItem>();
+        }
+
+        public ItemStack(SerializationInfo info, StreamingContext context)
+        {
+            stacked = (List<TItem>)info.GetValue(stackedSerializationName, typeof(List<TItem>));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue(stackedSerializationName, stacked, typeof(List<TItem>));
         }
 
         public override void ActiveUse(Character user)

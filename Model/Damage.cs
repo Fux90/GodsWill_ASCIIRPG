@@ -8,8 +8,11 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
-	public class Damage
+    [Serializable]
+	public class Damage : ISerializable
 	{
+        private const string dmgsSerializableName = "dmgs";
+
         private const int minimumDamage = 1;
 
         Dictionary<DamageType, int> dmgs;
@@ -49,6 +52,11 @@ namespace GodsWill_ASCIIRPG
             : this(new Dictionary<DamageType, int>())
         {
             
+        }
+
+        public Damage(SerializationInfo info, StreamingContext context)
+        {
+            dmgs = (Dictionary<DamageType, int>)info.GetValue(dmgsSerializableName, typeof(Dictionary<DamageType, int>));
         }
 
         public static Damage operator +(Damage dmg1, Damage dmg2)
@@ -104,6 +112,11 @@ namespace GodsWill_ASCIIRPG
                                 dmgs[dmgType])); 
             }
             return str.ToString();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(dmgsSerializableName, dmgs, typeof(Dictionary<DamageType, int>));
         }
     }
 

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model.Items
 {
+    [Serializable]
     [Stackable(4, SellableOnlyAsFullStack = true)]
     public class StackItemTest : Item
     {
@@ -18,6 +20,13 @@ namespace GodsWill_ASCIIRPG.Model.Items
         {
 
         }
+
+        public StackItemTest(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
+        }
+
         public override string FullDescription
         {
             get

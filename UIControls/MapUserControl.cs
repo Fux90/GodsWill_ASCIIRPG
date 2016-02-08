@@ -564,7 +564,8 @@ namespace GodsWill_ASCIIRPG.UIControls
 
                     #region SAVE
                     case ControllerCommand.Player_SaveGame:
-                        controlledPg.Map.Save(@"currentLevel.map");
+                        //controlledPg.Map.Save(@"currentLevel.map");
+                        Game.Current.Save(@"current.game");
                         controlledPg.NotifyListeners("*GAME SAVED*");
                         break;
                     #endregion

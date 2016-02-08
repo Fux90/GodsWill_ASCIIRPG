@@ -54,6 +54,7 @@ namespace GodsWill_ASCIIRPG.Model.Menus
                 currGame.CleanMsgs();
                 currGame.DebugMap();
                 ActivateByName("Resume");
+                currGame.WorldReset();
                 currGame.GameInitialization();
                 Close();
             };
@@ -66,11 +67,10 @@ namespace GodsWill_ASCIIRPG.Model.Menus
         private void CreteLoadGameEntry()
         {
             MenuItem.MenuAction newGame = (pars) => {
-                currGame.ResetMapBuilder();
-                currGame.CleanMsgs();
-                var builder = currGame.MapBuilder;
-                builder.MapCreationMode = MapBuilder.TableCreationMode.FromFile;
+
                 ActivateByName("Resume");
+                currGame.CleanMsgs();
+                currGame.Load(@"current.game");
                 currGame.GameInitialization();
                 Close();
             };
@@ -97,6 +97,7 @@ namespace GodsWill_ASCIIRPG.Model.Menus
                 builder.MapCreationMode = MapBuilder.TableCreationMode.Random;
 
                 ActivateByName("Resume");
+                currGame.WorldReset();
                 currGame.GameInitialization();
                 Close();
             };

@@ -17,7 +17,9 @@ using GodsWill_ASCIIRPG.Model.Weapons;
 using GodsWill_ASCIIRPG.View;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace GodsWill_ASCIIRPG
@@ -203,6 +205,17 @@ namespace GodsWill_ASCIIRPG
                 var book1 = ItemGenerators.GenerateByBuilderType(typeof(PrayerBookBuilder), position: new Coord(2, 1));
                 MapBuilder.AddAtom(book1);
 
+                for (int x = 6; x < 15; x++)
+                {
+                    for (int y = 6; y < 15; y++)
+                    {
+                        var stackableItem = new StackItemTest(color: System.Drawing.Color.Blue,
+                                                                position: new Coord(x, y),
+                                                                uses: Item._UnlimitedUses);
+                        MapBuilder.AddAtom(stackableItem);
+                    }
+                }
+
                 MapBuilder.AddAtom(new WoodenShield(position: Coord.Random(MapBuilder.Width, MapBuilder.Height)));
                 var orcBuilder1 = AICharacter.DummyCharacter(typeof(Orc)).Builder;
                 orcBuilder1.Position = new Coord(10, 12);
@@ -226,17 +239,6 @@ namespace GodsWill_ASCIIRPG
 
                 currentPg = new PgCreator() { God = Gods.Ares }.Create();
 
-                for (int x = 6; x < 15; x++)
-                {
-                    for (int y = 6; y < 15; y++)
-                    {
-                        var stackableItem = new StackItemTest(color: System.Drawing.Color.Blue,
-                                                                position: new Coord(x, y),
-                                                                uses: Item._UnlimitedUses);
-                        MapBuilder.AddAtom(stackableItem);
-                    }
-                }
-
                 //currentPg.Listeners.ForEach(listener => orc1.RegisterListener(listener));
                 //currentPg.Listeners.ForEach(listener => orc2.RegisterListener(listener));
             }
@@ -254,19 +256,8 @@ namespace GodsWill_ASCIIRPG
 
             public void GameInitialization()
             {
-                Maps.Clear();
-
-                MapBuilder.AddViewer(mapViewer);
-                MapBuilder.AddSingleMessageListener(singleMsgListener);
-
-                var map = MapBuilder.Create();
-//#if !DEBUG_MAP_FROM_FILE
-//                if (currentPg == null)
-//                {
-//                    currentPg = new PgCreator() { God = Gods.Ares }.Create();
-//                }
-//                CurrentPg.InsertInMap(map, map.PlayerInitialPosition, overwrite: false);
-//#else
+                var map = CurrentMap;
+                
                 currentPg = map.CurrentPg;
 
                 if (currentPg == null)
@@ -278,7 +269,7 @@ namespace GodsWill_ASCIIRPG
                 {
                     CurrentPg.InsertInMap(map, currentPg.Position, overwrite: true);
                 }
-//#endif
+
                 var aiCharacters = map.AICharacters.ToList();
                 var merchants = map.Merchants.ToList();
 
@@ -302,6 +293,19 @@ namespace GodsWill_ASCIIRPG
 
                 aiController.RegisterAll(aiCharacters);
                 Animation.RegisterAnimationViewer(animationViewer);
+            }
+
+            public void WorldReset()
+            {
+                Maps.Clear();
+
+                MapBuilder.AddViewer(mapViewer);
+                MapBuilder.AddSingleMessageListener(singleMsgListener);
+
+                var map = MapBuilder.Create();
+
+                Maps.Add(map);
+                CurrentMapIx = 0;
             }
 #else
             public void GameInitialization( PgController pgController, 
@@ -444,6 +448,57 @@ namespace GodsWill_ASCIIRPG
                 Maps = new List<Map>();
                 ResetMapBuilder();
             }
-		}
+
+            public void Save(string filepath)
+            {
+                using (Stream outputStream = File.Create(filepath))
+                {
+                    using (var bW = new BinaryWriter(outputStream))
+                    {
+                        bW.Write((Int32)Maps.Count);
+                        bW.Write((Int32)CurrentMapIx);
+
+
+
+                        BinaryFormatter serializer = new BinaryFormatter();
+
+                        foreach (var map in Maps)
+                        {
+                            //outputStream.CopyTo(map.Save());
+                            //map.Save().WriteTo(outputStream);
+                            map.Save(outputStream);
+                        }
+                    }
+                }
+            }
+
+            public void Load(string filepath)
+            {
+                Maps.Clear();
+
+                using (FileStream inputStream = File.Open(filepath, FileMode.Open))
+                {
+                    var count = 0;
+
+                    using (var bR = new BinaryReader(inputStream))
+                    {
+                        count = bR.ReadInt32();
+                        CurrentMapIx = bR.ReadInt32();
+
+                        BinaryFormatter serializer = new BinaryFormatter();
+
+                        MapBuilder.MapStream = inputStream;
+                        for (int i = 0; i < count; i++)
+                        {
+                            //ResetMapBuilder();
+                            MapBuilder.MapCreationMode = MapBuilder.TableCreationMode.FromGameFile;
+
+                            var map = MapBuilder.Create();
+                            Maps.Add(map);
+                        }
+                    }
+                }
+            }
+        }
 	}
 }

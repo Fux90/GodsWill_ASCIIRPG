@@ -23,7 +23,8 @@ namespace GodsWill_ASCIIRPG
         {
             Empty,
             Random,
-            FromFile
+            FromFile,
+            FromGameFile
         }
 
         #endregion
@@ -44,9 +45,16 @@ namespace GodsWill_ASCIIRPG
         public bool Lightened { get; set; }
         public TableCreationMode MapCreationMode { get; set; }
         public Pg PgReadFromFile { get { return pgFromFile; } }
+        public FileStream MapStream { get; set; }
         #endregion
 
         public MapBuilder()
+            : this(null)
+        {
+            
+        }
+
+        public MapBuilder(FileStream mapStream)
         {
             Name = "Map";
             Width = 1;
@@ -55,9 +63,10 @@ namespace GodsWill_ASCIIRPG
             views = new List<IMapViewer>();
             singleMsgListeners = new List<IAtomListener>();
             elements = new List<Atom>();
+            MapStream = mapStream;
         }
 
-        public bool LoadFromFile(string mapFilePath, out Map map)
+        private bool LoadFromFile(string mapFilePath, out Map map)
         {
             map = null;
 
@@ -67,6 +76,21 @@ namespace GodsWill_ASCIIRPG
                 FileStream mapFile = new FileStream(mapFilePath, FileMode.Open);
                 map = (Map)formatter.Deserialize(mapFile);
                 mapFile.Close();
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool LoadFromFile(out Map map)
+        {
+            map = null;
+
+            if (MapStream != null)
+            {
+                var formatter = new BinaryFormatter();
+                map = (Map)formatter.Deserialize(MapStream);
+
                 return true;
             }
 
@@ -232,6 +256,10 @@ namespace GodsWill_ASCIIRPG
                     LoadFromFile(@"currentLevel.map", out map);
                     table = null;
                     break;
+                case TableCreationMode.FromGameFile:
+                    LoadFromFile(out map);
+                    table = null;
+                    break;
                 case TableCreationMode.Random:
                     makeMap(out table);
                     break;
@@ -270,8 +298,6 @@ namespace GodsWill_ASCIIRPG
             {
                 map.RegisterView(views[i]);
             }
-            
-            
 
             return map;
         }
@@ -619,6 +645,17 @@ namespace GodsWill_ASCIIRPG
             BinaryFormatter serializer = new BinaryFormatter();
             serializer.Serialize(outputStream, this);
             outputStream.Close();
+        }
+
+        public MemoryStream Save(Stream outputStream)
+        {
+            MemoryStream ms = new MemoryStream();
+            BinaryFormatter serializer = new BinaryFormatter();
+            serializer.Serialize(ms, this);
+
+            ms.WriteTo(outputStream);
+
+            return ms;
         }
 
         #endregion

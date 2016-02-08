@@ -10,9 +10,12 @@ using System.Text;
 namespace GodsWill_ASCIIRPG
 {
     [Serializable]
-    public abstract class Armor : Item
-	{
+    public abstract class Armor : Item, ISerializable
+    {
         public static readonly string DefaultSymbol = "[";
+
+        private const string damageReductionSerializableName = "dmg";
+        private const string armorTypeSerializableName = "type";
 
         public enum _ArmorType
         {
@@ -70,7 +73,16 @@ namespace GodsWill_ASCIIRPG
         public Armor(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+            damageReduction = (Damage)info.GetValue(damageReductionSerializableName, typeof(Damage));
+            ArmorType = (_ArmorType)info.GetValue(armorTypeSerializableName, typeof(_ArmorType));
+        }
 
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue(damageReductionSerializableName, damageReduction, typeof(Damage));
+            info.AddValue(armorTypeSerializableName, ArmorType, typeof(_ArmorType));
         }
 
         public override string FullDescription
