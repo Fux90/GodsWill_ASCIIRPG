@@ -9,11 +9,16 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GodsWill_ASCIIRPG.View;
 using System.Runtime.Serialization;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
-    public partial class LogUserControl : UserControl, IAtomListener, IScrollable
+    public partial class LogUserControl : UserControl, ISaveableAtomListener, IScrollable
     {
+        private const string rowsSerializationName = "rows";
+        private const string lastShownSerializationName = "lastShown";
+
         public const float FontSize = 10.0f;
         private List<LogRow> rows;
         private int currentLastShown;
@@ -88,10 +93,38 @@ namespace GodsWill_ASCIIRPG.UIControls
                 pos.Y += FontSize;
             }
         }
+
+        public void SaveMessages(Stream outputStream)
+        {
+            MemoryStream ms = new MemoryStream();
+            BinaryFormatter serializer = new BinaryFormatter();
+
+            serializer.Serialize(ms, rows);
+
+            ms.WriteTo(outputStream);
+        }
+
+        public bool LoadMessages(Stream inputStream)
+        {
+            if (inputStream != null)
+            {
+                var formatter = new BinaryFormatter();
+                rows = (List<LogRow>)formatter.Deserialize(inputStream);
+
+                return true;
+            }
+
+            return false;
+        }
     }
 
-    public struct LogRow
+    [Serializable]
+    public struct LogRow : ISerializable
     {
+        private const string fontSerializableName = "font";
+        private const string colorSerializableName = "color";
+        private const string msgSerializableName = "msg";
+
         public Font Font { get; set; }
         public Color Color { get; set; }
         public Brush Brush { get { return new SolidBrush(Color); } }
@@ -102,6 +135,20 @@ namespace GodsWill_ASCIIRPG.UIControls
             Font = new Font(FontFamily.GenericMonospace, LogUserControl.FontSize);
             Color = Color.White;
             Message = message;
+        }
+
+        public LogRow(SerializationInfo info, StreamingContext context)
+        {
+            Font = (Font)info.GetValue(fontSerializableName, typeof(Font));
+            Color = (Color)info.GetValue(colorSerializableName, typeof(Color));
+            Message = (string)info.GetValue(msgSerializableName, typeof(string));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+             info.AddValue(fontSerializableName, Font, typeof(Font));
+             info.AddValue(colorSerializableName, Color, typeof(Color));
+             info.AddValue(msgSerializableName, Message, typeof(string));
         }
     }
 }

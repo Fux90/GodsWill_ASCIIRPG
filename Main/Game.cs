@@ -458,15 +458,20 @@ namespace GodsWill_ASCIIRPG
                         bW.Write((Int32)Maps.Count);
                         bW.Write((Int32)CurrentMapIx);
 
-
-
-                        BinaryFormatter serializer = new BinaryFormatter();
-
                         foreach (var map in Maps)
                         {
-                            //outputStream.CopyTo(map.Save());
-                            //map.Save().WriteTo(outputStream);
                             map.Save(outputStream);
+                        }
+
+                        foreach (var atomListener in atomListeners)
+                        {
+                            var listenerType = atomListener.GetType();
+                            if (typeof(ISaveableAtomListener).IsAssignableFrom(listenerType))
+                            {
+                                bW.Write(listenerType.Name.ToString());
+                                var sa = (ISaveableAtomListener)atomListener;
+                                sa.SaveMessages(outputStream);
+                            }
                         }
                     }
                 }
@@ -485,8 +490,6 @@ namespace GodsWill_ASCIIRPG
                         count = bR.ReadInt32();
                         CurrentMapIx = bR.ReadInt32();
 
-                        BinaryFormatter serializer = new BinaryFormatter();
-
                         MapBuilder.MapStream = inputStream;
                         for (int i = 0; i < count; i++)
                         {
@@ -496,6 +499,9 @@ namespace GodsWill_ASCIIRPG
                             var map = MapBuilder.Create();
                             Maps.Add(map);
                         }
+
+                        var listenerType = bR.ReadString();
+                        listenerType += "";
                     }
                 }
             }

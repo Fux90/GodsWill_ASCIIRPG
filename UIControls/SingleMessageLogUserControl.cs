@@ -25,6 +25,14 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
         }
 
+        public bool SupportMessagesSave
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public SingleMessageLogUserControl()
         {
             InitializeComponent();
