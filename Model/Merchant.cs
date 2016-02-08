@@ -167,14 +167,28 @@ namespace GodsWill_ASCIIRPG.Model
 
         public void ProposeSell(Item item)
         {
-            var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Sell * item.Cost);
-            NotifyListeners(String.Format("{0}: \"I can give you this for {1} gold pieces\"", this.Name, cost));
+            if (item.IsSellable)
+            {
+                var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Sell * item.Cost);
+                NotifyListeners(String.Format("{0}: \"I can give you this for {1} gold pieces\"", this.Name, cost));
+            }
+            else
+            {
+                NotifyListeners("I can't sell this to you...");
+            }
         }
 
         public void ProposePurchase(Item item)
         {
-            var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Purchase * item.Cost);
-            NotifyListeners(String.Format("{0}: \"For this I can give you {1} gold pieces\"", this.Name, cost));
+            if (item.IsSellable)
+            {
+                var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Purchase * item.Cost);
+                NotifyListeners(String.Format("{0}: \"For this I can give you {1} gold pieces\"", this.Name, cost));
+            }
+            else
+            {
+                NotifyListeners("Mmm... I can't buy this from you");
+            }
         }
 
         public void NoProposal()
@@ -184,41 +198,76 @@ namespace GodsWill_ASCIIRPG.Model
 
         public bool Sell(Item item, Pg to)
         {
-            var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Sell * item.Cost);
-
-            Gold gold;
-            if(to.GiveAwayGold(cost, out gold))
+            if (item.IsSellable)
             {
-                this.PickUpGold(gold);
+                var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Sell * item.Cost);
 
-                this.Backpack.Remove(item);
-                to.Backpack.Add(item);
+                Gold gold;
+                if (to.GiveAwayGold(cost, out gold))
+                {
+                    this.PickUpGold(gold);
 
-                merchantView.NotifyBuyerGold(to.MyGold);
+                    var itemType = item.GetType();
+                    if (!typeof(ItemStack).IsAssignableFrom(itemType)
+                        || item.SellableOnlyAsFullStack)
+                    {
+                        this.Backpack.Remove(item);
+                        to.Backpack.Add(item);
+                    }
+                    else
+                    {
+                        var firstItem = ((ItemStack)item)[0];
+                        this.Backpack.Remove(firstItem);
+                        to.Backpack.Add(firstItem);
+                    }
+                    
+
+                    merchantView.NotifyBuyerGold(to.MyGold);
+                    NotifyExcange();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        public bool Purchase(Item item, Pg from)
+        {
+            if (item.IsSellable)
+            {
+                var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Purchase * item.Cost);
+
+                Gold gold;
+                this.GiveAwayGold(cost, out gold);
+
+                from.PickUpGold(gold);
+
+                var itemType = item.GetType();
+                if (!typeof(ItemStack).IsAssignableFrom(itemType)
+                    || item.SellableOnlyAsFullStack)
+                {
+                    from.Backpack.Remove(item);
+                    this.Backpack.Add(item);
+                }
+                else
+                {
+                    var firstItem = ((ItemStack)item)[0];
+                    from.Backpack.Remove(firstItem);
+                    this.Backpack.Add(firstItem);
+                }
+
+                merchantView.NotifyBuyerGold(from.MyGold);
                 NotifyExcange();
 
                 return true;
             }
-            else
-            {
-                return false;
-            }
-        }
 
-        public void Purchase(Item item, Pg from)
-        {
-            var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Purchase * item.Cost);
-
-            Gold gold;
-            this.GiveAwayGold(cost, out gold);
-            
-            from.PickUpGold(gold);
-
-            from.Backpack.Remove(item);
-            this.Backpack.Add(item);
-
-            merchantView.NotifyBuyerGold(from.MyGold);
-            NotifyExcange();
+            return false;
         }
 
         private void NotifyExcange()
@@ -284,9 +333,14 @@ namespace GodsWill_ASCIIRPG.Model
             NotifyListeners("It's a deal");
         }
 
-        public virtual void PurchaseSpeech()
+        public virtual void GoodPurchaseSpeech()
         {
             NotifyListeners("Here you are");
+        }
+
+        public virtual void BadPurchaseSpeech()
+        {
+            NotifyListeners("I told you I can't buy that!");
         }
     }
 }

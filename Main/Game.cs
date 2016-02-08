@@ -226,6 +226,17 @@ namespace GodsWill_ASCIIRPG
 
                 currentPg = new PgCreator() { God = Gods.Ares }.Create();
 
+                for (int x = 6; x < 15; x++)
+                {
+                    for (int y = 6; y < 15; y++)
+                    {
+                        var stackableItem = new StackItemTest(color: System.Drawing.Color.Blue,
+                                                                position: new Coord(x, y),
+                                                                uses: Item._UnlimitedUses);
+                        MapBuilder.AddAtom(stackableItem);
+                    }
+                }
+
                 //currentPg.Listeners.ForEach(listener => orc1.RegisterListener(listener));
                 //currentPg.Listeners.ForEach(listener => orc2.RegisterListener(listener));
             }

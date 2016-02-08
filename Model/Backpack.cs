@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GodsWill_ASCIIRPG.Model.Items;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,15 +47,67 @@ namespace GodsWill_ASCIIRPG.Model
 
         public void Add(Item item)
         {
-            this.items.Add(item);
+            if (item.IsStackable)
+            {
+                var stacks = items.Where(i => i.GetType().IsSubclassOf(typeof(ItemStack)));
+
+                ItemStack currStack;
+                int ix = 0;
+                do
+                {
+                    currStack = (ItemStack)stacks.ElementAtOrDefault(ix);
+                    ix++;
+                }
+                while (currStack != null && item.HasStackLimit && currStack.Count == item.MaxPerStack);
+
+                if (currStack == null)
+                {
+                    // No stacks of given type already exist
+                    // or all are full
+                    var stack = ItemStack.CreateByType(item.GetType());
+                    this.items.Add(stack);
+                    currStack = stack;
+                }
+
+                currStack.Add(item);
+            }
+            else
+            {
+                this.items.Add(item);
+            }
+
             NotifyAddRemoval();
         }
 
         public Item Remove(Item item)
         {
-            var itemR = RemoveAt(this.items.IndexOf(item));
-            NotifyAddRemoval();
-            return itemR;
+            var ix = this.items.IndexOf(item);
+            // If not found in backpack, it could be in a stack
+            if (ix == -1)
+            {
+                var firstStack = (ItemStack)items.Where(i => i.GetType().IsSubclassOf(typeof(ItemStack)))
+                                                 .Where(s => ((ItemStack)s).Containing == item.GetType())
+                                                 .FirstOrDefault(s => ((ItemStack)s).Contains(item));
+                if(firstStack == null)
+                {
+                    throw new Exception("Unexpected not contained Item");
+                }
+
+                var itemR = firstStack.Remove(item);
+                if(firstStack.IsEmpty)
+                {
+                    this.items.Remove(firstStack);
+                }
+
+                NotifyAddRemoval();
+                return itemR;
+            }
+            else
+            {
+                var itemR = RemoveAt(ix);
+                NotifyAddRemoval();
+                return itemR;
+            }
         }
 
         public Item RemoveAt(int index)

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using GodsWill_ASCIIRPG.Model.Core;
 using System.Runtime.Serialization;
+using GodsWill_ASCIIRPG.Model.Items;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -18,10 +19,18 @@ namespace GodsWill_ASCIIRPG
         int weight;
         int uses;
 
-        public int Cost { get { return cost; } }
+        public virtual int Cost { get { return cost; } }
         public int Weight { get { return weight; } }
         public bool Expired { get { return uses == 0; } }
         public int Uses { get { return uses; } }
+
+        public virtual bool IsSellable
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public string ItemTypeName
         {
@@ -31,7 +40,65 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
+        public bool IsStackable
+        {
+            get
+            {
+                return this.GetType().GetCustomAttributes(typeof(Stackable), false).Length > 0;
+            }
+        }
+
         public abstract string FullDescription { get; }
+
+        private Stackable stackable;
+        private Stackable Stackable
+        {
+            get
+            {
+                if(stackable == null)
+                {
+                    stackable = (Stackable)this.GetType().GetCustomAttributes(typeof(Stackable), false).FirstOrDefault();
+                }
+
+                return stackable;
+            }
+        }
+
+        public int MaxPerStack
+        {
+            get
+            {
+                if(Stackable != null)
+                {
+                    return Stackable.MaxInStack;
+                }
+                return 0;
+            }
+        }
+
+        public bool HasStackLimit
+        {
+            get
+            {
+                if (Stackable != null)
+                {
+                    return Stackable.HasStackLimit;
+                }
+                return true;
+            }
+        }
+
+        public virtual bool SellableOnlyAsFullStack
+        {
+            get
+            {
+                if (Stackable != null)
+                {
+                    return Stackable.SellableOnlyAsFullStack;
+                }
+                return false;
+            }
+        }
 
         public Item(string name = "Generic Item",
                     string symbol = "i",

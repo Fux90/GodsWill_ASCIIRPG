@@ -267,8 +267,14 @@ namespace GodsWill_ASCIIRPG.UIControls
 
                             if (selectedListIndex == 0) // Merchant buy from Pg
                             {
-                                controlledMerchant.Purchase(item, controlledPg);
-                                controlledMerchant.PurchaseSpeech();
+                                if (controlledMerchant.Purchase(item, controlledPg))
+                                {
+                                    controlledMerchant.GoodPurchaseSpeech();
+                                }
+                                else
+                                {
+                                    controlledMerchant.BadPurchaseSpeech();
+                                }
                             }
                             else // Merchant sell to Pg
                             {

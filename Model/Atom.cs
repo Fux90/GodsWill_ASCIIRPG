@@ -39,7 +39,7 @@ namespace GodsWill_ASCIIRPG
         #endregion
 
         #region PROPERTIES
-        public string Name { get { return name; } }
+        public virtual string Name { get { return name; } }
         public string Symbol { get { return symbol; } }
         public Color Color { get { return color; } }
         public bool Walkable { get { return walkable; } }
