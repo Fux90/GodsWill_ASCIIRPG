@@ -18,4 +18,9 @@ namespace GodsWill_ASCIIRPG.View
         void SaveMessages(Stream outputStream);
         bool LoadMessages(Stream inputStream);
     }
+
+    public interface IPgStoryAtomListener
+    {
+        void SaveMessagesAsTxt(StreamWriter writer);
+    }
 }

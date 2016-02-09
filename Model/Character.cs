@@ -656,7 +656,8 @@ namespace GodsWill_ASCIIRPG
 
         public virtual bool TriggerCurrent()
         {
-            if(CurrentTriggerable != Triggerables.None)
+            if(CurrentTriggerable != Triggerables.None
+                && CurrentTriggerable.IsCurrentlyTriggerable)
             {
                 CurrentTriggerable.Trigger();
                 UnregisterTriggerable();

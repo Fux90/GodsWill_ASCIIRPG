@@ -9,6 +9,8 @@ using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.Model.Perceptions;
 using GodsWill_ASCIIRPG.Model.Items;
 using System.Runtime.Serialization;
+using GodsWill_ASCIIRPG.Main;
+using System.IO;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -463,6 +465,58 @@ namespace GodsWill_ASCIIRPG
             {
                 NotifyListeners(String.Format("Press Enter to activate {0}", ((Atom)triggerable).Name));
             }
+        }
+
+        public void PostDeathOperation()
+        {
+            var path = Path.Combine(Game.NeededFolders[Game.Folder.Saves],
+                                             String.Format("{0}.story", Name));
+
+            using (var w = new StreamWriter(path))
+            {
+                var sheet = CharacterSheets.FirstOrDefault();
+                if(sheet == null)
+                {
+                    throw new Exception("Unexpected missing Sheet");
+                }
+
+                w.Write(this.ToString());
+                Game.Current.SaveLog(w);
+            }
+        }
+
+        private const string sep = "=================================================";
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+
+            str.AppendFormat("{0} [{1}{2}]", 
+                                Name, 
+                                CurrentLevel,
+                                God != Gods.None 
+                                ? String.Format(" of {0}", God.Name) 
+                                : "");
+            str.AppendLine();
+            str.AppendLine(sep);
+            str.AppendLine(String.Format("Max HP: {0}", this.Hp));
+            str.AppendLine(String.Format("XP: {0}", this.XP));
+            str.AppendLine(String.Format("Hunger: {0}", this.Hunger));
+            str.AppendLine(sep);
+            str.AppendLine(String.Format("CA: {0}", this.CA));
+            str.AppendLine(String.Format("Special: {0}", this.CASpecial));
+            str.AppendLine(sep);
+            str.Append(Stats.ToVerticalString());
+            str.AppendLine(sep);
+            str.AppendLine(String.Format("$: {0}", this.MyGold));
+            str.AppendLine(sep);
+            str.Append(String.Format("Weapon: {0}", this.HandledWepon));
+            str.Append(String.Format("Shield: {0}", this.EmbracedShield));
+            str.Append(String.Format("Armor: {0}", this.WornArmor));
+            str.AppendLine(sep);
+            str.AppendLine("BACKPACK");
+            str.AppendLine(Backpack.ToString());
+
+            return str.ToString();
         }
     }
 }

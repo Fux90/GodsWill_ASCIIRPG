@@ -15,6 +15,8 @@ namespace GodsWill_ASCIIRPG.Model
     {
         Atom TriggeringSubject { get; }
         bool ImmediateTrigger { get; }
+        bool IsCurrentlyTriggerable { get; }
+
         void Trigger();
         void RegisterTriggeringSubject(Atom triggeringSubject);
     }

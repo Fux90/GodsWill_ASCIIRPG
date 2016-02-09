@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using GodsWill_ASCIIRPG.View;
 using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.Model;
+using System.IO;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {

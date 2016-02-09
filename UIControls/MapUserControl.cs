@@ -590,6 +590,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                         Game.Current.InitialMenu(true);
                         break;
                     case ControllerCommand.Player_IsDead:
+                        controlledPg.PostDeathOperation();
                         transparentPanel.Transparency = 0;
                         Game.Current.InitialMenu();
                         break;

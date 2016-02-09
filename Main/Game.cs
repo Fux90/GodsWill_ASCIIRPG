@@ -34,6 +34,16 @@ namespace GodsWill_ASCIIRPG
 
 		public class Game
 		{
+            public enum Folder
+            {
+                Saves,
+            };
+
+            public readonly static Dictionary<Folder, string> NeededFolders = new Dictionary<Folder, string>()
+            {
+                { Folder.Saves, "Saves" },
+            };
+
             private static Game current;
             private Pg currentPg;
             public MapBuilder MapBuilder { get; private set; }
@@ -103,6 +113,8 @@ namespace GodsWill_ASCIIRPG
                                 IMenuViewer mainMenuViewer,
                                 MenuController mainMenuController)
             {
+                CreateFolders();
+
                 this.pgController = pgController;
                 this.aiController = aiController;
                 this.merchantController = merchantController;
@@ -123,6 +135,17 @@ namespace GodsWill_ASCIIRPG
 
                 menuViewers[MenuType.Main] = mainMenuViewer;
                 menuControllers[MenuType.Main] = mainMenuController;
+            }
+
+            private void CreateFolders()
+            {
+                foreach (var folder in NeededFolders.Values)
+                {
+                    if(!Directory.Exists(folder))
+                    {
+                        Directory.CreateDirectory(folder);
+                    }
+                }
             }
 
             public void InitialMenu(bool resumeActive = false)
@@ -280,12 +303,12 @@ namespace GodsWill_ASCIIRPG
 
                 pgViewers.ForEach(pgViewer => CurrentPg.RegisterView(pgViewer));
 
+                aiCharacters.ForEach(aiC => atomListeners.ForEach(listener => aiC.RegisterListener(listener)));
+                traps.ForEach(trap => atomListeners.ForEach(listener => trap.RegisterListener(listener)));
+
                 atomListeners.ForEach(listener => currentPg.RegisterListener(listener));
                 currentPg.RegisterListener(singleMsgListener);
 
-                aiCharacters.ForEach(aiC => currentPg.Listeners.ForEach(listener => aiC.RegisterListener(listener)));
-                traps.ForEach(trap => currentPg.Listeners.ForEach(listener => trap.RegisterListener(listener)));
-                
                 merchantViewers.ForEach(mV => merchants.ForEach(m => m.RegisterView(mV)));
                 merchants.ForEach(m => merchantController.Register(m));
 
@@ -464,6 +487,17 @@ namespace GodsWill_ASCIIRPG
             {
                 Maps = new List<Map>();
                 ResetMapBuilder();
+            }
+
+            public void SaveLog(StreamWriter w)
+            {
+                var storyListener = (IPgStoryAtomListener)atomListeners.FirstOrDefault(aL => typeof(IPgStoryAtomListener).IsAssignableFrom(aL.GetType()));
+                if(storyListener == null)
+                {
+                    throw new Exception("Unexpected missing story log");
+                }
+
+                storyListener.SaveMessagesAsTxt(w);
             }
 
             public void Save(string filepath)

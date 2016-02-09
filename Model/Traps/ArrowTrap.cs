@@ -14,15 +14,16 @@ namespace GodsWill_ASCIIRPG.Model.Traps
     public class ArrowTrap : Trap
     {
         public ArrowTrap(Coord position = new Coord())
-            : base(charge: 1,
-                   bonus: 1,
-                   damage: new DamageCalculator(
-                           new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
-                           {
-                               { DamageType.Physical, (mod) => Dice.Throws(8, mod: mod) }
-                           }),
-                   description:  "A hidden crossbow that fires a bolt",
-                   position: position)
+            : base( name: "Arrow Trap",
+                    charge: 1,
+                    bonus: 1,
+                    damage: new DamageCalculator(
+                            new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
+                            {
+                                { DamageType.Physical, (mod) => Dice.Throws(8, mod: mod) }
+                            }),
+                    description:  "A hidden crossbow that fires a bolt",
+                    position: position)
         {
                 
         }

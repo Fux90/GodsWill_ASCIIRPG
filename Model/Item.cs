@@ -20,7 +20,7 @@ namespace GodsWill_ASCIIRPG
         int uses;
 
         public virtual int Cost { get { return cost; } }
-        public int Weight { get { return weight; } }
+        public virtual int Weight { get { return weight; } }
         public bool Expired { get { return uses == 0; } }
         public int Uses { get { return uses; } }
 

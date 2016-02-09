@@ -281,6 +281,9 @@ namespace GodsWill_ASCIIRPG.Model
             {
                 var pgInteractor = (Pg)interactor;
 
+                // 2) Greet
+                NotifyListeners("Greetings");
+
                 // 1) Evaluate inclination
                 EvaluateInclination(pgInteractor);
 

@@ -139,6 +139,18 @@ namespace GodsWill_ASCIIRPG.Model.Items
             }
         }
 
+        public override int Weight
+        {
+            get
+            {
+                if (Count > 0)
+                {
+                    return Count * stacked[0].Weight;
+                }
+
+                return 0;
+            }
+        }
         public override bool SellableOnlyAsFullStack
         {
             get

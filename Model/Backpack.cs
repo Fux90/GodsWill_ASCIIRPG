@@ -167,6 +167,21 @@ namespace GodsWill_ASCIIRPG.Model
 
             return new List<Item>();
         }
+
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+
+            foreach (var item in this)
+            {
+                str.AppendLine(String.Format("{0}, {1}$, {2}Kg",
+                                                item.Name,
+                                                item.Cost,
+                                                item.Weight));
+            }
+
+            return str.ToString();
+        }
     }
 
     public class BackpackEnum : IEnumerator

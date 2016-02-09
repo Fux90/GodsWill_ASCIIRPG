@@ -14,6 +14,7 @@ namespace GodsWill_ASCIIRPG.Model.Traps
         const string chargeSerializationName = "charge";
         const string bonusSerializationName = "bonus";
         const string damageSerializationName = "damage";
+        const string currTriggerableSerializationName = "isTriggerable";
 
         public const int UnlimitedCharge = -1;
 
@@ -21,12 +22,13 @@ namespace GodsWill_ASCIIRPG.Model.Traps
         public int Bonus { get; private set; }
         public DamageCalculator Damage { get; private set;}
 
-        public Trap(int charge,
+        public Trap(string name,
+                    int charge,
                     int bonus,
                     DamageCalculator damage,
                     string description = "Basic Trap",
                     Coord position = new Coord())
-            : base("Trap",
+            : base(name,
                   "^",
                   System.Drawing.Color.Blue,
                   true,
@@ -38,6 +40,7 @@ namespace GodsWill_ASCIIRPG.Model.Traps
             Charge = charge;
             Bonus = bonus;
             Damage = damage;
+            IsCurrentlyTriggerable = true;
         }
 
         public Trap(SerializationInfo info, StreamingContext context)
@@ -46,6 +49,7 @@ namespace GodsWill_ASCIIRPG.Model.Traps
             Charge = (int)info.GetValue(chargeSerializationName, typeof(int));
             Bonus = (int)info.GetValue(bonusSerializationName, typeof(int));
             Damage = (DamageCalculator)info.GetValue(damageSerializationName, typeof(DamageCalculator));
+            IsCurrentlyTriggerable = (bool)info.GetValue(currTriggerableSerializationName, typeof(bool));
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -55,6 +59,7 @@ namespace GodsWill_ASCIIRPG.Model.Traps
             info.AddValue(chargeSerializationName, Charge , typeof(int));
             info.AddValue(bonusSerializationName, Bonus, typeof(int));
             info.AddValue(damageSerializationName, Damage, typeof(DamageCalculator));
+            info.AddValue(currTriggerableSerializationName, IsCurrentlyTriggerable , typeof(bool));
         }
 
         public bool ImmediateTrigger
@@ -71,7 +76,9 @@ namespace GodsWill_ASCIIRPG.Model.Traps
             private set;
         }
 
-        public virtual void Attack(IDamageable defenderCharachter)
+        public bool IsCurrentlyTriggerable { get; private set; }
+
+        public void Attack(IDamageable defenderCharachter)
         {
             var msg = new StringBuilder();
 
@@ -125,6 +132,10 @@ namespace GodsWill_ASCIIRPG.Model.Traps
                     if(!unlimited)
                     {
                         Charge--;
+                        if(Charge == 0)
+                        {
+                            IsCurrentlyTriggerable = false;
+                        }
                     }
                 }
             }

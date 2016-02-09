@@ -30,6 +30,8 @@ namespace GodsWill_ASCIIRPG.Model
 
     public class Gods
     {
+        public  static readonly God None = null;
+
         public static God Ares { get { return new Ares(); } }
     }
 

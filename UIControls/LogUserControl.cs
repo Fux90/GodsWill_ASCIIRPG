@@ -14,7 +14,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
-    public partial class LogUserControl : UserControl, ISaveableAtomListener, IScrollable
+    public partial class LogUserControl : UserControl, ISaveableAtomListener, IPgStoryAtomListener, IScrollable
     {
         private const string rowsSerializationName = "rows";
         private const string lastShownSerializationName = "lastShown";
@@ -42,12 +42,16 @@ namespace GodsWill_ASCIIRPG.UIControls
         public void NotifyMessage(Atom who, string msg)
         {
             //TODO: different colors, given different actions/monster
-            rows.Add(new LogRow(String.Format("[{0}]: {1}", who.Name, msg))
+
+            if (msg != null && msg != "")
             {
-                Color = who.Color,
-            });
-            currentLastShown++;
-            this.Refresh();
+                rows.Add(new LogRow(String.Format("[{0}]: {1}", who.Name, msg))
+                {
+                    Color = who.Color,
+                });
+                currentLastShown++;
+                this.Refresh();
+            }
         }
 
         public void CleanPreviousMessages()
@@ -116,6 +120,18 @@ namespace GodsWill_ASCIIRPG.UIControls
 
             return false;
         }
+
+        public void SaveMessagesAsTxt(StreamWriter w)
+        {
+            var story = new StringBuilder();
+
+            foreach (var row in rows)
+            {
+                story.AppendLine(row.ToString());
+            }
+
+            w.Write(story);
+        }
     }
 
     [Serializable]
@@ -149,6 +165,11 @@ namespace GodsWill_ASCIIRPG.UIControls
              info.AddValue(fontSerializableName, Font, typeof(Font));
              info.AddValue(colorSerializableName, Color, typeof(Color));
              info.AddValue(msgSerializableName, Message, typeof(string));
+        }
+
+        public override string ToString()
+        {
+            return Message;
         }
     }
 }
