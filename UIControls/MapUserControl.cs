@@ -573,6 +573,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                     case ControllerCommand.Player_BackToMainMenu:
                         Game.Current.InitialMenu(true);
                         break;
+                    case ControllerCommand.Player_IsDead:
+                        Game.Current.InitialMenu();
+                        break;
                     case ControllerCommand.Player_ExitGame:
                         gameForm.Close();
                         break;
@@ -849,7 +852,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                     switch(e.KeyCode)
                     {
                         case Keys.Enter:
-                            Notify(ControllerCommand.Player_BackToMainMenu);
+                            Notify(ControllerCommand.Player_IsDead);
                             break;
                         default:
                             break;
