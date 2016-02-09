@@ -55,13 +55,6 @@ namespace GodsWill_ASCIIRPG.UIControls
             return false;
         };
 
-        public enum Modes
-        {
-            Normal,
-            Selection,
-            AfterDeath
-        }
-
         Pg controlledPg;
         Atom currentAtomFollowedByViewport;
 
@@ -170,7 +163,23 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
         }
 
-        private Modes mode;
+        //private Modes mode;
+        private Modes mode
+        {
+            get
+            {
+                return controlledPg == null ? Modes.Normal : controlledPg.CurrentMode;
+            }
+
+            set
+            {
+                if (controlledPg == null)
+                {
+                    controlledPg.CurrentMode = value;
+                }
+            }
+        }
+
         private void EnterSelectionMode()
         {
             //selectorCursor.CenterOnPg(controlledPg);
@@ -570,6 +579,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                     #endregion
 
+                    #region TRIGGERABLES
+                    case ControllerCommand.Player_TriggerCurrent:
+                        controlledPg.TriggerCurrent();
+                        mode = Modes.Normal;
+                        break;
+                    #endregion
+
                     case ControllerCommand.Player_BackToMainMenu:
                         Game.Current.InitialMenu(true);
                         break;
@@ -848,8 +864,22 @@ namespace GodsWill_ASCIIRPG.UIControls
                 }
                 break;
 
+                case Modes.WaitTrigger:
+                {
+                        switch (e.KeyCode)
+                        {
+                            case Keys.Enter:
+                                Notify(ControllerCommand.Player_TriggerCurrent);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                break;
+
                 case Modes.AfterDeath:
-                    switch(e.KeyCode)
+                {
+                    switch (e.KeyCode)
                     {
                         case Keys.Enter:
                             Notify(ControllerCommand.Player_IsDead);
@@ -857,8 +887,8 @@ namespace GodsWill_ASCIIRPG.UIControls
                         default:
                             break;
                     }
-                    
-                    break;
+                }
+                break;
             }
         }
 

@@ -79,6 +79,7 @@
     <Compile Include="Model\Items\PrayerBook.cs" />
     <Compile Include="Model\Items\Stackable.cs" />
     <Compile Include="Model\Items\StackItemTest.cs" />
+    <Compile Include="Model\ITriggerable.cs" />
     <Compile Include="Model\IViewable.cs" />
     <Compile Include="Model\Menus\MainMenu.cs" />
     <Compile Include="Model\Merchant.cs" />

@@ -239,16 +239,24 @@ namespace GodsWill_ASCIIRPG
 
             var moved = false;
             acted = false;
+            Atom steppedOnto = this.Map[candidateCoord];
 
             if (this.Unblockable
                 || this.Map.CanMoveTo(candidateCoord)
-                || this.IsNotBlockedFromType(this.Map[candidateCoord]))
+                || this.IsNotBlockedFromType(steppedOnto))
             {
+                bool immediate = CanHappenTriggerEvent(this, steppedOnto);
+
                 this.Map.MoveAtomTo(this, this.Position, candidateCoord);
                 this.Position = candidateCoord;
 
                 moved = true;
                 acted = true;
+
+                if(immediate)
+                {
+                    ((ITriggerActor)this).TriggerCurrent();
+                }
             }
             else
             {
@@ -262,6 +270,26 @@ namespace GodsWill_ASCIIRPG
         {
             //var atomType = ...
             return false;
+        }
+
+        public virtual bool CanHappenTriggerEvent(MoveableAtom triggerer, Atom triggerable)
+        {
+            var immediate = false;
+
+            var typeOfStepped = triggerable.GetType();
+
+            if (typeof(ITriggerable).IsAssignableFrom(triggerable.GetType()))
+            {
+                if (typeof(ITriggerActor).IsAssignableFrom(triggerer.GetType()))
+                {
+                    var _triggerable = (ITriggerable)triggerable;
+
+                    ((ITriggerActor)triggerer).RegisterTriggerable(_triggerable);
+                    immediate = _triggerable.ImmediateTrigger;
+                }
+            }
+
+            return immediate;
         }
     }
 }

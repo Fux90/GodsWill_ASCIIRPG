@@ -420,5 +420,32 @@ namespace GodsWill_ASCIIRPG
         {
             view = viewer;
         }
+
+        public override bool TriggerCurrent()
+        {
+            var triggerable = (Atom)CurrentTriggerable;
+            var res = base.TriggerCurrent();
+
+            if(res)
+            {
+                NotifyListeners(String.Format("Triggered {0}", triggerable.Name));
+            }
+            else
+            {
+                NotifyListeners("Nothing to activate");
+            }
+
+            return res;
+        }
+
+        public override void RegisterTriggerable(ITriggerable triggerable)
+        {
+            base.RegisterTriggerable(triggerable);
+
+            if (!triggerable.ImmediateTrigger)
+            {
+                NotifyListeners(String.Format("Press Enter to activate {0}", ((Atom)triggerable).Name));
+            }
+        }
     }
 }

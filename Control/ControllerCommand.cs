@@ -67,5 +67,6 @@ namespace GodsWill_ASCIIRPG
         Merchant_SelectNextList,
         Merchant_PurchaseSell,
         Player_IsDead,
+        Player_TriggerCurrent,
     }
 }

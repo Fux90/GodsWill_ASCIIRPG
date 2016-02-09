@@ -11,10 +11,19 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
+    public enum Modes
+    {
+        Normal,
+        Selection,
+        WaitTrigger,
+        AfterDeath
+    }
+
     [Serializable]
     [StraightSightNeededForPerception]
     public abstract class Character : MoveableAtom, 
-        IFighter, IDamageable, IBlockable, IGoldDealer, ISerializable,
+        IFighter, IDamageable, IBlockable, IGoldDealer, ITriggerActor,
+        ISerializable,
         IViewable<ISheetViewer>
     {
         #region SERIALIZABLE_CONST_NAMES
@@ -121,6 +130,10 @@ namespace GodsWill_ASCIIRPG
 
         public God God { get; private set; }
 
+        public ITriggerable CurrentTriggerable { get; private set; }
+
+        public Modes CurrentMode { get; set; } // Current Selection Mode
+
         public List<Perception> perceptions;
         public List<Perception> Perceptions
         {
@@ -179,6 +192,8 @@ namespace GodsWill_ASCIIRPG
             Perceptions = (List<Perception>)info.GetValue(perceptionsSerializableName, typeof(List<Perception>));
             BlockedTurns = (int)info.GetValue(blockedTurnsSerializableName, typeof(int));
             AlliedTo = (Allied)info.GetValue(alliedToSerializableName, typeof(Allied));
+            CurrentTriggerable = Triggerables.None;
+
             Init();
         }
 
@@ -567,6 +582,7 @@ namespace GodsWill_ASCIIRPG
 
         public virtual void EffectOfTurn()
         {
+            // TO DO: other effects
             ConsumeModifiers();
         }
 
@@ -586,8 +602,6 @@ namespace GodsWill_ASCIIRPG
         protected virtual void NotifyAll()
         {
             CharacterSheets.ForEach((sheet) => sheet.NotifyName(this.Name));
-            //CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(this.CurrentLevel, this.God));
-            //CharacterSheets.ForEach((sheet) => sheet.NotifyXp(this.XP, this.NextXP));
             CharacterSheets.ForEach((sheet) => sheet.NotifyGold(this.MyGold));
             CharacterSheets.ForEach((sheet) => sheet.NotifyHp(this.Hp, this.MaxHp));
             CharacterSheets.ForEach((sheet) => sheet.NotifyHunger(this.Hunger));
@@ -638,6 +652,28 @@ namespace GodsWill_ASCIIRPG
         public virtual void SkipTurn()
         {
             BlockedTurns--;
+        }
+
+        public virtual bool TriggerCurrent()
+        {
+            if(CurrentTriggerable != Triggerables.None)
+            {
+                CurrentTriggerable.Trigger();
+                UnregisterTriggerable();
+                return true;
+            }
+
+            return false;
+        }
+
+        public virtual void RegisterTriggerable(ITriggerable triggerable)
+        {
+            CurrentTriggerable = triggerable;
+        }
+
+        public void UnregisterTriggerable()
+        {
+            CurrentTriggerable = Triggerables.None;
         }
     }
 }
