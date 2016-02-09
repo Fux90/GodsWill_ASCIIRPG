@@ -501,7 +501,10 @@ namespace GodsWill_ASCIIRPG
                         }
 
                         var listenerType = bR.ReadString();
-                        listenerType += "";
+
+                        atomListeners.Where(aL => aL.GetType().Name == listenerType)
+                                    .ToList().ForEach(sal => ((ISaveableAtomListener)sal).LoadMessages(inputStream));
+
                     }
                 }
             }
