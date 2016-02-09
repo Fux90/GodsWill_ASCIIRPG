@@ -627,7 +627,7 @@ namespace GodsWill_ASCIIRPG
 
         public virtual void RegisterView(ISheetViewer sheet)
         {
-            CharacterSheets.Add(sheet);
+            CharacterSheets.AddOnce(sheet);
         }
 
         public void BlockForTurns(int numTurns)

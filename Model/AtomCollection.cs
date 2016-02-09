@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Collections;
 using System.Runtime.Serialization;
+using GodsWill_ASCIIRPG.Model.Core;
 
 namespace GodsWill_ASCIIRPG.Model
 {
@@ -62,7 +63,7 @@ namespace GodsWill_ASCIIRPG.Model
         public void Add(Atom atom)
         {
             atoms.Remove(atom); //Prevent duplication
-            atoms.Add(atom);
+            atoms.AddOnce(atom);
         }
 
         public void AddRange(List<Atom> atomList)

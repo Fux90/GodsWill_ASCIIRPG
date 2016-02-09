@@ -295,16 +295,21 @@ namespace GodsWill_ASCIIRPG
                 Animation.RegisterAnimationViewer(animationViewer);
             }
 
-            public void WorldReset()
+            public void ClearMaps()
             {
                 Maps.Clear();
 
                 MapBuilder.AddViewer(mapViewer);
                 MapBuilder.AddSingleMessageListener(singleMsgListener);
+            }
+
+            public void WorldReset()
+            {
+                ClearMaps();
 
                 var map = MapBuilder.Create();
 
-                Maps.Add(map);
+                Maps.AddOnce(map);
                 CurrentMapIx = 0;
             }
 #else
@@ -497,7 +502,7 @@ namespace GodsWill_ASCIIRPG
                             MapBuilder.MapCreationMode = MapBuilder.TableCreationMode.FromGameFile;
 
                             var map = MapBuilder.Create();
-                            Maps.Add(map);
+                            Maps.AddOnce(map);
                         }
 
                         var listenerType = bR.ReadString();

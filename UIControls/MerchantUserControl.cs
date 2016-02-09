@@ -22,6 +22,12 @@ namespace GodsWill_ASCIIRPG.UIControls
         private const float charSize = 10.0f;
         private const float charHelpSize = charSize / 2.5f;
 
+        private readonly string[] helpStrings = new string[]
+        {
+            "Tab: Switch List - Enter: Sell - Esc: Exit",
+            "Tab: Switch List - Enter: Buy - Esc: Exit",
+        };
+
         const int _Alt = 100;
         const int _Shift = 10;
         const int _Ctrl = 1;
@@ -78,6 +84,28 @@ namespace GodsWill_ASCIIRPG.UIControls
                 {
                     selectedListIndex = (value) % descriptionList.Length;
                 }
+
+                OnSelectedIndexChanged(new IndexChangedEventArgs(selectedListIndex));
+            }
+        }
+
+        private class IndexChangedEventArgs : EventArgs
+        {
+            public int Index { get; private set; }
+
+            public IndexChangedEventArgs(int index)
+            {
+                Index = index;
+            }
+        }
+
+        public event EventHandler SelectedIndexChanged;
+
+        protected virtual void OnSelectedIndexChanged(EventArgs e)
+        {
+            if(SelectedIndexChanged != null)
+            {
+                SelectedIndexChanged(this, e);
             }
         }
 
@@ -149,8 +177,8 @@ namespace GodsWill_ASCIIRPG.UIControls
                                                                     item.Name);
 
                 descriptionList[i].Title = i == 0 
-                                    ? "You"
-                                    : "Merchant";
+                                    ? "Your backpack"
+                                    : "Merchant's warehouse";
                 descriptionList[i].HelpString = "W: Previous - S: Next - A: Previous Page - D: Next Page";
             }
 
@@ -185,7 +213,11 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.Controls.Add(structure);
             this.Controls.Add(transparentPanel);
 
-            HelpString = "Tab - Switch List";
+            HelpString = helpStrings[SelectedListIndex];
+            this.SelectedIndexChanged += (sender, e) =>
+            {
+                HelpString = helpStrings[((IndexChangedEventArgs)e).Index];
+            };
 
             initialWidth = Width;
             initialHeight = Height;
@@ -224,32 +256,32 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             var tryedExchange = false;
 
-            if (ControlledBackpack[selectedListIndex] != null)
+            if (ControlledBackpack[SelectedListIndex] != null)
             {                
                 switch (cmd)
                 {
                     case ControllerCommand.Merchant_SelectNext:
-                        descriptionList[selectedListIndex].SelectNext();
+                        descriptionList[SelectedListIndex].SelectNext();
                         break;
                     case ControllerCommand.Merchant_SelectPrevious:
-                        descriptionList[selectedListIndex].SelectPrevious();
+                        descriptionList[SelectedListIndex].SelectPrevious();
                         break;
                     case ControllerCommand.Merchant_SelectNextPage:
-                        descriptionList[selectedListIndex].SelectNextPage();
+                        descriptionList[SelectedListIndex].SelectNextPage();
                         break;
                     case ControllerCommand.Merchant_SelectPreviousPage:
-                        descriptionList[selectedListIndex].SelectPreviousPage();
+                        descriptionList[SelectedListIndex].SelectPreviousPage();
                         break;
                     case ControllerCommand.Merchant_SelectPreviousList:
-                        descriptionList[selectedListIndex].HideSelection();
+                        descriptionList[SelectedListIndex].HideSelection();
                         SelectedListIndex = SelectedListIndex - 1;
-                        descriptionList[selectedListIndex].ShowSelection();
+                        descriptionList[SelectedListIndex].ShowSelection();
                         this.Refresh();
                         break;
                     case ControllerCommand.Merchant_SelectNextList:
-                        descriptionList[selectedListIndex].HideSelection();
+                        descriptionList[SelectedListIndex].HideSelection();
                         SelectedListIndex = SelectedListIndex + 1;
-                        descriptionList[selectedListIndex].ShowSelection();
+                        descriptionList[SelectedListIndex].ShowSelection();
                         this.Refresh();
                         break;
                     case ControllerCommand.Merchant_Close:
@@ -265,7 +297,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                             var item = ControlledBackpack[SelectedListIndex][SelectedIndex];
                             var locIx = SelectedIndex;
 
-                            if (selectedListIndex == 0) // Merchant buy from Pg
+                            if (SelectedListIndex == 0) // Merchant buy from Pg
                             {
                                 if (controlledMerchant.Purchase(item, controlledPg))
                                 {
@@ -317,16 +349,16 @@ namespace GodsWill_ASCIIRPG.UIControls
 
             if (!tryedExchange)
             {
-                var ix = descriptionList[selectedListIndex].SelectedIndex;
+                var ix = descriptionList[SelectedListIndex].SelectedIndex;
                 if (ix != -1)
                 {
                     if (SelectedListIndex == 0)
                     {
-                        controlledMerchant.ProposePurchase(controlledBackpack[selectedListIndex][ix]);
+                        controlledMerchant.ProposePurchase(controlledBackpack[SelectedListIndex][ix]);
                     }
                     else
                     {
-                        controlledMerchant.ProposeSell(controlledBackpack[selectedListIndex][ix]);
+                        controlledMerchant.ProposeSell(controlledBackpack[SelectedListIndex][ix]);
                     }
                 }
                 else
@@ -338,7 +370,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
 
             tryedExchange = false;
-            descriptionList[selectedListIndex].Refresh();
+            descriptionList[SelectedListIndex].Refresh();
         }
 
         private void FocusOnMap()
@@ -423,7 +455,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         public void NotifyAddRemoval(Item[] itemsInBackpack)
         {
-            descriptionList[selectedListIndex].Items = itemsInBackpack.ToList();
+            descriptionList[SelectedListIndex].Items = itemsInBackpack.ToList();
         }
 
         protected override void OnResize(EventArgs e)
@@ -516,7 +548,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         public void NotifyBuyerGold(int gold)
         {
-            descriptionList[0].Title = String.Format("You - {0} $", gold);
+            descriptionList[0].Title = String.Format("Your Backpack - {0} $", gold);
         }
     }
 }

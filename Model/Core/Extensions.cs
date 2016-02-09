@@ -195,5 +195,16 @@ namespace GodsWill_ASCIIRPG.Model.Core
 
             return false;
         }
+
+        public static bool AddOnce<T>(this List<T> lst, T item)
+        {
+            if(lst.Contains(item))
+            {
+                return false;
+            }
+
+            lst.Add(item);
+            return true;
+        }
     }
 }

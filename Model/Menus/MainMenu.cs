@@ -70,6 +70,7 @@ namespace GodsWill_ASCIIRPG.Model.Menus
 
                 ActivateByName("Resume");
                 currGame.CleanMsgs();
+                currGame.ClearMaps();
                 currGame.Load(@"current.game");
                 currGame.GameInitialization();
                 Close();

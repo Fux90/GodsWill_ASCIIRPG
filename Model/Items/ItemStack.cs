@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GodsWill_ASCIIRPG.Model.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -109,7 +110,7 @@ namespace GodsWill_ASCIIRPG.Model.Items
 
         public override void Add(Item item)
         {
-            stacked.Add((TItem)item);
+            stacked.AddOnce((TItem)item);
         }
 
         public override bool Contains(Item item)

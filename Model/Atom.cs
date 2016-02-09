@@ -8,6 +8,7 @@ using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.View;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using GodsWill_ASCIIRPG.Model.Core;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -95,7 +96,7 @@ namespace GodsWill_ASCIIRPG
 
         public void RegisterListener(IAtomListener listener)
         {
-            listeners.Add(listener);
+            listeners.AddOnce(listener);
         }
 
         public void UnregisterListener(IAtomListener listener)

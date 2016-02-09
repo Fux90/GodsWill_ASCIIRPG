@@ -99,17 +99,17 @@ namespace GodsWill_ASCIIRPG
 
         public void AddViewer(IMapViewer viewer)
         {
-            views.Add(viewer);
+            views.AddOnce(viewer);
         }
 
         public void AddSingleMessageListener(IAtomListener singleMsgListener)
         {
-            this.singleMsgListeners.Add(singleMsgListener);
+            this.singleMsgListeners.AddOnce(singleMsgListener);
         }
 
         public void AddAtom(Atom a)
         {
-            elements.Add(a);
+            elements.AddOnce(a);
         }
 
 
@@ -422,7 +422,7 @@ namespace GodsWill_ASCIIRPG
 
         public void RegisterView(IMapViewer viewer)
         {
-            views.Add(viewer);
+            views.AddOnce(viewer);
         }
 
         public void NotifyViewersOfMovement(Atom movedAtom, Coord freedCell, Coord occupiedCell)
