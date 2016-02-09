@@ -590,6 +590,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                         Game.Current.InitialMenu(true);
                         break;
                     case ControllerCommand.Player_IsDead:
+                        transparentPanel.Transparency = 0;
                         Game.Current.InitialMenu();
                         break;
                     case ControllerCommand.Player_ExitGame:
@@ -1181,9 +1182,13 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         public void NotifyDeath()
         {
-            mode = Modes.AfterDeath;
-            transparentPanel.Transparency = 100;
+            transparentPanel.Transparency = 200;
             this.Refresh();
+        }
+
+        public void RemoveAll()
+        {
+            aiCharacters.Clear();
         }
     }
 }

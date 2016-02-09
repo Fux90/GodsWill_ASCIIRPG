@@ -65,6 +65,7 @@
     <Compile Include="Model\Description.cs" />
     <Compile Include="Model\Descriptionable.cs" />
     <Compile Include="Model\GeometricItem.cs" />
+    <Compile Include="Model\IAttacker.cs" />
     <Compile Include="Model\IBlockable.cs" />
     <Compile Include="Model\IDamageable.cs" />
     <Compile Include="Model\IDescriptionable.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Model\Perception.cs" />
     <Compile Include="Model\Perceptions\ListenPerception.cs" />
     <Compile Include="Model\FireBallAnimation.cs" />
+    <Compile Include="Model\Perceptions\SpotPerception.cs" />
     <Compile Include="Model\SelectorCursor.cs" />
     <Compile Include="Main\GameForm.cs">
       <SubType>Form</SubType>
@@ -139,6 +141,8 @@
     <Compile Include="Model\StraightSightNeededForPerception.cs" />
     <Compile Include="Model\TemporaryBonus\DivineModifier.cs" />
     <Compile Include="Model\TemporaryModifier.cs" />
+    <Compile Include="Model\Traps\ArrowTrap.cs" />
+    <Compile Include="Model\Traps\Trap.cs" />
     <Compile Include="Model\Unphysical.cs" />
     <Compile Include="Model\Weapon.cs" />
     <Compile Include="Model\Weapons\LongSword.cs" />

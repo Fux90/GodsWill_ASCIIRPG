@@ -12,6 +12,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using GodsWill_ASCIIRPG.View;
 using System.Drawing;
 using GodsWill_ASCIIRPG.Model.SceneryItems;
+using GodsWill_ASCIIRPG.Model.Traps;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -362,6 +363,15 @@ namespace GodsWill_ASCIIRPG
             {
                 var typeOfMerchant = typeof(Merchant);
                 return table.Where(a => typeOfMerchant.IsAssignableFrom(a.GetType())).Select(a => (Merchant)a);
+            }
+        }
+
+        public IEnumerable<Trap> Traps
+        {
+            get
+            {
+                var typeOfTraps = typeof(Trap);
+                return table.Where(a => typeOfTraps.IsAssignableFrom(a.GetType())).Select(a => (Trap)a);
             }
         }
 

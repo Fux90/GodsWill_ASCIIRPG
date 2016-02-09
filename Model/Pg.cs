@@ -94,7 +94,8 @@ namespace GodsWill_ASCIIRPG
 
     [Serializable]
     [HasPerception(typeof(ListenPerception))]
-	public class Pg : Character, ISpellcaster, IViewable<IPgViewer>
+    [HasPerception(typeof(SpotPerception))]
+    public class Pg : Character, ISpellcaster, IViewable<IPgViewer>
 	{
         #region SERIALIZATION_CONST_NAMES
         const string currentLevelSerializationName = "level";
@@ -257,27 +258,42 @@ namespace GodsWill_ASCIIRPG
                     continue;
                 }
                 if (pt.X >= 0 && pt.Y >= 0
-                    && pt.X < Map.Width && pt.Y < Map.Height
-                    && !Map.IsFullyExplored(pt))
+                    && pt.X < Map.Width && pt.Y < Map.Height)
                 {
-
-                    if (Map[pt].HasToBeInStraightSight)
+                    if (!Map.IsFullyExplored(pt))
                     {
-                        explored = !SomethingBlockView(pt);
-                        if (!explored)
+                        // Perception of enemies
+                        if (Map[pt].HasToBeInStraightSight)
                         {
-                            foreach (var perception in Perceptions)
+                            explored = !SomethingBlockView(pt);
+                            if (!explored)
                             {
-                                explored = perception.Sense(this, Map[pt]);
-                                if (explored)
+                                foreach (var perception in Perceptions)
                                 {
-                                    break;
+                                    explored = perception.Sense(this, Map[pt]);
+                                    if (explored)
+                                    {
+                                        break;
+                                    }
                                 }
                             }
                         }
+
+                        Map.Explore(pt, explored);
                     }
 
-                    Map.Explore(pt, explored);
+                    // Perception of hidden scenery items (e.g. traps)
+                    if (typeof(HiddenAtom).IsAssignableFrom(Map[pt].GetType()))
+                    {
+                        foreach (var perception in Perceptions)
+                        {
+                            var detected = perception.Sense(this, Map[pt]);
+                            if (detected)
+                            {
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             
@@ -294,6 +310,7 @@ namespace GodsWill_ASCIIRPG
 
         public override void Die(IFighter killer)
         {
+            CurrentMode = Modes.AfterDeath;
             view.NotifyDeath();
 
             // Save story ?

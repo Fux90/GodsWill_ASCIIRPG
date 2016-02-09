@@ -8,5 +8,6 @@ namespace GodsWill_ASCIIRPG
 	public interface AIController : Controller<AICharacter>
 	{
         void RegisterAll(IEnumerable<AICharacter> characters);
+        void RemoveAll();
 	}
 }

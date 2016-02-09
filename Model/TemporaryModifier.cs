@@ -73,7 +73,8 @@ namespace GodsWill_ASCIIRPG.Model
             CA,
             CASpecial,
             Stats,
-            ListenPerception
+            ListenPerception,
+            SpotPerception
         }
 
         public int TimeToLive { get; private set; }

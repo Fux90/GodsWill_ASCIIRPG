@@ -41,8 +41,8 @@ namespace GodsWill_ASCIIRPG
 
         #region PROPERTIES
         public virtual string Name { get { return name; } }
-        public string Symbol { get { return symbol; } }
-        public Color Color { get { return color; } }
+        public virtual string Symbol { get { return symbol; } }
+        public virtual Color Color { get { return color; } }
         public bool Walkable { get { return walkable; } }
         public bool BlockVision { get { return blockVision; } }
         public string Description { get { return description; } }
@@ -169,6 +169,73 @@ namespace GodsWill_ASCIIRPG
     }
 
     [Serializable]
+    abstract public class HiddenAtom : Atom, ISerializable
+    {
+        private const int baseCDPerception = 10;
+        private const string hiddenSerializationName = "hidden";
+
+        public bool Hidden { get; private set; }
+        public override string Symbol
+        {
+            get
+            {
+                return Hidden ? Floor._Symbol : base.Symbol;
+            }
+        }
+
+        public override Color Color
+        {
+            get
+            {
+                return Hidden ? Floor._Color : base.Color;
+            }
+        }
+
+        public HiddenAtom(  string name,
+                            string symbol,
+                            Color color,
+                            bool walkable,
+                            bool blockVision,
+                            string description = "Element of the game initially hidden",
+                            Coord position = new Coord(),
+                            bool hidden = true)
+            : base( name, 
+                    symbol,
+                    color,
+                    walkable,
+                    blockVision,
+                    description,
+                    position)
+        {
+            Hidden = hidden;
+        }
+
+        public HiddenAtom(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            Hidden = (bool)info.GetValue(hiddenSerializationName, typeof(bool));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue(hiddenSerializationName, Hidden, typeof(bool));
+        }
+
+        public void NotifyIndividuation()
+        {
+            Hidden = false;
+            NotifyListeners("Detected");
+        }
+
+        protected void Show()
+        {
+            Hidden = false;
+        }
+    }
+
+    [Serializable]
     public abstract class MoveableAtom : Atom
     {
         public bool Unblockable { get; private set; }
@@ -272,7 +339,8 @@ namespace GodsWill_ASCIIRPG
             return false;
         }
 
-        public virtual bool CanHappenTriggerEvent(MoveableAtom triggerer, Atom triggerable)
+        public virtual bool CanHappenTriggerEvent(  MoveableAtom triggerer, 
+                                                    Atom triggerable)
         {
             var immediate = false;
 
@@ -283,8 +351,11 @@ namespace GodsWill_ASCIIRPG
                 if (typeof(ITriggerActor).IsAssignableFrom(triggerer.GetType()))
                 {
                     var _triggerable = (ITriggerable)triggerable;
+                    var _triggerer = (ITriggerActor)triggerer;
 
-                    ((ITriggerActor)triggerer).RegisterTriggerable(_triggerable);
+                    _triggerer.RegisterTriggerable(_triggerable);
+                    _triggerable.RegisterTriggeringSubject(triggerer);
+
                     immediate = _triggerable.ImmediateTrigger;
                 }
             }

@@ -13,6 +13,7 @@ using GodsWill_ASCIIRPG.Model.Items;
 using GodsWill_ASCIIRPG.Model.Menus;
 using GodsWill_ASCIIRPG.Model.SceneryItems;
 using GodsWill_ASCIIRPG.Model.Shields;
+using GodsWill_ASCIIRPG.Model.Traps;
 using GodsWill_ASCIIRPG.Model.Weapons;
 using GodsWill_ASCIIRPG.View;
 using System;
@@ -237,6 +238,9 @@ namespace GodsWill_ASCIIRPG
 
                 MapBuilder.AddAtom(merchantBuilder.Build());
 
+                var aTrap = new ArrowTrap(new Coord(7, 7));
+                MapBuilder.AddAtom(aTrap);
+
                 currentPg = new PgCreator() { God = Gods.Ares }.Create();
 
                 //currentPg.Listeners.ForEach(listener => orc1.RegisterListener(listener));
@@ -272,13 +276,16 @@ namespace GodsWill_ASCIIRPG
 
                 var aiCharacters = map.AICharacters.ToList();
                 var merchants = map.Merchants.ToList();
+                var traps = map.Traps.ToList();
 
                 pgViewers.ForEach(pgViewer => CurrentPg.RegisterView(pgViewer));
 
                 atomListeners.ForEach(listener => currentPg.RegisterListener(listener));
-                aiCharacters.ForEach(aiC => currentPg.Listeners.ForEach(listener => aiC.RegisterListener(listener)));
                 currentPg.RegisterListener(singleMsgListener);
 
+                aiCharacters.ForEach(aiC => currentPg.Listeners.ForEach(listener => aiC.RegisterListener(listener)));
+                traps.ForEach(trap => currentPg.Listeners.ForEach(listener => trap.RegisterListener(listener)));
+                
                 merchantViewers.ForEach(mV => merchants.ForEach(m => m.RegisterView(mV)));
                 merchants.ForEach(m => merchantController.Register(m));
 
@@ -301,6 +308,11 @@ namespace GodsWill_ASCIIRPG
 
                 MapBuilder.AddViewer(mapViewer);
                 MapBuilder.AddSingleMessageListener(singleMsgListener);
+            }
+
+            public void ClearController()
+            {
+                aiController.RemoveAll();
             }
 
             public void WorldReset()
