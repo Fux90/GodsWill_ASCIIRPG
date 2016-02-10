@@ -13,6 +13,12 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         private List<IDamageable> targets;
         private DamageCalculator dmg;
 
+        public HealSpell()
+            : base(null, null)
+        {
+
+        }
+
         public HealSpell(   ISpellcaster launcher, 
                             List<IDamageable> targets,
                             DamageCalculator dmg,
@@ -42,10 +48,27 @@ namespace GodsWill_ASCIIRPG.Model.Spells
                 damageable.HealDamage(dmg);
             });
         }
+
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+            str.AppendLine(String.Format("{0} [Heal Spell]", this.Name));
+            str.AppendLine(String.Format("Target: {0}", this.Target));
+            str.AppendLine("Healing Effects:");
+            str.AppendLine(this.dmg.ToString());
+
+            return str.ToString();
+        }
     }
 
     public abstract class UtilitySpell : Spell
     {
+        public UtilitySpell()
+            : base(null, null)
+        {
+
+        }
+
         public UtilitySpell(ISpellcaster launcher, Animation animation)
             : base(launcher, animation)
         {
@@ -85,6 +108,12 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 
         private DamageCalculator dmg;
         private List<IDamageable> targets;
+
+        public AttackSpell()
+            : base(null, null)
+        {
+
+        }
 
         public AttackSpell( ISpellcaster launcher, 
                             List<IDamageable> targets, 
@@ -143,20 +172,47 @@ namespace GodsWill_ASCIIRPG.Model.Spells
                 });
             }
         }
+
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+            str.AppendLine(String.Format("{0} [Attack Spell]", this.Name));
+            str.AppendLine(String.Format("Target: {0}", this.Target));
+            str.AppendLine("Healing Effects:");
+            str.AppendLine(this.dmg.ToString());
+
+            return str.ToString();
+        }
     }
 
     [Serializable]
-    public abstract class HealSpellBuilder<SpellToBuild> : SpellBuilder<ISpellcaster, SpellToBuild>
+    public abstract class HealSpellBuilder<SpellToBuild> : SpellBuilder<IDamageable, SpellToBuild>
         where SpellToBuild : HealSpell
     {
         public HealSpellBuilder()
         {
-            this.Targets = new List<ISpellcaster>() { Caster };
+            this.Targets = new List<IDamageable>() { (IDamageable)Caster };
         }
 
         public HealSpellBuilder(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+        }
+
+        public override void SetTargets<T>(List<T> targets)
+        {
+            Targets.Clear();
+            targets.ForEach(target => Targets.Add((IDamageable)target));
+        }
+
+        public override string FullDescription
+        {
+            get
+            {
+                bool issues;
+                var spell = Create(out issues);
+                return spell.ToString();
+            }
         }
     }
 
@@ -193,6 +249,16 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         {
             Targets.Clear();
             targets.ForEach(target => Targets.Add((IDamageable)target));
+        }
+
+        public override string FullDescription
+        {
+            get
+            {
+                bool issues;
+                var spell = CreateForDescription(out issues);
+                return spell.ToString();
+            }
         }
     }
 }

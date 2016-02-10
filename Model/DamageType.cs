@@ -10,6 +10,7 @@ namespace GodsWill_ASCIIRPG
         Physical,
         Mental,
         Fire,
-        Necrotic
-	}
+        Necrotic,
+        Holy
+    }
 }

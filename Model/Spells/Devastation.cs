@@ -24,11 +24,17 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         {
         }
 
-        public override Devastation InnerCreate(out bool issues)
+        public override Devastation InnerCreate(out bool issues, bool createForDescription)
         {
+            issues = false;
+
+            if (createForDescription)
+            {
+                return Devastation.Create();
+            }
+
             if (Targets.Count > 0)
             {
-                issues = false;
                 return Devastation.Create(Caster, Targets);
             }
             else
@@ -51,14 +57,21 @@ namespace GodsWill_ASCIIRPG.Model.Spells
     [MoneyValue(10)]
     public class Devastation : AttackSpell
     {
+        protected static readonly DamageCalculator dC = new DamageCalculator(
+                                                       new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
+                                                       {
+                                                           { DamageType.Necrotic, (mod) => Dice.Throws(6, 1, mod: mod) }
+                                                       });
+        protected Devastation()
+            : base(null, null, dC, null)
+        {
+
+        }
+
         protected Devastation(ISpellcaster caster, List<IDamageable> targets)
             : base( caster,
                     targets,
-                    new DamageCalculator(
-                       new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
-                       {
-                           { DamageType.Necrotic, (mod) => Dice.Throws(6, 1, mod: mod) }
-                       }),
+                    Devastation.dC,
                     new BlobsAnimation( targets.Select(t => ((Atom)t).Position).ToList(), 
                                         4,
                                         Color.DarkGray))
@@ -78,6 +91,12 @@ namespace GodsWill_ASCIIRPG.Model.Spells
             msg.AppendFormat(" with {0}", this.Name);
 
             ((Atom)caster).NotifyListeners(msg.ToString());
+        }
+
+        public static Devastation Create()
+        {
+            // Always hits
+            return new Devastation();
         }
 
         public static Devastation Create(ISpellcaster sender, List<IDamageable> targets)

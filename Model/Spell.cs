@@ -121,6 +121,17 @@ namespace GodsWill_ASCIIRPG.Model
 
             Effect(targets, parameters);
         }
+
+        public string Target
+        {
+            get
+            {
+                var targetTypes = this.GetType().GetCustomAttributes(typeof(Target), false);
+                return targetTypes.Length == 0 
+                    ? TargetType.Personal.ToString() 
+                    : ((Target)targetTypes[0]).TargetType.ToString();
+            }
+        }
     }
 
     [Serializable]
@@ -149,6 +160,7 @@ namespace GodsWill_ASCIIRPG.Model
         public new abstract string Name { get; }
         public abstract Target Target { get; }
         public abstract Spell Create(out bool issues);
+        public abstract Spell CreateForDescription(out bool issues);
 
         public abstract Type SpellToBuildType { get; }
         public abstract void SetTargets<T>(List<T> targets);
@@ -186,6 +198,14 @@ namespace GodsWill_ASCIIRPG.Model
             Targets = new List<T>();
         }
 
+        public override string FullDescription
+        {
+            get
+            {
+                return Name;
+            }
+        }
+
         public override string Name
         {
             get
@@ -196,7 +216,12 @@ namespace GodsWill_ASCIIRPG.Model
 
         public override Spell Create(out bool issues)
         {
-            return (Spell)InnerCreate(out issues);
+            return (Spell)InnerCreate(out issues, createForDescription: false);
+        }
+
+        public override Spell CreateForDescription(out bool issues)
+        {
+            return (Spell)InnerCreate(out issues, createForDescription: true);
         }
 
         public override int MoneyValue
@@ -208,7 +233,7 @@ namespace GodsWill_ASCIIRPG.Model
             }
         }
 
-        public abstract SpellToBuild InnerCreate(out bool issues);
+        public abstract SpellToBuild InnerCreate(out bool issues, bool createForDescription );
 
         public override Target Target
         {

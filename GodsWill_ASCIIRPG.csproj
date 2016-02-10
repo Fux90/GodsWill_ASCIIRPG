@@ -68,6 +68,7 @@
     <Compile Include="Model\Edibles\Edible.cs" />
     <Compile Include="Model\Edibles\Meat.cs" />
     <Compile Include="Model\GeometricItem.cs" />
+    <Compile Include="Model\GlowingAnimation.cs" />
     <Compile Include="Model\IAttacker.cs" />
     <Compile Include="Model\IBlockable.cs" />
     <Compile Include="Model\IDamageable.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Model\Spell.cs" />
     <Compile Include="Model\Spellbook.cs" />
     <Compile Include="Model\Spells\BlockSpellcasterFor.cs" />
+    <Compile Include="Model\Spells\CureLightWounds.cs" />
     <Compile Include="Model\Spells\Devastation.cs" />
     <Compile Include="Model\Spells\FireOrb.cs" />
     <Compile Include="Model\Spells\FreeAction.cs" />

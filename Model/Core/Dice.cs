@@ -56,9 +56,11 @@ namespace GodsWill_ASCIIRPG.Model.Core
             }
 
             var partial = new int[totThrows];
+            var upperBound = nFaces + 1;
+
             for (int i = 0; i < totThrows; i++)
             {
-                partial[i] = rnd.Next(1, nFaces);
+                partial[i] = rnd.Next(1, upperBound);
             }
 
             return countingMethod == null

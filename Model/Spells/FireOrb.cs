@@ -23,25 +23,23 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         {
         }
 
-        public override FireOrb InnerCreate(out bool issues)
+        public override FireOrb InnerCreate(out bool issues, bool createForDescription)
         {
+            issues = false;
+
+            if (createForDescription)
+            {
+                return FireOrb.Create();
+            }
+
             if (Targets.Count > 0)
             {
-                issues = false;
-                return FireOrb.Create(Caster, Targets[0]);
+                return  FireOrb.Create(Caster, Targets[0]);
             }
             else
             {
                 issues = true;
                 return null;
-            }
-        }
-
-        public override string FullDescription
-        {
-            get
-            {
-                return "Fire Orb";
             }
         }
     }
@@ -50,14 +48,21 @@ namespace GodsWill_ASCIIRPG.Model.Spells
     [BlockSpellcasterFor(3)]
     public class FireOrb : AttackSpell
     {
+        protected static readonly DamageCalculator dC = new DamageCalculator(
+                                                        new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
+                                                        {
+                                                            { DamageType.Fire, (mod) => Dice.Throws(8, mod: mod) }
+                                                        });
+        protected FireOrb()
+            : base(null, null, FireOrb.dC, null)
+        {
+
+        }
+
         protected FireOrb(ISpellcaster caster, IDamageable target, bool missedRealTarget)
             : base( caster,
                     new List<IDamageable>() { target },
-                    new DamageCalculator(
-                       new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
-                       {
-                           { DamageType.Fire, (mod) => Dice.Throws(8, mod: mod) }
-                       }),
+                    FireOrb.dC,
                     new FireBallAnimation(((Atom)caster).Position, ((Atom)target).Position, Color.Red))
         {
             var msg = new StringBuilder();
@@ -74,6 +79,11 @@ namespace GodsWill_ASCIIRPG.Model.Spells
                                 this.Name);
 
             ((Atom)caster).NotifyListeners(msg.ToString());
+        }
+
+        public static FireOrb Create()
+        {
+            return new FireOrb();
         }
 
         public static FireOrb Create(ISpellcaster sender, IDamageable target)

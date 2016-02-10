@@ -23,10 +23,11 @@ namespace GodsWill_ASCIIRPG.Model.Items
             group spell by prerequisite.MinimumLevel into newGroup
             select newGroup;
 
+            #region PERC_LEVEL
             // Perc -> Level
             Dictionary<int, Pg.Level> percSpellLevel = null;
 
-            switch(casterLevel)
+            switch (casterLevel)
             {
                 case Pg.Level.Novice:
                     percSpellLevel = new Dictionary<int, Pg.Level>()
@@ -63,6 +64,21 @@ namespace GodsWill_ASCIIRPG.Model.Items
                     break;
             }
 
+            #endregion
+
+            #region LEVEL_EMPTY
+            // Level -> Perc Empty Book
+            Dictionary<Pg.Level, int> spellLevelPercEmpty = new Dictionary<Pg.Level, int>()
+            {
+                {Pg.Level.Novice, 15},
+                {Pg.Level.Cleric, 10},
+                {Pg.Level.Master, 5},
+                {Pg.Level.GrandMaster, 1},
+            };
+
+
+            #endregion
+
             var diceResult = Dice.Throws(new Dice(nFaces: 100));
             var spellLevel = percSpellLevel.Where(p => diceResult < p.Key).Select(p => p.Value).First();
 
@@ -93,13 +109,21 @@ namespace GodsWill_ASCIIRPG.Model.Items
                 }
             }
 
-            if(spellSetFromWhichToChoose == null || spellSetFromWhichToChoose.Count == 0)
+            // If spell of Novice, there's a chance book is empty
+            var voidBook = Dice.Throws(new Dice(100)) <= spellLevelPercEmpty[casterLevel];
+
+            if(voidBook || spellSetFromWhichToChoose == null || spellSetFromWhichToChoose.Count == 0)
             {
                 return new VoidPrayerBook();
             }
 
             var ix = Dice.Throws(spellSetFromWhichToChoose.Count) - 1;
-            
+
+            while(spellSetFromWhichToChoose.Count > 1 && ix < 1)
+            {
+                ix = Dice.Throws(spellSetFromWhichToChoose.Count) - 1;
+            }
+
             var spellB = (SpellBuilder)Activator.CreateInstance(spellSetFromWhichToChoose[ix]);
             var pl = spellSetFromWhichToChoose[ix].GetCustomAttributes(typeof(PercentageOfSuccess), false);
             var percentageOfSuccess = pl.Length == 0 ? 100 : ((PercentageOfSuccess)pl[0]).Percentage;
@@ -164,7 +188,7 @@ namespace GodsWill_ASCIIRPG.Model.Items
                 var desc = new StringBuilder();
                 desc.AppendLine("A book containing a ritual.");
                 desc.AppendLine(String.Format("It grant the prayer with {0}", spell.Name));
-                desc.AppendLine(String.Format("It has a {0}% of success", percOfSuccess));
+                desc.AppendLine(String.Format("Learning it has a {0}% of success", percOfSuccess));
                 desc.AppendLine();
                 desc.AppendLine(spell.Prerequisites.ToString());
                 return desc.ToString();
