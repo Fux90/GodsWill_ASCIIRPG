@@ -47,7 +47,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
     }
 
     [Target(TargetType.NumberOfTargets, NumericParameter = 1)]
-    //[BlockSpellcasterFor(3)]
+    [BlockSpellcasterFor(3)]
     public class FireOrb : AttackSpell
     {
         protected FireOrb(ISpellcaster caster, IDamageable target, bool missedRealTarget)

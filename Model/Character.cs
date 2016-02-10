@@ -383,6 +383,10 @@ namespace GodsWill_ASCIIRPG
         }
 
         public abstract void Die(IFighter killer);
+        protected void Unblock()
+        {
+            BlockedTurns = 0;
+        }
 
         public bool PickUp()
         {

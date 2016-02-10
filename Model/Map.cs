@@ -419,7 +419,12 @@ namespace GodsWill_ASCIIRPG
             this.name = name;
             this.playerInitialPosition = playerInitialPosition;
             this.table = table;
-            this.buffer = new BidimensionalArray<Atom>(table.Rows, table.Cols, (pos) => new Floor(pos));
+            this.table.ForEach(a => a.SetMap(this));
+            this.buffer = new BidimensionalArray<Atom>(table.Rows, table.Cols, (pos) => {
+                var f = new Floor(pos);
+                f.SetMap(this);
+                return f;
+            });
             this.untangibles = new BidimensionalArray<AtomCollection>(table.Rows, table.Cols, () => new AtomCollection());
             this.explored = new BidimensionalArray<TernaryValue>(table.Rows, table.Cols, notToExplore);
             this.dark = new BidimensionalArray<bool>(table.Rows, table.Cols, dark);

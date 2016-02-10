@@ -1,4 +1,54 @@
 ﻿WRITE A SPELL
 
-1) Add new class 
-2) Extends
+[PercentageOfSuccess(<succes percentage>)]
+[Prerequisite(<...>)]
+[Serializable]
+public class <NameOfTheSpell>Builder : [Attack|Healing|Utility]SpellBuilder<<NameOfTheSpell>>
+{
+	// CONSTRUCTORS
+
+    public override <NameOfTheSpell> InnerCreate(out bool issues)
+    {
+		...
+
+        return <NameOfTheSpell>.Create(Caster, <...>);
+    }
+
+    public override string FullDescription
+    {
+        get
+        {
+            return <...>;
+        }
+    }
+}
+
+[Target(<...>)]
+[BlockSpellcasterFor(<number of blocked turns>)]
+[MoneyValue(<valueMoney>)]
+[FreeAction]
+public class <NameOfTheSpell> : [Attack|Healing|Utility]Spell
+{
+    protected <NameOfTheSpell>(ISpellcaster caster, <...>)
+        : base( caster,
+                <...>)
+    {
+        /*
+			NOTIFY HERE LAUNCH, IF SUCCESS, IF HIT 
+			SOMEONE ELSE & Co
+		*/
+    }
+
+    public static <NameOfTheSpell> Create(ISpellcaster sender, <...>)
+    {
+        <...>
+
+        return new <NameOfTheSpell>(sender, <...>);
+    }
+
+    public override void Launch()
+    {
+        //Launcher
+        base.Effect();
+    }
+}

@@ -312,6 +312,7 @@ namespace GodsWill_ASCIIRPG
 
         public override void Die(IFighter killer)
         {
+            Unblock();
             CurrentMode = Modes.AfterDeath;
             view.NotifyDeath();
 

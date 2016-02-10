@@ -10,6 +10,7 @@
 #define DEBUG_PRINT_MAP // On print button, it saves a txt representation of the map
 #define CHECK_SAME_Y_IN_PRITING
 #define LOG_STAMPS
+#define DEBUG_BLOCKED
 
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ using GodsWill_ASCIIRPG.View;
 using GodsWill_ASCIIRPG.Model.Spells;
 using System.Threading;
 using GodsWill_ASCIIRPG.Main;
+using System.Reflection;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {
@@ -47,6 +49,8 @@ namespace GodsWill_ASCIIRPG.UIControls
         const int _Ctrl = 1;
 
         #endregion
+
+        bool invalidSelection = false;
 
         public delegate bool AfterSelectionOperation(Coord selPos, bool allowOtherSelection = false);
         private readonly AfterSelectionOperation defaultAfterSelectionOp = (selPos, otherSel) => 
@@ -450,7 +454,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                     case ControllerCommand.Player_ExitSelectionModeWithoutSelection:
                         CurrentAfterValidSelectionOperation = defaultAfterSelectionOp;
-                        CurrentAfterInvalidSelectionOperation(selectorCursor.Position);
+                        CurrentAfterInvalidSelectionOperation(selPos: selectorCursor.Position);
                         CurrentAfterInvalidSelectionOperation = defaultAfterSelectionOp;
                         ExitSelectionMode();
                         break;
@@ -467,12 +471,17 @@ namespace GodsWill_ASCIIRPG.UIControls
                         selectorCursor.Move(Direction.West, out acted);
                         break;
                     case ControllerCommand.SelectionCursor_PickedCell:
-                        acted = CurrentAfterValidSelectionOperation(selectorCursor.Position);
                         ExitSelectionMode();
+                        acted = CurrentAfterValidSelectionOperation(selPos: selectorCursor.Position);
+                        if (!invalidSelection)
+                        {
+                            ExitSelectionMode();
+                        }
+                        invalidSelection = false;
                         break;
                     case ControllerCommand.SelectionCursor_PickedCellOneOfMany:
                         ExitSelectionMode();
-                        acted = CurrentAfterValidSelectionOperation(selectorCursor.Position, true);
+                        acted = CurrentAfterValidSelectionOperation(selPos: selectorCursor.Position, allowOtherSelection: true);
                         break;
                     #endregion
 
@@ -499,8 +508,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                                         spellBuilder.NotifyListeners("Select target");
 
                                         AfterSelectionOperation op = null;
+                                        #region OP    
                                         op = (selPos, allowOtherSel) =>
                                         {
+                                            if(invalidSelection)
+                                            {
+                                                allowOtherSel = true;
+                                            }
                                             var selTarget = controlledPg.Map[selPos];
                                             var spellType = spellBuilder.SpellToBuildType;
                                             var permittedType = typeof(Atom);
@@ -543,11 +557,18 @@ namespace GodsWill_ASCIIRPG.UIControls
 
                                                     return !issues;
                                                 }
-                                            }
-                                            //else
-                                            {
+
                                                 spellBuilder.NotifyListeners("Select next target");
                                                 // Select next target
+                                                CurrentAfterValidSelectionOperation = (AfterSelectionOperation)op.Clone();
+                                                EnterSelectionMode();
+                                            }
+                                            else
+                                            {
+                                                spellBuilder.NotifyListeners("Invalid target");
+                                                // Select next target
+                                                //CurrentAfterValidSelectionOperation = (AfterSelectionOperation)op.Clone();
+                                                invalidSelection = true;
                                                 CurrentAfterValidSelectionOperation = (AfterSelectionOperation)op.Clone();
                                                 EnterSelectionMode();
                                             }
@@ -555,6 +576,8 @@ namespace GodsWill_ASCIIRPG.UIControls
 
                                             return acted;
                                         };
+                                        #endregion
+                                        
                                         CurrentAfterValidSelectionOperation = op;
                                         CurrentAfterInvalidSelectionOperation = (selPos, allowOtherSel) =>
                                         {
@@ -700,19 +723,24 @@ namespace GodsWill_ASCIIRPG.UIControls
                         break;
                 }
 
-                if(acted)
+                var blocked = controlledPg.BlockedTurns > 0;
+                if (acted || blocked)
                 {
                     controlledPg.EffectOfTurn();
+
+                    if (blocked)
+                    {
+                        controlledPg.SkipTurn();
+#if DEBUG_BLOCKED
+                        controlledPg.NotifyListeners(String.Format("Blocked {0}", controlledPg.BlockedTurns));
+#endif
+                    }
 #if !PREVENT_AI
                     Notify(ControllerCommand.AI_Turn);
 #endif
                     aiCharacters.RemoveAll(aiChar => aiChar.Dead);
 
-                    if(controlledPg.BlockedTurns > 0)
-                    {
-                        controlledPg.SkipTurn();
-                        Notify(ControllerCommand.AI_Turn);
-                    }
+                    this.Refresh();
                 }
             }
             else // Some commands work without player too
@@ -952,7 +980,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                         case Keys.D:
                             Notify(ControllerCommand.SelectionCursor_MoveEast);
                             break;
-                            #endregion
+#endregion
 
                         case Keys.Enter:
                             Notify(ControllerCommand.SelectionCursor_PickedCell);
@@ -1152,7 +1180,7 @@ namespace GodsWill_ASCIIRPG.UIControls
             }
 #endif
 #if DEBUG_CENTER_VIEWPORT
-            #region CENTER_VIEWPORT
+#region CENTER_VIEWPORT
             
             var ptCenter = new PointF(  (centerRegion.X - firstCol) * charSize + offSetX - charPaintHorPadding,
                                         (centerRegion.Y - firstRow) * this.FontHeight + offSetY);
@@ -1209,7 +1237,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                     g.DrawString("*", this.Font, Brushes.Yellow, ptF);
                 }
             }
-            #endregion
+#endregion
 #endif
 #if DEBUG_LINE
             if (line != null)
