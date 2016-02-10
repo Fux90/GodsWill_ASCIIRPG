@@ -32,6 +32,8 @@ namespace GodsWill_ASCIIRPG.Model
 
     public abstract class Spell
     {
+        public const int _defaultMoneyValue = 5;
+
         public static List<Type> All
         {
             get
@@ -152,6 +154,7 @@ namespace GodsWill_ASCIIRPG.Model
         public abstract void SetTargets<T>(List<T> targets);
 
         public abstract string Prerequisites { get; }
+        public abstract int MoneyValue { get; }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -194,6 +197,15 @@ namespace GodsWill_ASCIIRPG.Model
         public override Spell Create(out bool issues)
         {
             return (Spell)InnerCreate(out issues);
+        }
+
+        public override int MoneyValue
+        {
+            get
+            {
+                var values = typeof(SpellToBuild).GetCustomAttributes(typeof(MoneyValue), false).ToArray();
+                return values.Length == 0 ? Spell._defaultMoneyValue : ((MoneyValue)values[0]).Value;
+            }
         }
 
         public abstract SpellToBuild InnerCreate(out bool issues);

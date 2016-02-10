@@ -29,7 +29,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
             if (Targets.Count > 0)
             {
                 issues = false;
-                return Devastation.Create(Caster, Targets[0]);
+                return Devastation.Create(Caster, Targets);
             }
             else
             {
@@ -47,38 +47,43 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         }
     }
 
+    [Target(TargetType.AllEnemiesInRange, NumericParameter = 3)]
+    [MoneyValue(10)]
     public class Devastation : AttackSpell
     {
-        protected Devastation(ISpellcaster caster, IDamageable target, bool missedRealTarget)
-            : base(caster,
-                    new List<IDamageable>() { target },
+        protected Devastation(ISpellcaster caster, List<IDamageable> targets)
+            : base( caster,
+                    targets,
                     new DamageCalculator(
                        new Dictionary<DamageType, DamageCalculator.DamageCalculatorMethod>()
                        {
-                           { DamageType.Necrotic, (mod) => Dice.Throws(6, 2, mod: mod) }
+                           { DamageType.Necrotic, (mod) => Dice.Throws(6, 1, mod: mod) }
                        }),
-                    new FireBallAnimation(((Atom)caster).Position, ((Atom)target).Position, Color.Red))
+                    new BlobsAnimation( targets.Select(t => ((Atom)t).Position).ToList(), 
+                                        4,
+                                        Color.DarkGray))
         {
             var msg = new StringBuilder();
 
-            if (missedRealTarget)
-            {
-                msg.AppendFormat("{0} misses his target!", ((Atom)caster).Name);
-            }
+            msg.AppendFormat("{0} hits ", ((Atom)caster).Name);
 
-            msg.AppendFormat("{0} hits {1}{2} with {3}",
-                                ((Atom)caster).Name,
-                                missedRealTarget ? "instead " : "",
-                                ((Atom)target).Name,
-                                this.Name);
+            var sep = "";
+            foreach (var target in targets)
+            {
+                msg.AppendFormat("{0}{1}",
+                                sep,
+                                ((Atom)target).Name);
+                sep = " and ";
+            }
+            msg.AppendFormat(" with {0}", this.Name);
 
             ((Atom)caster).NotifyListeners(msg.ToString());
         }
 
-        public static Devastation Create(ISpellcaster sender, IDamageable target)
+        public static Devastation Create(ISpellcaster sender, List<IDamageable> targets)
         {
             // Always hits
-            return new Devastation(sender, target, missedRealTarget: false);
+            return new Devastation(sender, targets);
         }
 
         public override void Launch()

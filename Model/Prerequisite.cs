@@ -40,7 +40,7 @@ namespace GodsWill_ASCIIRPG.Model
 
             meString.AppendLine("Prerequisites:");
             meString.AppendLine(String.Format("Level: {0}", MinimumLevel.ToString()));
-            meString.AppendLine(MinimumStats.ToVerticalString());
+            meString.AppendLine(MinimumStats.ToVerticalString(true));
 
             return meString.ToString();
         }

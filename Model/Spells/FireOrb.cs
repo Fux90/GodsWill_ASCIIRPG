@@ -41,12 +41,13 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         {
             get
             {
-                return "Fire orb";
+                return "Fire Orb";
             }
         }
     }
 
     [Target(TargetType.NumberOfTargets, NumericParameter = 1)]
+    //[BlockSpellcasterFor(3)]
     public class FireOrb : AttackSpell
     {
         protected FireOrb(ISpellcaster caster, IDamageable target, bool missedRealTarget)

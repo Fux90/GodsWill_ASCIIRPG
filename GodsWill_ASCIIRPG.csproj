@@ -60,15 +60,19 @@
     <Compile Include="Control\SpellbookController.cs" />
     <Compile Include="Model\Allied.cs" />
     <Compile Include="Model\Animation.cs" />
+    <Compile Include="Model\BlobsAnimation.cs" />
     <Compile Include="Model\Circle.cs" />
     <Compile Include="Model\Core\TernaryValue.cs" />
     <Compile Include="Model\Description.cs" />
     <Compile Include="Model\Descriptionable.cs" />
+    <Compile Include="Model\Edibles\Edible.cs" />
+    <Compile Include="Model\Edibles\Meat.cs" />
     <Compile Include="Model\GeometricItem.cs" />
     <Compile Include="Model\IAttacker.cs" />
     <Compile Include="Model\IBlockable.cs" />
     <Compile Include="Model\IDamageable.cs" />
     <Compile Include="Model\IDescriptionable.cs" />
+    <Compile Include="Model\IEater.cs" />
     <Compile Include="Model\IFighter.cs" />
     <Compile Include="Model\IGoldDealer.cs" />
     <Compile Include="Model\IMerchant.cs" />
@@ -136,6 +140,7 @@
     <Compile Include="Model\Spells\Devastation.cs" />
     <Compile Include="Model\Spells\FireOrb.cs" />
     <Compile Include="Model\Spells\FreeAction.cs" />
+    <Compile Include="Model\Spells\MoneyValue.cs" />
     <Compile Include="Model\Spells\SpellTypes.cs" />
     <Compile Include="Model\Stats.cs" />
     <Compile Include="Model\StraightSightNeededForPerception.cs" />
@@ -252,7 +257,9 @@
   <ItemGroup>
     <None Include="Main\App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="HowTos\HowTo_WriteNewSpell.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>if exist "$(TargetPath).locked" del "$(TargetPath).locked"

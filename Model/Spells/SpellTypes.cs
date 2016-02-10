@@ -10,10 +10,37 @@ namespace GodsWill_ASCIIRPG.Model.Spells
 {
     public abstract class HealSpell : Spell
     {
-        public HealSpell(ISpellcaster launcher, Animation animation = null)
+        private List<IDamageable> targets;
+        private DamageCalculator dmg;
+
+        public HealSpell(   ISpellcaster launcher, 
+                            List<IDamageable> targets,
+                            DamageCalculator dmg,
+                            Animation animation = null)
             : base(launcher, animation)
         {
+            this.targets = targets;
+            this.dmg = dmg;
+        }
 
+        protected void Effect(int tpc = -1)
+        {
+            var atomTargets = new AtomCollection();
+            atomTargets.AddRange(targets.Select(t => ((Atom)t)).ToList());
+            Launch(atomTargets, (object)new object[] { dmg.CalculateDamage(), tpc });
+        }
+
+        protected override void Effect(AtomCollection targets, object parameters)
+        {
+            var aParameters = (object[])parameters;
+
+            var dmg = (Damage)aParameters[0];
+            
+            targets.ForEach(t =>
+            {
+                var damageable = (IDamageable)t;
+                damageable.HealDamage(dmg);
+            });
         }
     }
 

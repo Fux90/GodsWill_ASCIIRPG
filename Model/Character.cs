@@ -1,5 +1,6 @@
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model.Edibles;
 using GodsWill_ASCIIRPG.Model.Items;
 using GodsWill_ASCIIRPG.View;
 using System;
@@ -22,7 +23,7 @@ namespace GodsWill_ASCIIRPG
     [Serializable]
     [StraightSightNeededForPerception]
     public abstract class Character : MoveableAtom, 
-        IFighter, IDamageable, IBlockable, IGoldDealer, ITriggerActor,
+        IFighter, IDamageable, IBlockable, IGoldDealer, ITriggerActor, IEater,
         ISerializable,
         IViewable<ISheetViewer>
     {
@@ -247,6 +248,13 @@ namespace GodsWill_ASCIIRPG
         public virtual void UseItem(Item item)
         {
             item.ActiveUse(this);
+        }
+
+        public void Eat(Edible edible)
+        {
+            this.hunger += edible.EdibleValue;
+            NotifyAll();
+            NotifyListeners(String.Format("Eats {0}", edible.Name));
         }
 
         public virtual void PickUpGold(Gold gold)

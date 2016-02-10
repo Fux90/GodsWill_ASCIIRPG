@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace GodsWill_ASCIIRPG.Model.Spells
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class BlockSpellcasterFor : Attribute
+    public class MoneyValue : Attribute
     {
-        public int Turns { get; }
+        public int Value { get; private set; }
 
-        public BlockSpellcasterFor(int turns)
+        public MoneyValue(int value)
         {
-            Turns = turns;
+            Value = value;        
         }
     }
 }

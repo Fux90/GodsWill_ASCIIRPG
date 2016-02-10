@@ -173,7 +173,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
             set
             {
-                if (controlledPg == null)
+                if (controlledPg != null)
                 {
                     controlledPg.CurrentMode = value;
                 }
@@ -491,6 +491,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                                 {
                                     case TargetType.NumberOfTargets:
                                     {
+                                        #region NUMBER_OF_TARGETS
                                         var maxEnemies = target.NumericParameter;
                                         var chosenEnemies = 0;
                                         var targets = new List<Atom>();
@@ -506,6 +507,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
                                             if (typeof(HealSpell).IsAssignableFrom(spellType))
                                             {
+                                                permittedType = typeof(IDamageable);
                                             }
                                             else if (typeof(UtilitySpell).IsAssignableFrom(spellType))
                                             {
@@ -563,8 +565,107 @@ namespace GodsWill_ASCIIRPG.UIControls
                                         };
 
                                         EnterSelectionMode();
+                                        #endregion
                                     }
                                     break;
+
+                                    case TargetType.Personal:
+                                    {
+                                        var targets = new List<Atom>() { controlledPg };
+                                        spellBuilder.SetTargets(targets);
+                                        var spell = spellBuilder.Create(out issues);
+                                        if (!issues)
+                                        {
+                                            controlledPg.CastSpell(spell, out acted);
+                                            this.Refresh();
+                                        }
+                                    }
+                                    break;
+
+                                    case TargetType.AllEnemiesInRange:
+                                    {
+                                        #region ALL_ENEMIES
+                                        var targets = new List<Atom>();
+                                        var circlePerception = new FilledCircle(controlledPg.Position, 
+                                                                                controlledPg.PerceptionRange);
+                                        var permittedType = typeof(Character);
+                                            var map = controlledPg.Map;
+                                        foreach (Coord pt in circlePerception)
+                                        {
+                                            if (pt.X >= 0 && pt.Y >= 0
+                                                && pt.X < map.Width && pt.Y < map.Height)
+                                            {
+                                                var cur = map[pt];
+                                                var curType = cur.GetType();
+                                                if (permittedType.IsAssignableFrom(curType))
+                                                {
+                                                    if (((Character)cur).AlliedTo == Allied.Enemy)
+                                                    {
+                                                        targets.Add(cur);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        // If more than permitted targets
+                                        if (targets.Count > target.NumericParameter)
+                                        {
+                                            var sortedTargets = targets.OrderBy(t => t.Position.ManhattanDistance(controlledPg.Position));
+                                            targets = sortedTargets.Take(targets.Count).ToList();
+                                        }
+
+                                        spellBuilder.SetTargets(targets);
+                                        var spell = spellBuilder.Create(out issues);
+                                        if (!issues)
+                                        {
+                                            controlledPg.CastSpell(spell, out acted);
+                                            this.Refresh();
+                                        }
+                                        #endregion
+                                    }
+                                    break;
+
+                                    case TargetType.AllAlliesInRange:
+                                    {
+                                        #region ALL_ALLIES
+                                        var targets = new List<Atom>();
+                                        var circlePerception = new FilledCircle(controlledPg.Position,
+                                                                                controlledPg.PerceptionRange);
+                                        var permittedType = typeof(Character);
+
+                                        foreach (Coord pt in circlePerception)
+                                        {
+                                            var cur = controlledPg.Map[pt];
+                                            var curType = cur.GetType();
+                                            if (permittedType.IsAssignableFrom(curType))
+                                            {
+                                                if (((Character)cur).AlliedTo == Allied.Pg)
+                                                {
+                                                    targets.Add(cur);
+                                                }
+                                            }
+                                        }
+
+                                        // If more than permitted targets
+                                        if (targets.Count > target.NumericParameter)
+                                        {
+                                            var sortedTargets = targets.OrderBy(t => t.Position.ManhattanDistance(controlledPg.Position));
+                                            targets = sortedTargets.Take(targets.Count).ToList();
+                                        }
+
+                                        spellBuilder.SetTargets(targets);
+                                        var spell = spellBuilder.Create(out issues);
+                                        if (!issues)
+                                        {
+                                            controlledPg.CastSpell(spell, out acted);
+                                            this.Refresh();
+                                        }
+                                        #endregion
+                                    }
+                                    break;
+
+                                    default:
+                                        throw new Exception();
                                 }
                             }
                         });
@@ -1171,7 +1272,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         }
 
         Animation.Frame currentFrame;
-        public void PlayFrame(Animation animation)
+        public void PlayAnimation(Animation animation)
         {
             foreach (Animation.Frame frame in animation)
             {

@@ -1,0 +1,4 @@
+﻿WRITE A SPELL
+
+1) Add new class 
+2) Extends

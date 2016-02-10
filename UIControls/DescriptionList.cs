@@ -168,6 +168,24 @@ namespace GodsWill_ASCIIRPG.UIControls
             UpdateDescription();
         }
 
+        public void SelectPrevious(int x)
+        {
+            for (int i = 0; i < x; i++)
+            {
+                itemList.SelectPrevious();
+            }
+            UpdateDescription();
+        }
+
+        public void SelectNext(int x)
+        {
+            for (int i = 0; i < x; i++)
+            {
+                itemList.SelectNext();
+            }
+            UpdateDescription();
+        }
+
         public void SelectPreviousPage()
         {
             itemList.SelectPreviousPage();

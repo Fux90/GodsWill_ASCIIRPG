@@ -1,4 +1,5 @@
-﻿using GodsWill_ASCIIRPG.View;
+﻿using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.View;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -101,13 +102,13 @@ namespace GodsWill_ASCIIRPG.Model
         {
             foreach (var viewer in animationViewers)
             {
-                viewer.PlayFrame(this);
+                viewer.PlayAnimation(this);
             }
         }
 
         public static void RegisterAnimationViewer(IAnimationViewer view)
         {
-            animationViewers.Add(view);
+            animationViewers.AddOnce(view);
         }
 
         IEnumerator IEnumerable.GetEnumerator()

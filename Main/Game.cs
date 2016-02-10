@@ -9,6 +9,7 @@ using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.AICharacters;
 using GodsWill_ASCIIRPG.Model.Armors;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model.Edibles;
 using GodsWill_ASCIIRPG.Model.Items;
 using GodsWill_ASCIIRPG.Model.Menus;
 using GodsWill_ASCIIRPG.Model.SceneryItems;
@@ -257,6 +258,10 @@ namespace GodsWill_ASCIIRPG
                 var merchantBuilder = new MerchantBuilder();
                 merchantBuilder.AddItem(new LongSword());
                 merchantBuilder.AddItem(book2);
+                for (int i = 0; i < 20; i++)
+                {
+                    merchantBuilder.AddItem(new Meat());
+                }
                 merchantBuilder.Position = new Coord(4, 4);
 
                 MapBuilder.AddAtom(merchantBuilder.Build());

@@ -65,6 +65,7 @@ namespace GodsWill_ASCIIRPG.Model
     {
         public const string defaultSymbol = "M";
         public static readonly Color defaultColor = Color.Purple;
+        private Item lastSoldPurchased;
 
         public enum MerchantInclination
         {
@@ -209,6 +210,8 @@ namespace GodsWill_ASCIIRPG.Model
 
         public bool Sell(Item item, Pg to)
         {
+            lastSoldPurchased = null;
+
             if (item.IsSellable)
             {
                 var cost = (int)Math.Round(GoldModifiersByInclination[Inclination].Sell * item.Cost);
@@ -224,12 +227,16 @@ namespace GodsWill_ASCIIRPG.Model
                     {
                         this.Backpack.Remove(item);
                         to.Backpack.Add(item);
+
+                        lastSoldPurchased = item;
                     }
                     else
                     {
                         var firstItem = ((ItemStack)item)[0];
                         this.Backpack.Remove(firstItem);
                         to.Backpack.Add(firstItem);
+
+                        lastSoldPurchased = firstItem;
                     }
                     
 
@@ -264,12 +271,16 @@ namespace GodsWill_ASCIIRPG.Model
                 {
                     from.Backpack.Remove(item);
                     this.Backpack.Add(item);
+
+                    lastSoldPurchased = item;
                 }
                 else
                 {
                     var firstItem = ((ItemStack)item)[0];
                     from.Backpack.Remove(firstItem);
                     this.Backpack.Add(firstItem);
+
+                    lastSoldPurchased = firstItem;
                 }
 
                 merchantView.NotifyBuyerGold(from.MyGold);
@@ -369,14 +380,28 @@ namespace GodsWill_ASCIIRPG.Model
             merchantView = view;
         }
 
-        public void SaysWhatSold(Item item, Pg controlledPg)
+        public void SaysWhatSold(Pg controlledPg)
         {
-            controlledPg.NotifyListeners(String.Format("Bought {0}", item.Name));
+            if (lastSoldPurchased != null)
+            {
+                controlledPg.NotifyListeners(String.Format("Bought {0}", lastSoldPurchased.Name));
+            }
+            else
+            {
+                controlledPg.NotifyListeners("UNEXPECTED");
+            }
         }
 
-        public void SaysWhatPurchased(Item item, Pg controlledPg)
+        public void SaysWhatPurchased(Pg controlledPg)
         {
-            controlledPg.NotifyListeners(String.Format("Sold {0}", item.Name));
+            if (lastSoldPurchased != null)
+            {
+                controlledPg.NotifyListeners(String.Format("Sold {0}", lastSoldPurchased.Name));
+            }
+            else
+            {
+                controlledPg.NotifyListeners("UNEXPECTED");
+            }
         }
     }
 }

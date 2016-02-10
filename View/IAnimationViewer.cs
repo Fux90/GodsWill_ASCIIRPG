@@ -16,6 +16,6 @@ namespace GodsWill_ASCIIRPG.View
         /// Play a single frame of an animation
         /// </summary>
         /// <param name="animation">Animation to be played</param>
-        void PlayFrame(Animation animation);
+        void PlayAnimation(Animation animation);
     }
 }

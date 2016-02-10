@@ -297,15 +297,15 @@ namespace GodsWill_ASCIIRPG.UIControls
                     case ControllerCommand.Merchant_PurchaseSell:
                         if (SelectedIndex != -1)
                         {
-                            var item = ControlledBackpack[SelectedListIndex][SelectedIndex];
                             var locIx = SelectedIndex;
-
+                            var item = ControlledBackpack[SelectedListIndex][locIx];
+                            
                             if (SelectedListIndex == 0) // Merchant buy from Pg
                             {
                                 if (controlledMerchant.Purchase(item, controlledPg))
                                 {
                                     controlledMerchant.GoodPurchaseSpeech();
-                                    controlledMerchant.SaysWhatPurchased(item, controlledPg);
+                                    controlledMerchant.SaysWhatPurchased(controlledPg);
                                 }
                                 else
                                 {
@@ -318,7 +318,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                                 {
                                     Notify(ControllerCommand.Merchant_SelectPrevious);
                                     controlledMerchant.GoodSellSpeech();
-                                    controlledMerchant.SaysWhatSold(item, controlledPg);
+                                    controlledMerchant.SaysWhatSold(controlledPg);
                                 }
                                 else
                                 {
@@ -327,6 +327,12 @@ namespace GodsWill_ASCIIRPG.UIControls
                             }
 
                             tryedExchange = true;
+
+                            var b = controlledBackpack[selectedListIndex];
+                            var c = b.Count;
+                            locIx = c == 0 ? -1 : Math.Min(locIx, c);
+                            
+                            descriptionList[SelectedListIndex].SelectNext(locIx);
                         }
                         break;
                     case ControllerCommand.Merchant_Open:

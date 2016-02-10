@@ -93,13 +93,18 @@ namespace GodsWill_ASCIIRPG.Model.Items
                 }
             }
 
+            if(spellSetFromWhichToChoose == null || spellSetFromWhichToChoose.Count == 0)
+            {
+                return new VoidPrayerBook();
+            }
+
             var ix = Dice.Throws(spellSetFromWhichToChoose.Count) - 1;
-            //return new PrayerBook(  (SpellBuilder)Activator.CreateInstance(typeof(FireOrbBuilder)),
-            //                        position: position);
+            
             var spellB = (SpellBuilder)Activator.CreateInstance(spellSetFromWhichToChoose[ix]);
             var pl = spellSetFromWhichToChoose[ix].GetCustomAttributes(typeof(PercentageOfSuccess), false);
             var percentageOfSuccess = pl.Length == 0 ? 100 : ((PercentageOfSuccess)pl[0]).Percentage;
-            return new PrayerBook(spellB,
+            return new PrayerBook(  spellB,
+                                    cost: spellB.MoneyValue,
                                     percOfSuccess: percentageOfSuccess,
                                     position: position);
         }
@@ -189,6 +194,42 @@ namespace GodsWill_ASCIIRPG.Model.Items
             {
                 base.ActiveUse(user);
             }
+        }
+    }
+
+    [Serializable]
+    public class VoidPrayerBook : PrayerBook
+    {
+        public VoidPrayerBook(Coord position = new Coord())
+            : base(null,
+                  position: position,
+                  cost: 1,
+                  weight: 2,
+                  uses: Item._UnlimitedUses)
+        {
+            
+        }
+
+        public VoidPrayerBook(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            
+        }
+
+        public override string FullDescription
+        {
+            get
+            {
+                var desc = new StringBuilder();
+                desc.AppendLine("A void book.");
+
+                return desc.ToString();
+            }
+        }
+
+        public override void ActiveUse(Character user)
+        {
+            user.NotifyListeners(String.Format("It's an empty book... What should I read?"));
         }
     }
 }
