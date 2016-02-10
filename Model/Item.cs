@@ -32,7 +32,7 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
-        public string ItemTypeName
+        public virtual string ItemTypeName
         {
             get
             {

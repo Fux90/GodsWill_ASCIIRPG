@@ -30,8 +30,8 @@ namespace GodsWill_ASCIIRPG.Model.Spells
         {
             issues = false;
 		    return createForDescription 
-                ? CureLightWounds.Create(Caster)
-                : CureLightWounds.Create();
+                ? CureLightWounds.Create()
+                : CureLightWounds.Create(Caster);
         }
     }
 

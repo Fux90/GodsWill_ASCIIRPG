@@ -114,7 +114,7 @@ namespace GodsWill_ASCIIRPG.Model.Items
 
             if(voidBook || spellSetFromWhichToChoose == null || spellSetFromWhichToChoose.Count == 0)
             {
-                return new VoidPrayerBook();
+                return new VoidPrayerBook(position);
             }
 
             var ix = Dice.Throws(spellSetFromWhichToChoose.Count) - 1;
@@ -235,6 +235,13 @@ namespace GodsWill_ASCIIRPG.Model.Items
             
         }
 
+        public override string ItemTypeName
+        {
+            get
+            {
+                return base.ItemTypeName;
+            }
+        }
         public override string FullDescription
         {
             get
