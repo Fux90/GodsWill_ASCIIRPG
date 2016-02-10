@@ -19,6 +19,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         private const int PaddingValue = 4;
 
         private const float penWidth = 4.0f;
+        private const float halvedPenWidth = penWidth / 2.0f;
         private const float charSize = 10.0f;
         private const float charHelpSize = charSize / 2.5f;
 
@@ -243,10 +244,11 @@ namespace GodsWill_ASCIIRPG.UIControls
 
             var ctrl = (System.Windows.Forms.Control)descriptionList[SelectedListIndex];
             var pos = ctrl.Location;
-            pos.Offset(Margin.Left, lblTitle.Height + 2 * (Margin.Top + Margin.Bottom));
+            pos.Offset(Margin.Left, 
+                        lblTitle.Height + 2 * (Margin.Top + Margin.Bottom) - (int)halvedPenWidth);
             var size = ctrl.Size;
-            size.Width += Padding.Left + Padding.Right;
-            size.Height += Padding.Top + Padding.Bottom;
+            size.Width += Padding.Left + Padding.Right + (int)penWidth;
+            size.Height += Padding.Top + Padding.Bottom + (int)penWidth;
 
             g.DrawRectangle(new Pen(Brushes.Orange, penWidth),
                             new Rectangle(pos, size));
@@ -290,6 +292,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                         gamePanel.Show();
                         FocusOnMap();
                         Opened = false;
+                        controlledMerchant.FarewellMessage();
                         break;
                     case ControllerCommand.Merchant_PurchaseSell:
                         if (SelectedIndex != -1)
@@ -302,6 +305,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                                 if (controlledMerchant.Purchase(item, controlledPg))
                                 {
                                     controlledMerchant.GoodPurchaseSpeech();
+                                    controlledMerchant.SaysWhatPurchased(item, controlledPg);
                                 }
                                 else
                                 {
@@ -314,6 +318,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                                 {
                                     Notify(ControllerCommand.Merchant_SelectPrevious);
                                     controlledMerchant.GoodSellSpeech();
+                                    controlledMerchant.SaysWhatSold(item, controlledPg);
                                 }
                                 else
                                 {
@@ -343,6 +348,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                         }
                         this.Refresh();
                         this.Focus();
+                        controlledMerchant.GreetingsMessage();
                         break;
                 }
             }
@@ -497,7 +503,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             controlledMerchant = merchant;
             ControlledBackpack[1] = merchant.Backpack;
-            controlledMerchant.RegisterListener(singleLogMerchant);
+            controlledMerchant.RegisterView(singleLogMerchant);
         }
 
         public void Unregister(Merchant merchant)

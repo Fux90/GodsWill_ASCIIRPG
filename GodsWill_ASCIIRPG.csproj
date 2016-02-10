@@ -220,6 +220,7 @@
     <Compile Include="View\IMapViewer.cs" />
     <Compile Include="View\IMenuViewer.cs" />
     <Compile Include="View\ISpellbookViewer.cs" />
+    <Compile Include="View\ITwoLevelViewable.cs" />
     <Compile Include="View\IViewer.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

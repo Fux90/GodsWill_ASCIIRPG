@@ -62,7 +62,7 @@ namespace GodsWill_ASCIIRPG.Model
             else
             { 
                 this.spells.Add(spell);
-                spell.RegisterListener(spellSecondaryView);
+                spell.RegisterView(spellSecondaryView);
                 NotifyAdd();
                 return true;
             }

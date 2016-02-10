@@ -58,8 +58,10 @@ namespace GodsWill_ASCIIRPG.Model
     }
 
     [Serializable]
-    public class Merchant : Atom, 
-        IGoldDealer, IViewable<IMerchantViewer>, ISerializable, IMerchant
+    public class Merchant : TwoLevelNotifyableAtom, 
+        IGoldDealer, IMerchant, 
+        IViewable<IMerchantViewer>,
+        ISerializable
     {
         public const string defaultSymbol = "M";
         public static readonly Color defaultColor = Color.Purple;
@@ -127,6 +129,20 @@ namespace GodsWill_ASCIIRPG.Model
             };
 
         private IMerchantViewer merchantView;
+        private List<IAtomListener> secondaryListeners;
+        private List<IAtomListener> SecondaryListeners
+        {
+            get
+            {
+                if(secondaryListeners == null)
+                {
+                    secondaryListeners = new List<IAtomListener>();
+                }
+
+                return secondaryListeners;
+            }
+        }
+
         public Backpack Backpack { get; private set; }
         public MerchantInclination Inclination { get; private set; }
 
@@ -151,11 +167,6 @@ namespace GodsWill_ASCIIRPG.Model
         {
             base.GetObjectData(info, context);
             info.AddValue(backpackSerializableName, Backpack, typeof(Backpack));
-        }
-
-        public void RegisterView(IMerchantViewer view)
-        {
-            merchantView = view;
         }
 
         public bool GiveAwayGold(int amount, out Gold gold)
@@ -281,9 +292,6 @@ namespace GodsWill_ASCIIRPG.Model
             {
                 var pgInteractor = (Pg)interactor;
 
-                // 2) Greet
-                NotifyListeners("Greetings");
-
                 // 1) Evaluate inclination
                 EvaluateInclination(pgInteractor);
 
@@ -344,6 +352,31 @@ namespace GodsWill_ASCIIRPG.Model
         public virtual void BadPurchaseSpeech()
         {
             NotifyListeners("I told you I can't buy that!");
+        }
+
+        public void GreetingsMessage()
+        {
+            NotifySecondaryViewers("Greetings");
+        }
+
+        public void FarewellMessage()
+        {
+            NotifySecondaryViewers("Farewell");
+        }
+
+        public void RegisterView(IMerchantViewer view)
+        {
+            merchantView = view;
+        }
+
+        public void SaysWhatSold(Item item, Pg controlledPg)
+        {
+            controlledPg.NotifyListeners(String.Format("Bought {0}", item.Name));
+        }
+
+        public void SaysWhatPurchased(Item item, Pg controlledPg)
+        {
+            controlledPg.NotifyListeners(String.Format("Sold {0}", item.Name));
         }
     }
 }

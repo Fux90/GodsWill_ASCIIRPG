@@ -13,7 +13,7 @@ using GodsWill_ASCIIRPG.Model.Core;
 namespace GodsWill_ASCIIRPG
 {
     [Serializable]
-    abstract public class Atom : ISerializable
+    abstract public class Atom : ISerializable, IViewable<IAtomListener>
     {
         #region SERIALIZATION_CONST_NAMES
         private const string nameSerializableName = "name";
@@ -72,6 +72,20 @@ namespace GodsWill_ASCIIRPG
             this.listeners = new List<IAtomListener>();
         }
 
+        public Atom(SerializationInfo info, StreamingContext context)
+        {
+            name = (string)info.GetValue(nameSerializableName, typeof(string));
+            symbol = (string)info.GetValue(symbolSerializableName, typeof(string));
+            color = (Color)info.GetValue(colorSerializableName, typeof(Color));
+            walkable = (bool)info.GetValue(walkableSerializableName, typeof(bool));
+            description = (string)info.GetValue(descriptionSerializableName, typeof(string));
+            position = (Coord)info.GetValue(positionSerializableName, typeof(Coord));
+            //map = (Map)info.GetValue(mapSerializableName, typeof(Map));
+            //listeners = (List<IAtomListener>)info.GetValue(listenersSerializableName, typeof(List<IAtomListener>));
+            this.listeners = new List<IAtomListener>();
+            IsPickable = (bool)info.GetValue(isPickableSerializableName, typeof(bool));
+        }
+
         #region METHODS
         public virtual void InsertInMap(Map map, Coord newPos, bool overwrite = false)
         {
@@ -94,7 +108,7 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
-        public void RegisterListener(IAtomListener listener)
+        public void RegisterView(IAtomListener listener)
         {
             listeners.AddOnce(listener);
         }
@@ -108,19 +122,6 @@ namespace GodsWill_ASCIIRPG
         #endregion
 
         #region SERIALIZATION
-        public Atom(SerializationInfo info, StreamingContext context)
-        {
-            name = (string)info.GetValue(nameSerializableName, typeof(string));
-            symbol = (string)info.GetValue(symbolSerializableName, typeof(string));
-            color = (Color)info.GetValue(colorSerializableName, typeof(Color));
-            walkable = (bool)info.GetValue(walkableSerializableName, typeof(bool));
-            description = (string)info.GetValue(descriptionSerializableName, typeof(string));
-            position = (Coord)info.GetValue(positionSerializableName, typeof(Coord));
-            //map = (Map)info.GetValue(mapSerializableName, typeof(Map));
-            //listeners = (List<IAtomListener>)info.GetValue(listenersSerializableName, typeof(List<IAtomListener>));
-            this.listeners = new List<IAtomListener>();
-            IsPickable = (bool)info.GetValue(isPickableSerializableName, typeof(bool));
-        }
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -361,6 +362,60 @@ namespace GodsWill_ASCIIRPG
             }
 
             return immediate;
+        }
+    }
+
+    [Serializable]
+    abstract public class TwoLevelNotifyableAtom : Atom,
+        ISerializable, 
+        IViewable<IAtomListener>, ITwoLevelViewable<IAtomListener, string>
+    {
+        private List<IAtomListener> secondaryListeners;
+        private List<IAtomListener> SecondaryListeners
+        {
+            get
+            {
+                if (secondaryListeners == null)
+                {
+                    secondaryListeners = new List<IAtomListener>();
+                }
+
+                return secondaryListeners;
+            }
+        }
+
+        public TwoLevelNotifyableAtom(string name,
+                    string symbol,
+                    Color color,
+                    bool walkable,
+                    bool blockVision,
+                    string description = "Base element of the game",
+                    Coord position = new Coord())
+            : base( name,
+                    symbol,
+                    color,
+                    walkable,
+                    blockVision,
+                    description,
+                    position)
+        {
+            
+        }
+
+        public TwoLevelNotifyableAtom(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            
+        }
+
+        public void RegisterSecondaryView(IAtomListener viewer)
+        {
+            SecondaryListeners.AddOnce(viewer);
+        }
+
+        public void NotifySecondaryViewers(string content)
+        {
+            SecondaryListeners.ForEach(l => l.NotifyMessage(this, content));
         }
     }
 }

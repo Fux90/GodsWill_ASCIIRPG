@@ -303,14 +303,15 @@ namespace GodsWill_ASCIIRPG
 
                 pgViewers.ForEach(pgViewer => CurrentPg.RegisterView(pgViewer));
 
-                aiCharacters.ForEach(aiC => atomListeners.ForEach(listener => aiC.RegisterListener(listener)));
-                traps.ForEach(trap => atomListeners.ForEach(listener => trap.RegisterListener(listener)));
+                aiCharacters.ForEach(aiC => atomListeners.ForEach(listener => aiC.RegisterView(listener)));
+                traps.ForEach(trap => atomListeners.ForEach(listener => trap.RegisterView(listener)));
 
-                atomListeners.ForEach(listener => currentPg.RegisterListener(listener));
-                currentPg.RegisterListener(singleMsgListener);
+                atomListeners.ForEach(listener => currentPg.RegisterView(listener));
+                currentPg.RegisterView(singleMsgListener);
 
                 merchantViewers.ForEach(mV => merchants.ForEach(m => m.RegisterView(mV)));
                 merchants.ForEach(m => merchantController.Register(m));
+                merchants.ForEach(m => atomListeners.ForEach(listener => m.RegisterSecondaryView(listener)));
 
                 sheetViews.ForEach(sheet => currentPg.RegisterView(sheet));
                 backpackViewers.ForEach(viewer => currentPg.Backpack.RegisterView(viewer));

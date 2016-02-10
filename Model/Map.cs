@@ -279,7 +279,7 @@ namespace GodsWill_ASCIIRPG
                     //map.Insert(atom);
                     if (singleMsgListeners != null && atom.SupportsSingleMsgListener())
                     {
-                        singleMsgListeners.ForEach(l => atom.RegisterListener(l));
+                        singleMsgListeners.ForEach(l => atom.RegisterView(l));
                     }
                     atom.InsertInMap(map, atom.Position, true);
                 }
@@ -290,7 +290,7 @@ namespace GodsWill_ASCIIRPG
                 {
                     map.EveryAtom().ForEach(atom =>
                     {
-                        singleMsgListeners.ForEach(l => atom.RegisterListener(l));
+                        singleMsgListeners.ForEach(l => atom.RegisterView(l));
                     });
                 }
             }

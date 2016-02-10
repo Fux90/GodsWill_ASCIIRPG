@@ -215,7 +215,7 @@ namespace GodsWill_ASCIIRPG.UIControls
 
             this.MinimumSize = new Size((int)charSize, this.FontHeight);
             
-            this.selectorCursor.RegisterListener(selectorMsgListener);
+            this.selectorCursor.RegisterView(selectorMsgListener);
 
             TransparentPanelCreation();
         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.View
 {
-    public interface IAtomListener
+    public interface IAtomListener : IViewer
     {
         void NotifyMessage(Atom who, string msg);
         void CleanPreviousMessages();
