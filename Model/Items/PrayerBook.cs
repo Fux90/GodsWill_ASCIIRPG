@@ -119,11 +119,6 @@ namespace GodsWill_ASCIIRPG.Model.Items
 
             var ix = Dice.Throws(spellSetFromWhichToChoose.Count) - 1;
 
-            while(spellSetFromWhichToChoose.Count > 1 && ix < 1)
-            {
-                ix = Dice.Throws(spellSetFromWhichToChoose.Count) - 1;
-            }
-
             var spellB = (SpellBuilder)Activator.CreateInstance(spellSetFromWhichToChoose[ix]);
             var pl = spellSetFromWhichToChoose[ix].GetCustomAttributes(typeof(PercentageOfSuccess), false);
             var percentageOfSuccess = pl.Length == 0 ? 100 : ((PercentageOfSuccess)pl[0]).Percentage;
