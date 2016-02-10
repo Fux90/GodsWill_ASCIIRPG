@@ -5,6 +5,9 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
+    /// <summary>
+    /// Menu Viewers
+    /// </summary>
 	public interface IMenuViewer : IViewer
 	{
         void NotifyLabels(string[] menuLabels, bool[] activeLabels);

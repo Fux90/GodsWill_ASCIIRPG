@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Control
 {
+    /// <summary>
+    /// Controller of Merchant
+    /// </summary>
     public interface MerchantController : Controller<Merchant>, Controller<Pg>
     {
     }

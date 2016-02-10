@@ -5,6 +5,9 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {	
+    /// <summary>
+    /// All commands a controller can be notified with
+    /// </summary>
 	public enum ControllerCommand
 	{
         Player_MoveNorth,
@@ -13,30 +16,46 @@ namespace GodsWill_ASCIIRPG
         Player_MoveEast,
         Player_ExitGame,
         Player_PickUp,
-        Backpack_SelectNext,
-        Backpack_SelectPrevious,
-        Backpack_Close,
-        Backpack_Pick,
-        Backpack_Open,
         Player_PutOn,
         Player_UnhandleWeapon,
         Player_PutOff,
         Player_HandleWeapon,
         Player_EmbraceShield,
         Player_PutAwayShield,
-        AI_Turn,
         Player_Pray,
-        Backpack_SelectNextPage,
-        Backpack_SelectPreviousPage,
         Player_ScrollMsgsUp,
         Player_ScrollMsgsDown,
         Player_EnterSelectionMode,
         Player_ExitSelectionModeWithoutSelection,
+        Player_CastSpell,
+        Player_UseItem,
+        Player_SaveGame,
+        Player_ActivateWeaponPower,
+        Player_BackToMainMenu,
+        Player_IsDead,
+        Player_TriggerCurrent,
+
+        Backpack_SelectNext,
+        Backpack_SelectPrevious,
+        Backpack_Close,
+        Backpack_Pick,
+        Backpack_Open,
+        Backpack_SelectNextPage,
+        Backpack_SelectPreviousPage,
+        Backpack_UseItem,
+        Backpack_PutOnArmor,
+        Backpack_EmbraceShield,
+        Backpack_HandleWeapon,
+
+        AI_Turn,
+
         SelectionCursor_MoveNorth,
         SelectionCursor_MoveEast,
         SelectionCursor_MoveSouth,
         SelectionCursor_MoveWest,
         SelectionCursor_PickedCell,
+        SelectionCursor_PickedCellOneOfMany,
+
         Spellbook_SelectPrevious,
         Spellbook_SelectPreviousPage,
         Spellbook_SelectNext,
@@ -44,19 +63,11 @@ namespace GodsWill_ASCIIRPG
         Spellbook_Pick,
         Spellbook_Close,
         Spellbook_Open,
-        Player_CastSpell,
-        SelectionCursor_PickedCellOneOfMany,
-        Backpack_UseItem,
-        Backpack_PutOnArmor,
-        Backpack_EmbraceShield,
-        Backpack_HandleWeapon,
-        Player_UseItem,
-        Player_SaveGame,
-        Player_ActivateWeaponPower,
+
         Menu_PreviousItem,
         Menu_NextItem,
         Menu_ExecuteSelectItem,
-        Player_BackToMainMenu,
+
         Merchant_SelectNext,
         Merchant_SelectNextPage,
         Merchant_SelectPrevious,
@@ -66,7 +77,5 @@ namespace GodsWill_ASCIIRPG
         Merchant_SelectPreviousList,
         Merchant_SelectNextList,
         Merchant_PurchaseSell,
-        Player_IsDead,
-        Player_TriggerCurrent,
     }
 }

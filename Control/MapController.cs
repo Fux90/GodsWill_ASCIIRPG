@@ -5,6 +5,9 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
+    /// <summary>
+    /// Controller of Map
+    /// </summary>
     public class MapController : Controller<Map>
     {
         Map controlledMap;

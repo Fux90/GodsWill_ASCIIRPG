@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.View
 {
+    /// <summary>
+    /// Animation Viewer
+    /// </summary>
     public interface IAnimationViewer
     {
+        /// <summary>
+        /// Play a single frame of an animation
+        /// </summary>
+        /// <param name="animation">Animation to be played</param>
         void PlayFrame(Animation animation);
     }
 }
