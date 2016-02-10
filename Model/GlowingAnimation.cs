@@ -9,14 +9,14 @@ namespace GodsWill_ASCIIRPG.Model
 {
     public class GlowingAnimation : Animation
     {
-        public GlowingAnimation(Atom atomToGlow, Color[] colors = null, int framePerColors = 3)
+        public GlowingAnimation(Atom atomToGlow, Color[] colors = null, int framePerColors = 7)
         {
             if(colors == null)
             {
                 colors = new Color[]
                 {
-                    Color.DarkGray,
-                    Color.Azure,
+                    Color.Yellow,
+                    Color.Blue,
                 };
             }
             var symbol = atomToGlow.Symbol;

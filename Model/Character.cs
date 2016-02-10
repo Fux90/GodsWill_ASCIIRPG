@@ -298,8 +298,27 @@ namespace GodsWill_ASCIIRPG
 
         public void HealDamage(Damage dmg)
         {
-            hp[(int)HpType.Current] += dmg.TotalDamage;
-            CharacterSheets.ForEach((sheet) => sheet.NotifyHp(Hp, MaxHp));
+            var msg = new StringBuilder();
+            if (Hp == MaxHp)
+            {
+                msg.Append("Already at full Health");
+            }
+            else
+            {
+                var totalDmg = dmg.TotalDamage;
+                hp[(int)HpType.Current] = Math.Min(Hp + totalDmg, MaxHp);
+                CharacterSheets.ForEach((sheet) => sheet.NotifyHp(Hp, MaxHp));
+                msg.AppendFormat("Heals {0} damage{1} ",
+                                    totalDmg,
+                                    totalDmg == 1 ? "" : "s");
+                var dmgString = dmg.ToHorString();
+                var show = dmgString.Length > 0;
+                msg.AppendFormat("{0}{1}{2}",
+                                    show ? "(" : "",
+                                    dmgString,
+                                    show ? ")" : "");
+            }
+            NotifyListeners(msg.ToString());
         }
 
         public void DecreaseMaxHp(int deltaHp)
