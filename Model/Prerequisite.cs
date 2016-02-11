@@ -15,13 +15,13 @@ namespace GodsWill_ASCIIRPG.Model
         public Pg.Level MinimumLevel
         {
             get { return minimumLevel; }
-            set { minimumLevel = value; }
+            private set { minimumLevel = value; }
         }
 
         public Stats MinimumStats
         {
             get { return minimumStats; }
-            set { minimumStats = value; }
+            private set { minimumStats = value; }
         }
 
         public Prerequisite()
@@ -29,9 +29,26 @@ namespace GodsWill_ASCIIRPG.Model
 
         }
 
+        public Prerequisite(Pg.Level minimumLevel)
+        {
+            MinimumLevel = minimumLevel;
+        }
+
+        public Prerequisite(StatsType statsType, int value)
+        {
+            minimumStats.IncreaseStat(statsType, value);
+        }
+
         public bool SatisfyPrerequisites(Character character)
         {
-            throw new NotImplementedException();
+            // TO BE TESTED
+            bool satisfied = true;
+            if (typeof(Pg).IsAssignableFrom(character.GetType()))
+            {
+                satisfied &= ((Pg)character).CurrentLevel >= MinimumLevel;
+            }
+            satisfied &= character.Stats >= MinimumStats;
+            return satisfied;
         }
 
         public override string ToString()

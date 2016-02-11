@@ -53,6 +53,21 @@ namespace GodsWill_ASCIIRPG.Model
             return this.spells.Contains(spell);
         }
 
+        public IEnumerable<SpellBuilder> Where(Func<SpellBuilder, bool> predicate)
+        {
+            var lst = new List<SpellBuilder>();
+
+            foreach(SpellBuilder sB in this.spells)
+            {
+                if (predicate(sB))
+                {
+                    lst.Add(sB);
+                }
+            }            
+
+            return lst;
+        }
+
         public bool Add(SpellBuilder spell)
         {
             if (this.spells.Contains(spell))

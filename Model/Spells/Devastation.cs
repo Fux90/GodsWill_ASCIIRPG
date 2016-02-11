@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace GodsWill_ASCIIRPG.Model.Spells
 {
     [PercentageOfSuccess(80)]
-    [Prerequisite(MinimumLevel = Pg.Level.Cleric)]
+    [Prerequisite(/*MinimumLevel = */Pg.Level.Cleric)]
     [Serializable]
     public class DevastationBuilder : AttackSpellBuilder<Devastation>
     {

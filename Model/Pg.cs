@@ -403,7 +403,9 @@ namespace GodsWill_ASCIIRPG
         {
             if (spell.SatisfyRequisite(this))
             {
-                if(this.Spellbook.Contains(spell))
+                //if(this.Spellbook.Contains(spell))
+                // TO BE TESTED
+                if (this.Spellbook.Where(spellKnown => spell.GetType() == spellKnown.GetType()).Count() > 0)
                 {
                     NotifyListeners(String.Format("{0} already known", spell.Name));
                     return false;

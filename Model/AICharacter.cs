@@ -193,12 +193,12 @@ namespace GodsWill_ASCIIRPG
             }
             else if(interactorType.IsSubclassOf(typeof(AICharacter)))
             {
-                var other = interactor as AICharacter;
-                if(other.AlliedTo != this.AlliedTo 
-                    && other.AlliedTo != Allied.None
+                var aiChar = interactor as AICharacter;
+                if(aiChar.AlliedTo != this.AlliedTo 
+                    && aiChar.AlliedTo != Allied.None
                     && this.AlliedTo != Allied.None)
                 {
-                    other.Attack(this);
+                    aiChar.Attack(this);
                 }
                 else
                 {

@@ -73,7 +73,7 @@ namespace GodsWill_ASCIIRPG.Model.AICharacters
 
     [Serializable]
     //[PerceptionCD(typeof(ListenPerception), 15)]
-    [Prerequisite(MinimumLevel = Pg.Level.Novice)]
+    [Prerequisite(/*MinimumLevel = */Pg.Level.Novice)]
     public class Orc : AICharacter
     {
         public static readonly Dice healthDice = new Dice(nFaces: 8);

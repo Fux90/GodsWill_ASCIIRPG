@@ -146,17 +146,18 @@ namespace GodsWill_ASCIIRPG
         #endregion
 
         #region REQUISITES
-        public virtual bool SatisfyRequisite(Pg player)
+        public virtual bool SatisfyRequisite(Character player)
         {
             var satisfied = true;
 
-            var requisites = this.GetType().GetCustomAttributes(typeof(Prerequisite), true);
-            if(requisites.Length > 0)
+            var requisites = this.GetType().GetCustomAttributes(typeof(Prerequisite), true).ToList();
+            if(requisites.Count > 0)
             {
-                var r = (Prerequisite)requisites[0];
+                //var r = (Prerequisite)requisites[0];
 
-                satisfied &= player.CurrentLevel >= r.MinimumLevel;
-                satisfied &= player.Stats >= r.MinimumStats;
+                //satisfied &= player.CurrentLevel >= r.MinimumLevel;
+                //satisfied &= player.Stats >= r.MinimumStats;
+                requisites.ForEach(r => satisfied &= ((Prerequisite)r).SatisfyPrerequisites(player));
             }
             
             return satisfied;
