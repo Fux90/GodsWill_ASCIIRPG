@@ -66,7 +66,7 @@ namespace GodsWill_ASCIIRPG.Model
     }
 
     [Serializable]
-    public abstract class TemporaryModifier
+    public abstract class TemporaryModifier : TypeQueryable
     {
         public enum ModFor
         {
@@ -100,7 +100,14 @@ namespace GodsWill_ASCIIRPG.Model
             Bonus = bonus;
         }
 
-        public string TypeOfModifier { get { return this.GetType().Name.Clean(); } }
+        public string TypeOfModifier
+        {
+            get
+            {
+                //return this.GetType().Name.Clean();
+                return this.Type.Name.Clean();
+            }
+        }
 
         public T Bonus
         {

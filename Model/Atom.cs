@@ -13,7 +13,42 @@ using GodsWill_ASCIIRPG.Model.Core;
 namespace GodsWill_ASCIIRPG
 {
     [Serializable]
-    abstract public class Atom : ISerializable, IViewable<IAtomListener>
+    abstract public class TypeQueryable
+    {
+
+        private Type myType;
+        private Dictionary<Type, List<Attribute>> attributes;
+
+        public Type Type
+        {
+            get
+            {
+                if (myType == null)
+                {
+                    myType = this.GetType();
+                }
+
+                return myType;
+            }
+        }
+
+        public List<Attribute> Attributes(Type attributeType, bool inherit = false)
+        {
+            if (attributes == null)
+            {
+                attributes = new Dictionary<Type, List<Attribute>>();
+            }
+            if (!attributes.ContainsKey(attributeType))
+            {
+                attributes[attributeType] = Type.GetCustomAttributes(attributeType, inherit).Select(a => (Attribute)a).ToList<Attribute>();
+            }
+
+            return attributes[attributeType];
+        }
+    }
+
+    [Serializable]
+    abstract public class Atom : TypeQueryable, ISerializable, IViewable<IAtomListener>
     {
         #region SERIALIZATION_CONST_NAMES
         private const string nameSerializableName = "name";
@@ -50,7 +85,14 @@ namespace GodsWill_ASCIIRPG
         public Map Map { get { return map; } }
         public bool IsPickable { get; protected set; }
         public List<IAtomListener> Listeners { get { return new List<IAtomListener>(listeners); } }
-        public bool Physical { get { return this.GetType().GetCustomAttributes(typeof(Unphysical), true).Length == 0; } }
+        public bool Physical
+        {
+            get
+            {
+                //return this.GetType().GetCustomAttributes(typeof(Unphysical), true).Length == 0;
+                return this.Attributes(typeof(Unphysical), true).Count == 0;
+            }
+        }
         public bool Unphysical { get { return !Physical; } }
         #endregion
 
@@ -91,7 +133,8 @@ namespace GodsWill_ASCIIRPG
         {
             this.map = map;
             this.position = newPos;
-            var type = this.GetType();
+            //var type = this.GetType();
+            var type = this.Type;
             var typePg = typeof(Pg);
             if (type == typePg || type.IsSubclassOf(typePg))
             {
@@ -140,7 +183,8 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                return this.GetType().GetCustomAttributes(typeof(StraightSightNeededForPerception), true).Length > 0;
+                //return this.GetType().GetCustomAttributes(typeof(StraightSightNeededForPerception), true).Length > 0;
+                return this.Attributes(typeof(StraightSightNeededForPerception), true).Count > 0;
             }
         }
         #endregion
@@ -150,8 +194,9 @@ namespace GodsWill_ASCIIRPG
         {
             var satisfied = true;
 
-            var requisites = this.GetType().GetCustomAttributes(typeof(Prerequisite), true).ToList();
-            if(requisites.Count > 0)
+            //var requisites = this.GetType().GetCustomAttributes(typeof(Prerequisite), true).ToList();
+            var requisites = this.Attributes(typeof(Prerequisite), true).ToList();
+            if (requisites.Count > 0)
             {
                 //var r = (Prerequisite)requisites[0];
 

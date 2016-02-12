@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace GodsWill_ASCIIRPG.Model
 {
     [Serializable]
-    public abstract class God
+    public abstract class God : TypeQueryable
     {
         public enum PrayResult
         {
@@ -19,7 +19,14 @@ namespace GodsWill_ASCIIRPG.Model
             VeryGood
         }
 
-        public string Name { get { return this.GetType().Name.Clean(); } }
+        public string Name
+        {
+            get
+            {
+                //return this.GetType().Name.Clean();
+                return this.Type.Name.Clean();
+            }
+        }
 
         public God()
         {

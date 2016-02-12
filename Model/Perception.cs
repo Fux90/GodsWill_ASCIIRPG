@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace GodsWill_ASCIIRPG.Model
 {
     [Serializable]
-    public abstract class Perception
+    public abstract class Perception : TypeQueryable
     {
         protected abstract bool SensingProcess(Character sensor, Atom sensed, int CD);
 
@@ -17,9 +17,10 @@ namespace GodsWill_ASCIIRPG.Model
 
             var CDs = sensed.GetType()
                             .GetCustomAttributes(typeof(PerceptionCD), false);
-            var sensing = CDs.Where(a => ((PerceptionCD)a).PerceptionType == this.GetType()).FirstOrDefault();
+            //var sensing = CDs.Where(a => ((PerceptionCD)a).PerceptionType == this.GetType()).FirstOrDefault();
+            var sensing = CDs.Where(a => ((PerceptionCD)a).PerceptionType == this.Type).FirstOrDefault();
 
-            if(sensing == null)
+            if (sensing == null)
             {
                 return false;
             }

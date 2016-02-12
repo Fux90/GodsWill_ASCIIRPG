@@ -201,10 +201,11 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                var attributes = (XPPremium[])this.GetType().GetCustomAttributes(typeof(XPPremium), false);
-                return attributes.Length == 0
+                //var attributes = (XPPremium[])this.GetType().GetCustomAttributes(typeof(XPPremium), false);
+                var attributes = this.Attributes(typeof(XPPremium), false);
+                return attributes.Count == 0
                         ? 0
-                        : attributes[0].Value;
+                        : ((XPPremium)attributes[0]).Value;
             }
         }
 

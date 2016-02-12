@@ -30,7 +30,7 @@ namespace GodsWill_ASCIIRPG.Model
         }
     }
 
-    public abstract class Spell
+    public abstract class Spell : TypeQueryable
     {
         public const int _defaultMoneyValue = 5;
 
@@ -51,14 +51,22 @@ namespace GodsWill_ASCIIRPG.Model
             }
         }
 
-        public string Name {  get { return this.GetType().Name.Clean(); } }
+        public string Name
+        {
+            get
+            {
+                //return this.GetType().Name.Clean();
+                return this.Type.Name.Clean();
+            }
+        }
 
         public Pg.Level MinimumLevel
         {
             get
             {
-                var prerequisite = this.GetType().GetCustomAttributes(typeof(Prerequisite), false);
-                return prerequisite.Length > 0
+                //var prerequisite = this.GetType().GetCustomAttributes(typeof(Prerequisite), false);
+                var prerequisite = this.Attributes(typeof(Prerequisite), false);
+                return prerequisite.Count > 0
                     ? ((Prerequisite)prerequisite[0]).MinimumLevel
                     : Pg.Level.Novice;
             }
@@ -67,8 +75,9 @@ namespace GodsWill_ASCIIRPG.Model
         {
             get
             {
-                var m = (BlockSpellcasterFor[])this.GetType().GetCustomAttributes(typeof(BlockSpellcasterFor), false);
-                return m.Length == 0 ? 0 : m[0].Turns;
+                //var m = (BlockSpellcasterFor[])this.GetType().GetCustomAttributes(typeof(BlockSpellcasterFor), false);
+                var m = this.Attributes(typeof(BlockSpellcasterFor), false);
+                return m.Count == 0 ? 0 : ((BlockSpellcasterFor)m[0]).Turns;
             }
         }
 
@@ -76,7 +85,8 @@ namespace GodsWill_ASCIIRPG.Model
         {
             get
             {
-                return this.GetType().GetCustomAttributes(typeof(FreeAction), false).Length > 0;
+                //return this.GetType().GetCustomAttributes(typeof(FreeAction), false).Length > 0;
+                return this.Attributes(typeof(FreeAction), false).Count > 0;
             }
         }
 
@@ -126,8 +136,9 @@ namespace GodsWill_ASCIIRPG.Model
         {
             get
             {
-                var targetTypes = this.GetType().GetCustomAttributes(typeof(Target), false);
-                return targetTypes.Length == 0 
+                //var targetTypes = this.GetType().GetCustomAttributes(typeof(Target), false);
+                var targetTypes = this.Attributes(typeof(Target), false);
+                return targetTypes.Count == 0 
                     ? TargetType.Personal.ToString() 
                     : ((Target)targetTypes[0]).TargetType.ToString();
             }
@@ -261,8 +272,9 @@ namespace GodsWill_ASCIIRPG.Model
         {
             get
             {
-                var p = this.GetType().GetCustomAttributes(typeof(Prerequisite), false);
-                return p.Length == 0 ? "" : p[0].ToString();
+                //var p = this.GetType().GetCustomAttributes(typeof(Prerequisite), false);
+                var p = this.Attributes(typeof(Prerequisite), false);
+                return p.Count == 0 ? "" : p[0].ToString();
             }
         }
     }

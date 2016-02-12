@@ -125,7 +125,8 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                return this.GetType().Name.Clean();
+                //return this.GetType().Name.Clean();
+                return this.Type.Name.Clean();
             }
         }
 
@@ -235,8 +236,12 @@ namespace GodsWill_ASCIIRPG
 
         private List<Perception> initPerceptions()
         {
-            var perceptions = this.GetType().GetCustomAttributes(typeof(HasPerception), false)
-                                    .Select(hP => ((HasPerception)hP).Instantiate()).ToList();
+            //var perceptions = this.GetType().GetCustomAttributes(typeof(HasPerception), false)
+            //                        .Select(hP => ((HasPerception)hP).Instantiate()).ToList();
+            var perceptions = this.Attributes(typeof(HasPerception), false)
+                                  .Select(hP => ((HasPerception)hP).Instantiate()).ToList();
+
+
             return perceptions;
         }
 

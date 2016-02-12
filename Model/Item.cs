@@ -36,7 +36,8 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                return this.GetType().Name.Clean();
+                //return this.GetType().Name.Clean();
+                return this.Type.Name.Clean();
             }
         }
 
@@ -44,7 +45,8 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                return this.GetType().GetCustomAttributes(typeof(Stackable), false).Length > 0;
+                //return this.GetType().GetCustomAttributes(typeof(Stackable), false).Length > 0;
+                return this.Attributes(typeof(Stackable), false).Count > 0;
             }
         }
 
@@ -57,7 +59,8 @@ namespace GodsWill_ASCIIRPG
             {
                 if(stackable == null)
                 {
-                    stackable = (Stackable)this.GetType().GetCustomAttributes(typeof(Stackable), false).FirstOrDefault();
+                    //stackable = (Stackable)this.GetType().GetCustomAttributes(typeof(Stackable), false).FirstOrDefault();
+                    stackable = (Stackable)this.Attributes(typeof(Stackable), false).FirstOrDefault();
                 }
 
                 return stackable;
