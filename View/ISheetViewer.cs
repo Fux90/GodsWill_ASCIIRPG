@@ -1,4 +1,5 @@
 ﻿using GodsWill_ASCIIRPG.Model;
+using GodsWill_ASCIIRPG.Model.Gods;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -58,6 +58,7 @@
     <Compile Include="Control\MerchantController.cs" />
     <Compile Include="Control\PgController.cs" />
     <Compile Include="Control\SpellbookController.cs" />
+    <Compile Include="Model\AICharacters\EquivalentLevel.cs" />
     <Compile Include="Model\AICharacters\XPPremium.cs" />
     <Compile Include="Model\Allied.cs" />
     <Compile Include="Model\Animation.cs" />
@@ -70,6 +71,8 @@
     <Compile Include="Model\Edibles\Meat.cs" />
     <Compile Include="Model\GeometricItem.cs" />
     <Compile Include="Model\GlowingAnimation.cs" />
+    <Compile Include="Model\Gods\IPrayer.cs" />
+    <Compile Include="Model\Gods\OnPrayResults.cs" />
     <Compile Include="Model\IAttacker.cs" />
     <Compile Include="Model\IBlockable.cs" />
     <Compile Include="Model\IDamageable.cs" />
@@ -123,7 +126,7 @@
     <Compile Include="Model\Damage.cs" />
     <Compile Include="Model\DamageType.cs" />
     <Compile Include="Model\Direction.cs" />
-    <Compile Include="Model\God.cs" />
+    <Compile Include="Model\Gods\God.cs" />
     <Compile Include="Model\Line.cs" />
     <Compile Include="Model\Prerequisite.cs" />
     <Compile Include="Model\SceneryItems\Floor.cs" />

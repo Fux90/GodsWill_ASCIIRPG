@@ -45,7 +45,7 @@ namespace GodsWill_ASCIIRPG.Model
             bool satisfied = true;
             if (typeof(Pg).IsAssignableFrom(character.GetType()))
             {
-                satisfied &= ((Pg)character).CurrentLevel >= MinimumLevel;
+                satisfied &= character.CurrentLevel >= MinimumLevel;
             }
             satisfied &= character.Stats >= MinimumStats;
             return satisfied;

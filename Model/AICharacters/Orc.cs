@@ -7,6 +7,7 @@ using GodsWill_ASCIIRPG.Model.Core;
 using System.Drawing;
 using GodsWill_ASCIIRPG.Model.Perceptions;
 using System.Runtime.Serialization;
+using GodsWill_ASCIIRPG.Model.Gods;
 
 namespace GodsWill_ASCIIRPG.Model.AICharacters
 {

@@ -11,6 +11,7 @@ using GodsWill_ASCIIRPG.Model.Items;
 using System.Runtime.Serialization;
 using GodsWill_ASCIIRPG.Main;
 using System.IO;
+using GodsWill_ASCIIRPG.Model.Gods;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -118,7 +119,15 @@ namespace GodsWill_ASCIIRPG
         public static readonly Dice healthDice = new Dice(nFaces: 10);
         public static readonly Dice hungerDice = new Dice(nFaces: 4);
 
-        public Level CurrentLevel { get; private set; }
+        private Level currentLevel;
+        public override Level CurrentLevel
+        {
+            get
+            {
+                return currentLevel;
+            }
+        }
+
         private int maxLevel;
         
         private int[] xp;
@@ -127,7 +136,7 @@ namespace GodsWill_ASCIIRPG
             get { return xp[0]; }
             private set
             {
-                if(CurrentLevel == CurrentLevel.Next())
+                if(currentLevel == currentLevel.Next())
                 {
                     xp[0] = xp[1];
                 }
@@ -189,7 +198,7 @@ namespace GodsWill_ASCIIRPG
                     symbol,
                     color)
         {
-            CurrentLevel = level;
+            currentLevel = level;
             maxLevel = Enum.GetValues(typeof(Level)).Length - 1;
             xp = new int[] { currentXp, nextXp };
             this.PerceptionRange = perception;
@@ -200,7 +209,7 @@ namespace GodsWill_ASCIIRPG
                     StreamingContext context)
             : base(info, context)
         {
-            CurrentLevel = (Pg.Level)info.GetValue(currentLevelSerializationName, typeof(Pg.Level));
+            currentLevel = (Pg.Level)info.GetValue(currentLevelSerializationName, typeof(Pg.Level));
             maxLevel = (int)info.GetValue(maxLevelSerializationName, typeof(int));
             xp = (int[])info.GetValue(xpSerializationName, typeof(int[]));
             PerceptionRange = (int)info.GetValue(perceptionRangeSerializationName, typeof(int));
@@ -211,7 +220,7 @@ namespace GodsWill_ASCIIRPG
         {
             base.GetObjectData(info, context);
 
-            info.AddValue(currentLevelSerializationName, CurrentLevel, typeof(Pg.Level));
+            info.AddValue(currentLevelSerializationName, currentLevel, typeof(Pg.Level));
             info.AddValue(maxLevelSerializationName, maxLevel, typeof(int));
             info.AddValue(xpSerializationName, xp, typeof(int[]));
             info.AddValue(perceptionRangeSerializationName, PerceptionRange, typeof(int));
@@ -236,9 +245,9 @@ namespace GodsWill_ASCIIRPG
 
         private void LevelUp()
         {
-            CurrentLevel = CurrentLevel.Next();
-            CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(CurrentLevel, God));
-            NextXP = Pg.XpForLevel(CurrentLevel.Next());
+            currentLevel = currentLevel.Next();
+            CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(currentLevel, God));
+            NextXP = Pg.XpForLevel(currentLevel.Next());
         }
 
         public override void InsertInMap(Map map, Coord newPos, bool overwrite = false)
@@ -387,7 +396,7 @@ namespace GodsWill_ASCIIRPG
         protected override void NotifyAll()
         {
             base.NotifyAll();
-            CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(this.CurrentLevel, this.God));
+            CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(this.currentLevel, this.God));
             CharacterSheets.ForEach((sheet) => sheet.NotifyXp(this.XP, this.NextXP));
         }
 
@@ -505,7 +514,7 @@ namespace GodsWill_ASCIIRPG
 
             str.AppendFormat("{0} [{1}{2}]", 
                                 Name, 
-                                CurrentLevel,
+                                currentLevel,
                                 God != Gods.None 
                                 ? String.Format(" of {0}", God.Name) 
                                 : "");

@@ -1,6 +1,7 @@
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.Model.Edibles;
+using GodsWill_ASCIIRPG.Model.Gods;
 using GodsWill_ASCIIRPG.Model.Items;
 using GodsWill_ASCIIRPG.View;
 using System;
@@ -23,7 +24,8 @@ namespace GodsWill_ASCIIRPG
     [Serializable]
     [StraightSightNeededForPerception]
     public abstract class Character : MoveableAtom, 
-        IFighter, IDamageable, IBlockable, IGoldDealer, ITriggerActor, IEater,
+        IFighter, IDamageable, IBlockable, IGoldDealer, 
+        ITriggerActor, IEater, IPrayer,
         ISerializable,
         IViewable<ISheetViewer>
     {
@@ -70,6 +72,8 @@ namespace GodsWill_ASCIIRPG
 
         public abstract Dice HealthDice { get; }
         public abstract Dice HungerDice { get; }
+
+        public abstract Pg.Level CurrentLevel { get; }
 
         public int Hp { get { return hp[(int)HpType.Current]; } }
         public int MaxHp { get { return hp[(int)HpType.Max]; } }
@@ -580,9 +584,9 @@ namespace GodsWill_ASCIIRPG
             if(God != null)
             {
                 NotifyListeners(String.Format("*kneels to pray*"));
-                TemporaryModifier mod;
+
                 God.PrayResult res;
-                if ((res = God.HearPray(out mod)) != God.PrayResult.None)
+                if (God != Gods.None && (res = God.HearPray()) != God.PrayResult.None)
                 {
                     var msg = new StringBuilder(String.Format("{0} hears you", God.Name));
 
@@ -601,7 +605,8 @@ namespace GodsWill_ASCIIRPG
 
                     NotifyListeners(msg.ToString());
                     //TempModifiers.AddTemporaryModifier(mod);
-                    RegisterTemporaryMod(mod);
+                    //RegisterTemporaryMod(mod);
+                    God.EffectOfPray(this);
                 }
                 else
                 {

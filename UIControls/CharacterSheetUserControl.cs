@@ -11,6 +11,7 @@ using GodsWill_ASCIIRPG.View;
 using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.Model;
 using System.IO;
+using GodsWill_ASCIIRPG.Model.Gods;
 
 namespace GodsWill_ASCIIRPG.UIControls
 {

@@ -1,6 +1,7 @@
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.AICharacters;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model.Gods;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -55,7 +56,29 @@ namespace GodsWill_ASCIIRPG
         #endregion
 
         private AI intelligence;
-        
+
+        private Pg.Level? currentLevel;
+        public override Pg.Level CurrentLevel
+        {
+            get
+            {
+                if (currentLevel == null)
+                {
+                    var currentLevels = this.Attributes(typeof(EquivalentLevel), false);
+                    if (currentLevels.Count == 0)
+                    {
+                        currentLevel = Pg.Level.Novice;
+                    }
+                    else
+                    {
+                        currentLevel = ((EquivalentLevel)currentLevels[0]).Level;
+                    }
+                }
+
+                return (Pg.Level)currentLevel;
+            }
+        }
+
         public bool Hostile { get { return this.AlliedTo == Allied.Enemy; } }
         public AI AI { get { return intelligence; } }
         private int perceptionDistance;

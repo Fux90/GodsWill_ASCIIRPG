@@ -10,6 +10,7 @@ using GodsWill_ASCIIRPG.Model.AICharacters;
 using GodsWill_ASCIIRPG.Model.Armors;
 using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.Model.Edibles;
+using GodsWill_ASCIIRPG.Model.Gods;
 using GodsWill_ASCIIRPG.Model.Items;
 using GodsWill_ASCIIRPG.Model.Menus;
 using GodsWill_ASCIIRPG.Model.SceneryItems;
