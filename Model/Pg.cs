@@ -43,8 +43,8 @@ namespace GodsWill_ASCIIRPG
             Stats = new Stats(StatsBuilder.RandomStats());
             var toughMod = Stats[StatsType.Toughness].ModifierOfStat();
             Level = Pg.Level.Novice;
-            CurrentXp = 0;
-            NextXp = 1000;
+            CurrentXp = Pg.XpForLevel(Level);
+            NextXp = Pg.XpForLevel(Level.Next());
             CurrentPf = Pg.healthDice.Max + toughMod;
             MaxPf = Pg.healthDice.Max + toughMod;
             Hunger = Pg.hungerDice.Max * Math.Max(1, toughMod);
@@ -122,7 +122,21 @@ namespace GodsWill_ASCIIRPG
         private int maxLevel;
         
         private int[] xp;
-        public int XP { get { return xp[0]; } private set { xp[0] = value; } }
+        public int XP
+        {
+            get { return xp[0]; }
+            private set
+            {
+                if(CurrentLevel == CurrentLevel.Next())
+                {
+                    xp[0] = xp[1];
+                }
+                else
+                {
+                    xp[0] = value;
+                }
+            }
+        }
         public int NextXP { get { return xp[1]; } private set { xp[1] = value; } }
 
         public override Dice HealthDice
@@ -208,12 +222,13 @@ namespace GodsWill_ASCIIRPG
         {
             XP += xp;
             CheckLevelUp();
+            NotifyListeners(String.Format("Gained {0} xp", xp));
             CharacterSheets.ForEach((sheet) => sheet.NotifyXp(XP, NextXP));
         }
 
         private void CheckLevelUp()
         {
-            if(false)
+            if(XP >= NextXP)
             {
                 LevelUp();
             }
@@ -221,14 +236,9 @@ namespace GodsWill_ASCIIRPG
 
         private void LevelUp()
         {
-            CurrentLevel = (Level)Math.Min(maxLevel, 1 + (int)CurrentLevel);
+            CurrentLevel = CurrentLevel.Next();
             CharacterSheets.ForEach((sheet) => sheet.NotifyLevel(CurrentLevel, God));
-            NextXP = ComputeNextXP();
-        }
-
-        private int ComputeNextXP()
-        {
-            throw new NotImplementedException();
+            NextXP = Pg.XpForLevel(CurrentLevel.Next());
         }
 
         public override void InsertInMap(Map map, Coord newPos, bool overwrite = false)
@@ -520,6 +530,19 @@ namespace GodsWill_ASCIIRPG
             str.AppendLine(Backpack.ToString());
 
             return str.ToString();
+        }
+
+        private static readonly Dictionary<Level, int> xpForLevel = new Dictionary<Level, int>()
+        {
+            {Level.Novice, 0 },
+            {Level.Cleric, 100 },
+            {Level.Master, 10000 },
+            {Level.GrandMaster, 100000 },
+        };
+
+        public static int XpForLevel(Level level)
+        {
+            return xpForLevel[level];
         }
     }
 }

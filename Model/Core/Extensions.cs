@@ -226,5 +226,19 @@ namespace GodsWill_ASCIIRPG.Model.Core
                     return false;
             }
         }
+
+        public static Pg.Level Next(this Pg.Level level)
+        {
+            var levels = (Pg.Level[])Enum.GetValues(typeof(Pg.Level));
+            // Last level available
+            if (levels.Length == 1 + (int)level)
+            {
+                return level;
+            }
+            else
+            {
+                return level + 1;
+            }
+        }
     }
 }

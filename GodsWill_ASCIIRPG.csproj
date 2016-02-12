@@ -58,6 +58,7 @@
     <Compile Include="Control\MerchantController.cs" />
     <Compile Include="Control\PgController.cs" />
     <Compile Include="Control\SpellbookController.cs" />
+    <Compile Include="Model\AICharacters\XPPremium.cs" />
     <Compile Include="Model\Allied.cs" />
     <Compile Include="Model\Animation.cs" />
     <Compile Include="Model\BlobsAnimation.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Model\Items\StackItemTest.cs" />
     <Compile Include="Model\ITriggerable.cs" />
     <Compile Include="Model\IViewable.cs" />
+    <Compile Include="Model\IXPGiveable.cs" />
     <Compile Include="Model\Menus\MainMenu.cs" />
     <Compile Include="Model\Merchant.cs" />
     <Compile Include="Model\PathFinding\AStar.cs" />

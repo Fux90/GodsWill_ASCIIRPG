@@ -25,10 +25,16 @@ namespace GodsWill_ASCIIRPG.Model
             Y = c.Y;
         }
 
+        /// <summary>
+        /// Returns a random position inside a map, given its dimensions
+        /// </summary>
+        /// <param name="width">Width of Map</param>
+        /// <param name="height">Height of Map</param>
+        /// <returns>Coordinate (x,y) | x in [0; width-1], y in [0; height-1]</returns>
         public static Coord Random(int width, int height)
         {
-            int x = Dice.Throws(width + 1) - 1;
-            int y = Dice.Throws(height + 1) - 1;
+            int x = Dice.Throws(width) - 1;
+            int y = Dice.Throws(height) - 1;
 
             return new Coord() { X = x, Y = y };
         }

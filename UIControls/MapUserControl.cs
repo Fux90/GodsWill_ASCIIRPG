@@ -10,7 +10,8 @@
 #define DEBUG_PRINT_MAP // On print button, it saves a txt representation of the map
 #define CHECK_SAME_Y_IN_PRITING
 #define LOG_STAMPS
-#define DEBUG_BLOCKED
+#define DEBUG_BLOCKED // Prints for how many turns character must wait
+#define DEBUG_GAIN_EXPERIENCE // On F12 Gives player 10 xp
 
 using System;
 using System.Collections.Generic;
@@ -932,6 +933,11 @@ namespace GodsWill_ASCIIRPG.UIControls
 #if DEBUG_PRINT_MAP
                             case Keys.PrintScreen:
                                 controlledPg.Map.SaveToTxt(@"currentMap.txt");
+                                break;
+#endif
+#if DEBUG_GAIN_EXPERIENCE
+                            case Keys.F12:
+                                controlledPg.GainExperience((int)Math.Pow(10.0, 1 + (int)controlledPg.CurrentLevel));
                                 break;
 #endif
 #region DEITY

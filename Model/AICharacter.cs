@@ -1,4 +1,5 @@
 using GodsWill_ASCIIRPG.Model;
+using GodsWill_ASCIIRPG.Model.AICharacters;
 using GodsWill_ASCIIRPG.Model.Core;
 using System;
 using System.Collections.Generic;
@@ -42,8 +43,8 @@ namespace GodsWill_ASCIIRPG
     }
 
     [Serializable]
-	public abstract class AICharacter : Character, ISerializable
-	{
+	public abstract class AICharacter : Character, ISerializable, IXPGiveable
+    {
         #region SERIALIZATION_CONST_NAMES
         const string hostileSerializationName = "hostile";
         const string aiTypeSerializationName = "type";
@@ -52,8 +53,6 @@ namespace GodsWill_ASCIIRPG
         const string perceptionDistanceSerializationName = "perceptionDist";
         const string squaredPerceptionDistanceSerializationName = "sqrPerceptionDist";
         #endregion
-
-        public delegate int XPCalculationMethod(Character pg, Character monster);
 
         private AI intelligence;
         
@@ -168,19 +167,6 @@ namespace GodsWill_ASCIIRPG
             info.AddValue(squaredPerceptionDistanceSerializationName, squaredPerceptionDistance, typeof(int));
         }
 
-        private static XPCalculationMethod xpCalculation;
-        public static XPCalculationMethod XpCalculation
-        {
-            get
-            {
-                return xpCalculation != null ? xpCalculation : (pg, monster) => 0;
-            }
-            protected set
-            {
-                xpCalculation = value;
-            }
-        }
-
         public override bool Interaction(Atom interactor)
         {
             var interactorType = interactor.GetType();
@@ -211,6 +197,17 @@ namespace GodsWill_ASCIIRPG
 
         public AI.SensingMethod SensePg { get; protected set; }
 
+        public int XPPremium
+        {
+            get
+            {
+                var attributes = (XPPremium[])this.GetType().GetCustomAttributes(typeof(XPPremium), false);
+                return attributes.Length == 0
+                        ? 0
+                        : attributes[0].Value;
+            }
+        }
+
         public override void Die(IFighter pg)
         {
             var killerType = pg.GetType();
@@ -220,7 +217,7 @@ namespace GodsWill_ASCIIRPG
             {
                 var charPg = pg as Pg;
                 // Pg Xp, Gold, Items, etc...
-                charPg.GainExperience(AICharacter.XpCalculation(charPg, this));
+                charPg.GainExperience(this.XPPremium);
                 // Remove from map
             }
             this.Map.Remove(this);
