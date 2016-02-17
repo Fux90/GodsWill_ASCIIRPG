@@ -210,7 +210,7 @@ namespace GodsWill_ASCIIRPG.Model.Spells
             get
             {
                 bool issues;
-                var spell = Create(out issues);
+                var spell = CreateForDescription(out issues);
                 return spell.ToString();
             }
         }
