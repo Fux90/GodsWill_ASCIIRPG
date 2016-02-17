@@ -586,20 +586,20 @@ namespace GodsWill_ASCIIRPG
                 NotifyListeners(String.Format("*kneels to pray*"));
 
                 God.PrayResult res;
-                if (God != Gods.None && (res = God.HearPray()) != God.PrayResult.None)
+                if (God != Gods.None && (res = God.HearPray(this)) != God.PrayResult.None)
                 {
                     var msg = new StringBuilder(String.Format("{0} hears you", God.Name));
 
                     switch (res)
                     {
                         case God.PrayResult.Bad:
-                            msg.Append("but he's very mad at you...");
+                            msg.Append(", but he's very mad at you...");
                             break;
                         case God.PrayResult.Good:
-                            msg.Append("and he decided to grant you his favours");
+                            msg.Append(" and he decided to grant you his favours");
                             break;
                         case God.PrayResult.VeryGood:
-                            msg.Append("and blesses you as his holy champion");
+                            msg.Append(" and blesses you as his holy champion");
                             break;
                     }
 
@@ -675,7 +675,7 @@ namespace GodsWill_ASCIIRPG
         public virtual void RegisterTemporaryMod(TemporaryModifier mod)
         {
             TempModifiers.AddTemporaryModifier(mod);
-            NotifyListeners(String.Format("Received mod {0} [x{1} Turns]", 
+            NotifyListeners(String.Format("Received {0} [x{1} Turns]", 
                             mod.ToString(),
                             mod.TimeToLive));
         }

@@ -116,7 +116,10 @@ namespace GodsWill_ASCIIRPG.Model
 
         public override string ToString()
         {
-            return String.Format("{0}", Bonus.ToString());
+            return String.Format(   "{0} {1} to {2}", 
+                                    Bonus.ToString(),
+                                    this.TypeOfModifier,
+                                    this.What);
         }
     }
 }

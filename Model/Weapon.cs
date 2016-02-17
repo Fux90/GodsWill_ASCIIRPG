@@ -99,6 +99,11 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
+        public static Atom RandomWeapon(Pg.Level level)
+        {
+            throw new NotImplementedException();
+        }
+
         private string specialAttackDescription;
         public string SpecialAttackDescription
         {

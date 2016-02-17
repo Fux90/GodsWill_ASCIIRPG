@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model.Gods
 {
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public abstract class OnPrayResult : Attribute
     {
         public Pg.Level ForLevel { get; private set; }
@@ -17,7 +17,7 @@ namespace GodsWill_ASCIIRPG.Model.Gods
         }
     }
 
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class OnBadPrayResult : OnPrayResult
     {
         public OnBadPrayResult(Pg.Level forLevel)
@@ -27,7 +27,7 @@ namespace GodsWill_ASCIIRPG.Model.Gods
         }
     }
 
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class OnGoodPrayResult : OnPrayResult
     {
         public OnGoodPrayResult(Pg.Level forLevel)
@@ -37,7 +37,7 @@ namespace GodsWill_ASCIIRPG.Model.Gods
         }
     }
 
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class OnVeryGoodPrayResult : OnPrayResult
     {
         public OnVeryGoodPrayResult(Pg.Level forLevel)

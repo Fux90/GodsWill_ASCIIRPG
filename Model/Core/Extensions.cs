@@ -31,7 +31,7 @@ namespace GodsWill_ASCIIRPG.Model.Core
 
         public static string Clean(this string str)
         {
-            return str.Replace("_", "");
+            return str.Split(new string[] { "`" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace("_", "");
         }
 
         public static Label DockFillLabel(  this System.Windows.Forms.Control control, 
@@ -239,6 +239,11 @@ namespace GodsWill_ASCIIRPG.Model.Core
             {
                 return level + 1;
             }
+        }
+
+        public static Pg.Level Previous(this Pg.Level level)
+        {
+            return (Pg.Level)Math.Max(0, (int)level - 1);
         }
     }
 }

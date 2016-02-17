@@ -71,6 +71,7 @@
     <Compile Include="Model\Edibles\Meat.cs" />
     <Compile Include="Model\GeometricItem.cs" />
     <Compile Include="Model\GlowingAnimation.cs" />
+    <Compile Include="Model\Gods\Ares.cs" />
     <Compile Include="Model\Gods\IPrayer.cs" />
     <Compile Include="Model\Gods\OnPrayResults.cs" />
     <Compile Include="Model\IAttacker.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Model\IMerchant.cs" />
     <Compile Include="Model\ISpellcaster.cs" />
     <Compile Include="Model\IStatsProvided.cs" />
+    <Compile Include="Model\Items\Generator.cs" />
     <Compile Include="Model\Items\Gold.cs" />
     <Compile Include="Model\Items\ItemGenerator.cs" />
     <Compile Include="Model\Items\ItemStack.cs" />
