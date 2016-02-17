@@ -1,4 +1,8 @@
-﻿using GodsWill_ASCIIRPG.Model.Core;
+﻿//#define ALL_BONUSES
+//#define HIGHER_BY_TYPE
+#define LAST_BONUS
+
+using GodsWill_ASCIIRPG.Model.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,13 +49,43 @@ namespace GodsWill_ASCIIRPG.Model
         public T GetBonus<T>(TemporaryModifier.ModFor ApplyableFor,
                                 summingTMethod<T> sumMethod,
                                 T baseBonus = default(T))
+            where T : IComparable
         {
+#if ALL_BONUSES
             var modT = modifiers.Where(mod => { var attr = mod.GetType().GetCustomAttributes(typeof(ApplyableTo));
                                                 return attr.Count( a => ((ApplyableTo)a).What == ApplyableFor) > 0; })
                                 .Where(mod => mod.GetType()
                                                 .IsSubclassOf(typeof(TemporaryModifier<T>)))
-                                                .Select(mod => (TemporaryModifier<T>)mod)
-                                                .ToList();
+                                .Select(mod => (TemporaryModifier<T>)mod)
+                                .ToList();
+#elif HIGHER_BY_TYPE
+            var modT = modifiers.Where(mod => { var attr = mod.GetType().GetCustomAttributes(typeof(ApplyableTo));
+                                                return attr.Count(a => ((ApplyableTo)a).What == ApplyableFor) > 0;})
+                                .Where(mod => mod.GetType()
+                                                .IsSubclassOf(typeof(TemporaryModifier<T>)))
+                                .GroupBy(e => e.GetType())
+                                .Select(group => (TemporaryModifier<T>)group
+                                                    .OrderByDescending(m => ((TemporaryModifier<T>)m).Bonus)
+                                                    .First())
+                                .ToList();
+#elif LAST_BONUS
+            var modT = modifiers.Where(mod => { var attr = mod.GetType().GetCustomAttributes(typeof(ApplyableTo));
+                                                return attr.Count(a => ((ApplyableTo)a).What == ApplyableFor) > 0;})
+                                .Where(mod => mod.GetType()
+                                                .IsSubclassOf(typeof(TemporaryModifier<T>)))
+                                .GroupBy(e => e.GetType())
+                                .Select(group => (TemporaryModifier<T>)group.Last())
+                                .ToList();
+#else
+            var modT = modifiers.Where(mod => {
+                var attr = mod.GetType().GetCustomAttributes(typeof(ApplyableTo));
+                return attr.Count(a => ((ApplyableTo)a).What == ApplyableFor) > 0;
+            })
+                    .Where(mod => mod.GetType()
+                                    .IsSubclassOf(typeof(TemporaryModifier<T>)))
+                    .Select(mod => (TemporaryModifier<T>)mod)
+                    .ToList();
+#endif
             T totalBonus = baseBonus;
             modT.Where(mod => mod.What == ApplyableFor).ToList()
                 .ForEach(mod => totalBonus = sumMethod(totalBonus, mod.Bonus));
