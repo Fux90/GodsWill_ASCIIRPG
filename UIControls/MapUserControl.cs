@@ -11,7 +11,7 @@
 #define CHECK_SAME_Y_IN_PRITING
 #define LOG_STAMPS
 #define DEBUG_BLOCKED // Prints for how many turns character must wait
-//#define DEBUG_GAIN_EXPERIENCE // On F12 Gives player 10 xp
+#define DEBUG_GAIN_EXPERIENCE // On F12 Gives player 10 xp
 
 using System;
 using System.Collections.Generic;

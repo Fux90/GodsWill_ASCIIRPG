@@ -7,6 +7,7 @@ using System.Text;
 using GodsWill_ASCIIRPG.Model.Core;
 using System.Runtime.Serialization;
 using GodsWill_ASCIIRPG.Model.Items;
+using System.Reflection;
 
 namespace GodsWill_ASCIIRPG
 {
@@ -146,6 +147,39 @@ namespace GodsWill_ASCIIRPG
         public override bool Interaction(Atom interactor)
         {
             throw new NotImplementedException();
+        }
+
+        public static Item GenerateRandom(Pg.Level level)
+        {
+            Item item = null;
+
+            var type = typeof(Item);
+            var itemClasses = AppDomain.CurrentDomain.GetAssemblies()
+                                        .SelectMany(s => s.GetTypes())
+                                        .Where(p => type.IsAssignableFrom(p)).ToArray();
+
+            var ix = 0; // TODO: Random index generation --> i.e. The type of item
+
+            var luck = Dice.Throws(new Dice(20));
+            var actualLevel = level;
+            
+            if(luck < 3)
+            {
+                actualLevel = actualLevel.Previous();
+            }
+            if(luck > 18)
+            {
+                actualLevel = actualLevel.Next();
+            }
+
+            var method = itemClasses[ix].GetMethods().Where(m => m.GetCustomAttributes(typeof(Generator), false).Length > 0).FirstOrDefault();
+
+            if (method == null)
+            {
+                throw new Exception("Unexpected null method");
+            }
+
+            return (Item)method.Invoke(null, new object[] { actualLevel });
         }
     }
 }

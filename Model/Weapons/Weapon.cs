@@ -1,5 +1,7 @@
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model.Items;
+using GodsWill_ASCIIRPG.Model.Weapons;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -97,11 +99,6 @@ namespace GodsWill_ASCIIRPG
                 ? WeaponSpecialAttacks.NoSpecialAttack
                 : specialAttack;
             }
-        }
-
-        public static Atom RandomWeapon(Pg.Level level)
-        {
-            throw new NotImplementedException();
         }
 
         private string specialAttackDescription;
@@ -202,6 +199,28 @@ namespace GodsWill_ASCIIRPG
             str.AppendLine(damage.ToString()); //Damage calculates random damage
             str.AppendLine(SpecialAttackDescription);
             return str.ToString();
+        }
+
+        [Generator]
+        public static Weapon RandomWeapon(Pg.Level level)
+        {
+            var weaponsType = typeof(Weapon);
+            var weapons = AppDomain.CurrentDomain.GetAssemblies()
+                                    .SelectMany(s => s.GetTypes())
+                                    .Where(w => weaponsType.IsAssignableFrom(w))
+                                    .Where(w => {
+                                        var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
+                                        return attribute != null && ((Prerequisite)attribute).MinimumLevel == level;
+                                    })
+                                    .ToArray();
+            if(weapons.Length == 0)
+            {
+                throw new Exception("Unexpected No Weapon");
+            }
+
+            var ix = Dice.Throws(new Dice(weapons.Length)) - 1;
+
+            return (Weapon)Activator.CreateInstance(weapons[ix]);
         }
     }
 }

@@ -57,21 +57,21 @@ namespace GodsWill_ASCIIRPG.Model.Gods
         [OnGoodPrayResult(Pg.Level.Cleric)]
         public void GiveGoodMod(IPrayer prayer)
         {
-            prayer.RegisterTemporaryMod(new DivineModifier<int>(5, TemporaryModifier.ModFor.CA, 2));
+            prayer.RegisterTemporaryMod(new DivineModifier<int>(Dice.Throws(new Dice(6)), TemporaryModifier.ModFor.CA, 2));
         }
 
         [OnBadPrayResult(Pg.Level.Novice)]
         [OnBadPrayResult(Pg.Level.Cleric)]
         public void GiveBadMod(IPrayer prayer)
         {
-            prayer.RegisterTemporaryMod(new DivineModifier<int>(5, TemporaryModifier.ModFor.CA, -2));
+            prayer.RegisterTemporaryMod(new DivineModifier<int>(Dice.Throws(new Dice(6)), TemporaryModifier.ModFor.CA, -2));
         }
 
         [OnVeryGoodPrayResult(Pg.Level.Novice)]
         [OnVeryGoodPrayResult(Pg.Level.Cleric)]
         public void GiveVeryGoodMod(IPrayer prayer)
         {
-            prayer.RegisterTemporaryMod(new DivineModifier<int>(5, TemporaryModifier.ModFor.CA, 4));
+            prayer.RegisterTemporaryMod(new DivineModifier<int>(Dice.Throws(new Dice(6)), TemporaryModifier.ModFor.CA, 4));
         }
         #endregion
 
@@ -87,14 +87,14 @@ namespace GodsWill_ASCIIRPG.Model.Gods
         [OnBadPrayResult(Pg.Level.GrandMaster)]
         public void GiveVeryBadMod(IPrayer prayer)
         {
-            prayer.RegisterTemporaryMod(new DivineModifier<int>(5, TemporaryModifier.ModFor.CA, 2));
+            prayer.RegisterTemporaryMod(new DivineModifier<int>(Dice.Throws(new Dice(4), 2), TemporaryModifier.ModFor.CA, -15));
         }
 
         [OnVeryGoodPrayResult(Pg.Level.Master)]
         [OnVeryGoodPrayResult(Pg.Level.GrandMaster)]
         public void GiveSomething(IPrayer prayer)
         {
-            prayer.RegisterTemporaryMod(new DivineModifier<int>(5, TemporaryModifier.ModFor.CA, 2));
+            Item.GenerateRandom(prayer.CurrentLevel);
         }
         #endregion
 
