@@ -677,7 +677,7 @@ namespace GodsWill_ASCIIRPG
             TempModifiers.AddTemporaryModifier(mod);
             NotifyListeners(String.Format("Received {0} [x{1} Turns]", 
                             mod.ToString(),
-                            mod.TimeToLive));
+                            mod.TimeToLive - 1));
         }
 
         public virtual void RegisterView(ISheetViewer sheet)

@@ -9,6 +9,7 @@ namespace GodsWill_ASCIIRPG.Model.Items
     public abstract class ItemGenerator
     {
         public abstract Item GenerateRandom(Pg.Level level, Coord position);
+        public abstract Type GeneratedType();
     }
 
     public abstract class ItemGenerator<T> : ItemGenerator
@@ -17,6 +18,11 @@ namespace GodsWill_ASCIIRPG.Model.Items
         public override Item GenerateRandom(Pg.Level level, Coord position)
         {
             return (Item)GenerateTypedRandom(level, position);
+        }
+
+        public override Type GeneratedType()
+        {
+            return typeof(T);
         }
 
         public abstract T GenerateTypedRandom(Pg.Level level, Coord position);

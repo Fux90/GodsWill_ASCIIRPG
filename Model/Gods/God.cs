@@ -1,9 +1,9 @@
 ﻿#define SHOW_DICE_RESULT
 
-//#define DEBUG_ALWAY_BAD
-//#define DEBUG_ALWAY_GOOD
-//#define DEBUG_ALWAY_VERY_GOOD
-//#define DEBUG_ALWAY_NONE
+//#define DEBUG_ALWAYS_BAD
+//#define DEBUG_ALWAYS_GOOD
+//#define DEBUG_ALWAYS_VERY_GOOD
+//#define DEBUG_ALWAYS_NONE
 
 using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.Model.Gods;
@@ -167,13 +167,13 @@ namespace GodsWill_ASCIIRPG.Model.Gods
         private PrayResult internalPray(IPrayer prayer)
         {
             // TODO: random value of PrayResul according to level and dice throw
-#if DEBUG_ALWAY_BAD
+#if DEBUG_ALWAYS_BAD
             return PrayResult.Bad;
-#elif DEBUG_ALWAY_GOOD
+#elif DEBUG_ALWAYS_GOOD
             return PrayResult.Good;
-#elif DEBUG_ALWAY_VERY_GOOD
+#elif DEBUG_ALWAYS_VERY_GOOD
             return PrayResult.VeryGood;
-#elif DEBUG_ALWAY_NONE
+#elif DEBUG_ALWAYS_NONE
             return PrayResult.None;
 #else
             var thrs = percentageOfSuccessByLevel[(int)prayer.CurrentLevel].ToList();

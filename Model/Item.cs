@@ -1,3 +1,5 @@
+//#define FIXED_OBJECT_TYPE
+
 using GodsWill_ASCIIRPG.Model;
 using System;
 using System.Collections.Generic;
@@ -149,17 +151,35 @@ namespace GodsWill_ASCIIRPG
             throw new NotImplementedException();
         }
 
-        public static Item GenerateRandom(Pg.Level level)
+        public static Item GenerateRandom(Pg.Level level, Coord position)
         {
-            Item item = null;
-
-            var type = typeof(Item);
-            var itemClasses = AppDomain.CurrentDomain.GetAssemblies()
+            var generableItemsTypes = AppDomain.CurrentDomain.GetAssemblies()
+                                                .SelectMany(s => s.GetTypes())
+                                                .Where(p => p.GetCustomAttributes(typeof(RandomGenerable), false).Count() == 1)
+                                                .ToArray();
+#if FIXED_OBJECT_TYPE
+            var ixGenerableItemsTypes = 0;
+#else
+            var ixGenerableItemsTypes = Dice.Throws(new Dice(generableItemsTypes.Length)) - 1;
+#endif
+            // Generator given family object
+            var itemFamily = generableItemsTypes[ixGenerableItemsTypes];
+            var type = typeof(ItemGenerator<>);
+            var itemGeneratorClasses = AppDomain.CurrentDomain.GetAssemblies()
                                         .SelectMany(s => s.GetTypes())
-                                        .Where(p => type.IsAssignableFrom(p)).ToArray();
-
-            var ix = 0; // TODO: Random index generation --> i.e. The type of item
-
+                                        .Where(p => 
+                                        {
+                                            var args = type.GetGenericArguments();
+                                            return args.Length > 0
+                                                    && type.IsAssignableFrom(p)
+                                                    && ((ItemGenerator)Activator.CreateInstance(p)).GeneratedType().IsAssignableFrom(itemFamily);
+                                        })
+                                        .ToArray();
+#if FIXED_OBJECT_TYPE
+            var ix = 0;
+#else
+            var ix = Dice.Throws(new Dice(itemGeneratorClasses.Length)) - 1;
+#endif
             var luck = Dice.Throws(new Dice(20));
             var actualLevel = level;
             
@@ -172,14 +192,8 @@ namespace GodsWill_ASCIIRPG
                 actualLevel = actualLevel.Next();
             }
 
-            var method = itemClasses[ix].GetMethods().Where(m => m.GetCustomAttributes(typeof(Generator), false).Length > 0).FirstOrDefault();
-
-            if (method == null)
-            {
-                throw new Exception("Unexpected null method");
-            }
-
-            return (Item)method.Invoke(null, new object[] { actualLevel });
+            var generator = (ItemGenerator)Activator.CreateInstance(itemGeneratorClasses[ix].MakeGenericType(itemFamily));
+            return generator.GenerateRandom(level, position);
         }
     }
 }

@@ -6,11 +6,20 @@ using System.Threading.Tasks;
 using System.Drawing;
 using GodsWill_ASCIIRPG.Model.Core;
 using System.Runtime.Serialization;
+using GodsWill_ASCIIRPG.Model.Items;
 
 namespace GodsWill_ASCIIRPG.Model.Weapons
 {
+    public class LongSwordGenerator : ItemGenerator<LongSword>
+    {
+        public override LongSword GenerateTypedRandom(Pg.Level level, Coord position)
+        {
+            return new LongSword(position: position);
+        }
+    }
+
     [Serializable]
-    class LongSword : Weapon
+    public class LongSword : Weapon
     {
         public LongSword(   string name = "Long Sword", 
                             Coord position = new Coord(),
@@ -41,26 +50,5 @@ namespace GodsWill_ASCIIRPG.Model.Weapons
         }
 
         public override int BonusOnTPC { get{ return 1; } }
-    }
-
-    [Serializable]
-    class FlamingLongSword : LongSword
-    {
-        public FlamingLongSword(string name = "Flaming Long Sword", Coord position = new Coord())
-            : base(name,
-                   position: position,
-                   specialAttack: Weapon.WeaponSpecialAttacks.Flaming,
-                   specialAttackDescription: Weapon.WeaponSpecialAttacks.Flaming.WeaponDescription())
-        {
-            
-        }
-
-        public FlamingLongSword(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-
-        }
-
-        public override int BonusOnTPC { get { return 2; } }
     }
 }

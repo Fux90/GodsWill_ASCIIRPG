@@ -80,7 +80,19 @@ namespace GodsWill_ASCIIRPG.Model.Gods
         [OnGoodPrayResult(Pg.Level.GrandMaster)]
         public void GiveWeapon(IPrayer prayer)
         {
-            ((Atom)prayer).Map.Insert(Weapon.RandomWeapon(prayer.CurrentLevel.Previous()));
+            bool issues;
+            var aPrayer = (Atom)prayer;
+            var positionFree = aPrayer.FirstNearFree(out issues);
+
+            if (!issues)
+            {
+                var weapon = Weapon.GenerateRandom(prayer.CurrentLevel.Previous(), positionFree);
+                aPrayer.Map.Insert(weapon);
+            }
+            else
+            {
+                aPrayer.NotifyListeners("No space around you to give a gift");
+            }
         }
 
         [OnBadPrayResult(Pg.Level.Master)]
@@ -94,7 +106,19 @@ namespace GodsWill_ASCIIRPG.Model.Gods
         [OnVeryGoodPrayResult(Pg.Level.GrandMaster)]
         public void GiveSomething(IPrayer prayer)
         {
-            Item.GenerateRandom(prayer.CurrentLevel);
+            bool issues;
+            var aPrayer = (Atom)prayer;
+            var positionFree = aPrayer.FirstNearFree(out issues);
+
+            if (!issues)
+            {
+                var item = Item.GenerateRandom(prayer.CurrentLevel, positionFree);
+                aPrayer.Map.Insert(item);
+            }
+            else
+            {
+                aPrayer.NotifyListeners("No space around you to give a gift");
+            }
         }
         #endregion
 

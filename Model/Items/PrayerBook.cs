@@ -129,6 +129,7 @@ namespace GodsWill_ASCIIRPG.Model.Items
         }
     }
 
+    [RandomGenerable]
     [Serializable]
     public class PrayerBook : Item, ISerializable
     {
@@ -216,6 +217,7 @@ namespace GodsWill_ASCIIRPG.Model.Items
         }
     }
 
+    [RandomGenerable]
     [Serializable]
     public class VoidPrayerBook : PrayerBook
     {

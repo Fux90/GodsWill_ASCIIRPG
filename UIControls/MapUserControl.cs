@@ -939,6 +939,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                             case Keys.F12:
                                 controlledPg.GainExperience((int)Math.Pow(10.0, 1 + (int)controlledPg.CurrentLevel));
                                 break;
+                            case Keys.F10:
+                                controlledPg.GainExperience(9900);
+                                break;
 #endif
 #region DEITY
                             case Keys.K:

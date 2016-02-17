@@ -116,7 +116,7 @@ namespace GodsWill_ASCIIRPG.Model
 
         protected TemporaryModifier(int ttl, ModFor applyTo)
         {
-            TimeToLive = ttl;
+            TimeToLive = ttl + 1;
             What = applyTo;
         }
 

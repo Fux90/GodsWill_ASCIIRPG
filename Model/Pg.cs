@@ -229,7 +229,7 @@ namespace GodsWill_ASCIIRPG
 
         public override void GainExperience(int xp)
         {
-            XP += xp;
+            XP = XP + xp;
             CheckLevelUp();
             NotifyListeners(String.Format("Gained {0} xp", xp));
             CharacterSheets.ForEach((sheet) => sheet.NotifyXp(XP, NextXP));

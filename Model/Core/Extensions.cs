@@ -245,5 +245,24 @@ namespace GodsWill_ASCIIRPG.Model.Core
         {
             return (Pg.Level)Math.Max(0, (int)level - 1);
         }
+
+        public static Coord FirstNearFree(this Atom atom, out bool issues)
+        {
+            issues = false;
+
+            var dirs = (Direction[])Enum.GetValues(typeof(Direction));
+
+            foreach (var dir in dirs)
+            {
+                var newPos = atom.Position.CoordFromDirection(dir);
+                if (atom.Map[newPos].Walkable)
+                {
+                    return newPos;
+                }
+            }
+
+            issues = true;
+            return new Coord();
+        }
     }
 }
