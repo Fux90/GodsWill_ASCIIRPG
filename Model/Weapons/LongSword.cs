@@ -10,7 +10,7 @@ using GodsWill_ASCIIRPG.Model.Items;
 
 namespace GodsWill_ASCIIRPG.Model.Weapons
 {
-    public class LongSwordGenerator : ItemGenerator<LongSword>
+    public class LongSwordBuilder : ItemGenerator<LongSword>
     {
         public override LongSword GenerateTypedRandom(Pg.Level level, Coord position)
         {

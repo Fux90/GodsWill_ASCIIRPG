@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model.Weapons
 {
-    public class FlamingLongSwordGenerator : ItemGenerator<FlamingLongSword>
+    public class FlamingLongSwordBuilder : ItemGenerator<FlamingLongSword>
     {
         public override FlamingLongSword GenerateTypedRandom(Pg.Level level, Coord position)
         {

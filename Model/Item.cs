@@ -164,16 +164,11 @@ namespace GodsWill_ASCIIRPG
 #endif
             // Generator given family object
             var itemFamily = generableItemsTypes[ixGenerableItemsTypes];
-            var type = typeof(ItemGenerator<>);
+            var type2 = typeof(ItemGenerator<>).MakeGenericType(new Type[] { itemFamily });
+            //var type = typeof(ItemGenerator);
             var itemGeneratorClasses = AppDomain.CurrentDomain.GetAssemblies()
                                         .SelectMany(s => s.GetTypes())
-                                        .Where(p => 
-                                        {
-                                            var args = type.GetGenericArguments();
-                                            return args.Length > 0
-                                                    && type.IsAssignableFrom(p)
-                                                    && ((ItemGenerator)Activator.CreateInstance(p)).GeneratedType().IsAssignableFrom(itemFamily);
-                                        })
+                                        .Where(p => type2.IsAssignableFrom(p) && !p.IsAbstract)
                                         .ToArray();
 #if FIXED_OBJECT_TYPE
             var ix = 0;
@@ -192,7 +187,7 @@ namespace GodsWill_ASCIIRPG
                 actualLevel = actualLevel.Next();
             }
 
-            var generator = (ItemGenerator)Activator.CreateInstance(itemGeneratorClasses[ix].MakeGenericType(itemFamily));
+            var generator = (ItemGenerator)Activator.CreateInstance(itemGeneratorClasses[ix]);
             return generator.GenerateRandom(level, position);
         }
     }
