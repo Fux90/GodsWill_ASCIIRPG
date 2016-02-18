@@ -16,23 +16,30 @@ namespace GodsWill_ASCIIRPG
         public override Weapon GenerateTypedRandom(Pg.Level level, Coord position)
         {
             var weaponsType = typeof(Weapon);
-            
+
             // Requested power
-            var weapons = AppDomain.CurrentDomain.GetAssemblies()
+            var allWeapons = AppDomain.CurrentDomain.GetAssemblies()
                             .SelectMany(s => s.GetTypes())
-                            .Where(w => weaponsType.IsAssignableFrom(w))
-                            .Where(w =>
-                            {
-                                var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
-                                return attribute != null && ((Prerequisite)attribute).MinimumLevel == level;
-                            })
+                            .Where(w => weaponsType.IsAssignableFrom(w)
+                                    && !w.IsNestedPrivate
+                                    && !w.IsAbstract)
+                            //.Where(w =>
+                            //{
+                            //    var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
+                            //    return attribute != null && ((Prerequisite)attribute).MinimumLevel == level;
+                            //})
                             .ToArray();
+            var weapons = allWeapons.Where(w => 
+                                    {
+                                        var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
+                                        return attribute != null && ((Prerequisite)attribute).MinimumLevel == level;
+                                    })
+                                    .ToArray();
+
             // Lesser power
             if (weapons.Length == 0)
             {
-                weapons = AppDomain.CurrentDomain.GetAssemblies()
-                            .SelectMany(s => s.GetTypes())
-                            .Where(w => weaponsType.IsAssignableFrom(w))
+                weapons =   allWeapons
                             .Where(w =>
                             {
                                 var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
@@ -43,11 +50,7 @@ namespace GodsWill_ASCIIRPG
             // No prerequisite
             if (weapons.Length == 0)
             {
-                weapons = AppDomain.CurrentDomain.GetAssemblies()
-                            .SelectMany(s => s.GetTypes())
-                            .Where(w => weaponsType.IsAssignableFrom(w)
-                                        && !weaponsType.IsAbstract
-                                        && !weaponsType.IsNestedPrivate)
+                weapons =   allWeapons
                             .Where(w => w.GetCustomAttributes(typeof(Prerequisite), false).Count() == 0)
                             .ToArray();
             }
@@ -59,7 +62,18 @@ namespace GodsWill_ASCIIRPG
 
             var ix = Dice.Throws(new Dice(weapons.Length)) - 1;
 
-            return (Weapon)Activator.CreateInstance(weapons[ix]);
+            var abstractGeneratorType = typeof(ItemGenerator<>).MakeGenericType(new Type[] { weapons[ix] });
+            var generatorType = AppDomain.CurrentDomain.GetAssemblies()
+                                                       .SelectMany(s => s.GetTypes())
+                                                       .Where(wg => abstractGeneratorType.IsAssignableFrom(wg)
+                                                               && !wg.IsNestedPrivate
+                                                               && !wg.IsAbstract).FirstOrDefault();
+            if(generatorType == null)
+            {
+                throw new Exception("Unexpected No Generator");
+            }
+
+            return (Weapon)((ItemGenerator)Activator.CreateInstance(generatorType)).GenerateRandom(level, position);
         }
     }
 
