@@ -45,6 +45,9 @@ namespace GodsWill_ASCIIRPG
         const string alliedToSerializableName = "alliedTo";
         #endregion
 
+        private const int baseCA = 10;
+        private const int minCA = 1;
+
         protected enum HpType
         {
             Current,
@@ -85,11 +88,12 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                return 10 
-                        + EmbracedShield.BonusCA 
-                        + Stats[StatsType.Agility].ModifierOfStat()
-                        + TempModifiers.GetBonus<int>(  TemporaryModifier.ModFor.CA,
-                                                        (a,b) => a + b);
+                return Math.Max(minCA,
+                                baseCA 
+                                + EmbracedShield.BonusCA 
+                                + Stats[StatsType.Agility].ModifierOfStat()
+                                + TempModifiers.GetBonus<int>(  TemporaryModifier.ModFor.CA,
+                                                                (a,b) => a + b));
             }
         }
 
@@ -97,11 +101,12 @@ namespace GodsWill_ASCIIRPG
         {
             get
             {
-                return 10 
-                        + EmbracedShield.BonusSpecialCA 
-                        + Stats[StatsType.Mental]
-                        + TempModifiers.GetBonus<int>(TemporaryModifier.ModFor.CASpecial,
-                                                        (a, b) => a + b);
+                return Math.Max(minCA,
+                                baseCA 
+                                + EmbracedShield.BonusSpecialCA 
+                                + Stats[StatsType.Mental]
+                                + TempModifiers.GetBonus<int>(TemporaryModifier.ModFor.CASpecial,
+                                                                (a, b) => a + b));
             }
         }
 
