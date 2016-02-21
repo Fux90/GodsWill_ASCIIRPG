@@ -14,40 +14,129 @@ namespace GodsWill_ASCIIRPG.UIControls
     public partial class CommandHelpUserControl : UserControl, ICommandHelpViewer
     {
         // Key + CombinationOf([Ctrl|Shift|Alt]) -> Command string description
-        readonly private Dictionary<Keys, ModifierCommands[]> commands =
-            new Dictionary<Keys, ModifierCommands[]>()
+        readonly private CommandLine[] commands =
+            new CommandLine[]
             {
+                new CommandLine()
                 {
-                    Keys.W,
-                    new ModifierCommands[]
-                    {
-                        new ModifierCommands(null, "Move up")
-                    }
+                    Keys = new Keys[]{ Keys.F1},
+                    Mods = new ModifierCommands(
+                        null,
+                        "Help")
                 },
+                new CommandLine()
                 {
-                    Keys.A,
-                    new ModifierCommands[]
-                    {
-                        new ModifierCommands(null, "Move left")
-                    }
+                    Keys = new Keys[]{ Keys.W, Keys.A, Keys.S, Keys.D },
+                    Mods = new ModifierCommands(null, "Move up/left/down/right")
                 },
+                new CommandLine()
                 {
-                    Keys.S,
-                    new ModifierCommands[]
-                    {
-                        new ModifierCommands(null, "Move down")
-                    }
+                    Keys = new Keys[]{ Keys.S },
+                    Mods = new ModifierCommands(
+                        new Keys[] { Keys.Control },
+                        "Save game")
                 },
+                new CommandLine()
                 {
-                    Keys.D,
-                    new ModifierCommands[]
-                    {
-                        new ModifierCommands(null, "Move right")
-                    }
+                    Keys = new Keys[]{ Keys.S },
+                    Mods = new ModifierCommands(
+                        new Keys[] { Keys.Shift },
+                        "Open spellbook")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.G },
+                    Mods = new ModifierCommands(
+                        null,
+                        "Grab from the ground")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.I },
+                    Mods = new ModifierCommands(
+                        null,
+                        "Open backpack")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.P },
+                    Mods = new ModifierCommands(
+                        null,
+                        "Put on armor")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.P },
+                    Mods = new ModifierCommands(
+                        new Keys[] { Keys.Control},
+                        "Put off armor")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.B },
+                    Mods = new ModifierCommands(
+                        null,
+                        "Handle shield")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.B },
+                    Mods = new ModifierCommands(
+                        new Keys[] { Keys.Control},
+                        "Unhandle shield")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.H },
+                    Mods = new ModifierCommands(
+                        null,
+                        "Handle weapon")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.H },
+                    Mods = new ModifierCommands(
+                        new Keys[] { Keys.Control},
+                        "Unhandle weapon")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.H },
+                    Mods = new ModifierCommands(
+                        new Keys[] { Keys.Shift},
+                        "Activate/Deactivate weapon special power")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.U },
+                    Mods = new ModifierCommands(
+                        null,
+                        "Use object")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.K },
+                    Mods = new ModifierCommands(
+                        null,
+                        "Kneel to pray")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.X },
+                    Mods = new ModifierCommands(
+                        null,
+                        "Explore")
+                },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.Enter, Keys.Add },
+                    Mods = new ModifierCommands(
+                        null,
+                        "Confirm single/multiple selection")
                 },
             };
 
-        private List<CommandLine> CommandStrings;
+        private List<CommandLineString> CommandStrings;
 
         private const float charSize = 12.0f;
         private const float titleFontSize = 1.5f * charSize;
@@ -125,32 +214,39 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         private void BuildCommandStrings()
         {
-            CommandStrings = new List<CommandLine>();
+            CommandStrings = new List<CommandLineString>();
 
-            foreach (var key in commands.Keys)
+            foreach (CommandLine command in commands)
             {
-                var modToCommand = commands[key];
+                var _keys = command.Keys;
+                var modToCommand = command.Mods;
 
-                foreach (var modLst in modToCommand)
+                var keyStr = new StringBuilder(_keys[0].ToString());
+
+                for (int i = 1; i < _keys.Length; i++)
                 {
-                    var keys = new StringBuilder(key.ToString());
-                    var mods = modLst.Mods;
-
-                    if (mods != null && mods.Length != 0)
-                    {
-                        for (int i = 0; i < mods.Length; i++)
-                        {
-                            keys.AppendFormat("{0}+{1}", mods[i], keys.ToString());
-                        }
-                    }
-                    keys.Append(":");
-
-                    CommandStrings.Add(
-                        new CommandLine(
-                            keys: keys.ToString(),
-                            command: modLst.Command
-                        ));
+                    keyStr.AppendFormat("/{0}", _keys[i]);
                 }
+
+                var keys = new StringBuilder();
+                var mods = modToCommand.Mods;
+
+                if (mods != null && mods.Length != 0)
+                {
+                    keys.AppendFormat("{0}+", mods[0]);
+
+                    for (int i = 1; i < mods.Length; i++)
+                    {
+                        keys.AppendFormat("{0}+", mods[i]);
+                    }
+                }
+                keys.AppendFormat("{0}:", keyStr.ToString());
+
+                CommandStrings.Add(
+                    new CommandLineString(
+                        keys: keys.ToString(),
+                        command: modToCommand.Command
+                    ));
             }
         }
 
@@ -190,7 +286,7 @@ namespace GodsWill_ASCIIRPG.UIControls
                                     keyBrush,
                                     new PointF(posX, posY));
 
-                posX += g.MeasureString(keys, TitleFont).Width;
+                posX += g.MeasureString(keys, Font).Width;
 
                 g.DrawString(line.Command,
                             Font,
@@ -283,10 +379,16 @@ namespace GodsWill_ASCIIRPG.UIControls
 
         private class CommandLine
         {
+            public Keys[] Keys {get;set;}
+            public ModifierCommands Mods { get; set; }
+        }
+
+        private class CommandLineString
+        {
             public string Keys { get; private set; }
             public string Command { get; private set; }
 
-            public CommandLine(string keys, string command)
+            public CommandLineString(string keys, string command)
             {
                 Keys = keys;
                 Command = command;
