@@ -174,6 +174,12 @@
     <Compile Include="UIControls\CharacterSheetUserControl.Designer.cs">
       <DependentUpon>CharacterSheetUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="UIControls\CommandHelpUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UIControls\CommandHelpUserControl.Designer.cs">
+      <DependentUpon>CommandHelpUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UIControls\DescriptionList.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -228,6 +234,7 @@
     <Compile Include="View\IAnimationViewer.cs" />
     <Compile Include="View\IAtomListener.cs" />
     <Compile Include="View\IBackpackViewer.cs" />
+    <Compile Include="View\ICommandHelpViewer.cs" />
     <Compile Include="View\IMerchantViewer.cs" />
     <Compile Include="View\IPgViewer.cs" />
     <Compile Include="View\IScrollable.cs" />

@@ -223,6 +223,14 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.selectorCursor.RegisterView(selectorMsgListener);
 
             TransparentPanelCreation();
+
+            KeyUp += MapUserControl_KeyControl;
+            //KeyPress += MapUserControl_KeyPress;
+        }
+
+        private void MapUserControl_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void TransparentPanelCreation()
@@ -722,6 +730,10 @@ namespace GodsWill_ASCIIRPG.UIControls
                     case ControllerCommand.Player_ExitGame:
                         gameForm.Close();
                         break;
+                    case ControllerCommand.Game_ShowHelp:
+                        var help = new CommandHelpUserControl(gameForm);
+                        help.UpmostBring();
+                        break;
                 }
 
                 var blocked = controlledPg.BlockedTurns > 0;
@@ -806,7 +818,8 @@ namespace GodsWill_ASCIIRPG.UIControls
             this.Refresh();
         }
 
-        protected override void OnKeyUp(KeyEventArgs e)
+        //protected override void OnKeyUp(KeyEventArgs e)
+        private void MapUserControl_KeyControl(object sender, KeyEventArgs e)
         {
             var modifiers = 0;
             if (e.Alt) modifiers += _Alt;
@@ -964,7 +977,9 @@ namespace GodsWill_ASCIIRPG.UIControls
                         case Keys.Home:
                             Notify(ControllerCommand.Player_BackToMainMenu);
                             break;
-
+                        case Keys.F1:
+                            Notify(ControllerCommand.Game_ShowHelp);
+                            break;
                         case Keys.X:
                             Notify(ControllerCommand.Player_EnterSelectionMode);
                             break;
