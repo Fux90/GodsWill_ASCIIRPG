@@ -70,7 +70,7 @@ namespace GodsWill_ASCIIRPG
                                                                && !wg.IsAbstract).FirstOrDefault();
             if(generatorType == null)
             {
-                throw new Exception("Unexpected No Generator");
+                throw new Exception("Unexpected No Weapon Generator");
             }
 
             return (Weapon)((ItemGenerator)Activator.CreateInstance(generatorType)).GenerateRandom(level, position);

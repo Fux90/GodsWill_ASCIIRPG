@@ -1,5 +1,6 @@
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
+using GodsWill_ASCIIRPG.Model.Items;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,7 +10,69 @@ using System.Text;
 
 namespace GodsWill_ASCIIRPG
 {
+    public class ArmorBuilder : ItemGenerator<Armor>
+    {
+        public override Armor GenerateTypedRandom(Pg.Level level, Coord position)
+        {
+            var armorType = typeof(Armor);
+
+            // Requested power
+            var allArmors = AppDomain.CurrentDomain.GetAssemblies()
+                            .SelectMany(s => s.GetTypes())
+                            .Where(a => armorType.IsAssignableFrom(a)
+                                    && !a.IsNestedPrivate
+                                    && !a.IsAbstract)
+                            .ToArray();
+            var armors = allArmors.Where(w =>
+            {
+                var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
+                return attribute != null && ((Prerequisite)attribute).MinimumLevel == level;
+            })
+            .ToArray();
+
+            // Lesser power
+            if (armors.Length == 0)
+            {
+                armors =    allArmors
+                            .Where(w =>
+                            {
+                                var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
+                                return attribute != null && ((Prerequisite)attribute).MinimumLevel < level;
+                            })
+                            .ToArray();
+            }
+            // No prerequisite
+            if (armors.Length == 0)
+            {
+                armors = allArmors
+                            .Where(w => w.GetCustomAttributes(typeof(Prerequisite), false).Count() == 0)
+                            .ToArray();
+            }
+
+            if (armors.Length == 0)
+            {
+                throw new Exception("Unexpected No Armor");
+            }
+
+            var ix = Dice.Throws(new Dice(armors.Length)) - 1;
+
+            var abstractGeneratorType = typeof(ItemGenerator<>).MakeGenericType(new Type[] { armors[ix] });
+            var generatorType = AppDomain.CurrentDomain.GetAssemblies()
+                                                       .SelectMany(s => s.GetTypes())
+                                                       .Where(ag => abstractGeneratorType.IsAssignableFrom(ag)
+                                                               && !ag.IsNestedPrivate
+                                                               && !ag.IsAbstract).FirstOrDefault();
+            if (generatorType == null)
+            {
+                throw new Exception("Unexpected No Armor Generator");
+            }
+
+            return (Armor)((ItemGenerator)Activator.CreateInstance(generatorType)).GenerateRandom(level, position);
+        }
+    }
+
     [Serializable]
+    [RandomGenerable]
     public abstract class Armor : Item, ISerializable
     {
         public static readonly string DefaultSymbol = "[";

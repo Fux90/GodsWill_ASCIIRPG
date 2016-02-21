@@ -5,11 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Runtime.Serialization;
+using GodsWill_ASCIIRPG.Model.Items;
 
 namespace GodsWill_ASCIIRPG.Model.Shields
 {
+    public class WoodenShieldBuilder : ItemGenerator<WoodenShield>
+    {
+        public override WoodenShield GenerateTypedRandom(Pg.Level level, Coord position)
+        {
+            return new WoodenShield(position: position);
+        }
+    }
+
     [Serializable]
-    class WoodenShield : Shield
+    public class WoodenShield : Shield
     {
         public WoodenShield(string name = "Wooden Shield", Coord position = new Coord())
             : base( name, 

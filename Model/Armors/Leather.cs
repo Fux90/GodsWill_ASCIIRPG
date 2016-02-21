@@ -5,11 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Runtime.Serialization;
+using GodsWill_ASCIIRPG.Model.Items;
 
 namespace GodsWill_ASCIIRPG.Model.Armors
 {
+    public class LeatherBuilder : ItemGenerator<Leather>
+    {
+        public override Leather GenerateTypedRandom(Pg.Level level, Coord position)
+        {
+            return new Leather(position: position);
+        }
+    }
+
     [Serializable]
-    class Leather : Armor
+    public class Leather : Armor
     {
         public Leather(string name = "Leather", Coord position = new Coord())
             : base(name,

@@ -6,10 +6,73 @@ using System.Drawing;
 using GodsWill_ASCIIRPG.Model;
 using GodsWill_ASCIIRPG.Model.Core;
 using System.Runtime.Serialization;
+using GodsWill_ASCIIRPG.Model.Items;
 
 namespace GodsWill_ASCIIRPG
 {
+    public class ShieldBuilder : ItemGenerator<Shield>
+    {
+        public override Shield GenerateTypedRandom(Pg.Level level, Coord position)
+        {
+            var shieldType = typeof(Shield);
+
+            // Requested power
+            var allShields = AppDomain.CurrentDomain.GetAssemblies()
+                            .SelectMany(s => s.GetTypes())
+                            .Where(s => shieldType.IsAssignableFrom(s)
+                                    && !s.IsNestedPrivate
+                                    && !s.IsAbstract)
+                            .ToArray();
+            var shields = allShields.Where(w =>
+            {
+                var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
+                return attribute != null && ((Prerequisite)attribute).MinimumLevel == level;
+            })
+            .ToArray();
+
+            // Lesser power
+            if (shields.Length == 0)
+            {
+                shields = allShields
+                            .Where(s =>
+                            {
+                                var attribute = s.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
+                                return attribute != null && ((Prerequisite)attribute).MinimumLevel < level;
+                            })
+                            .ToArray();
+            }
+            // No prerequisite
+            if (shields.Length == 0)
+            {
+                shields = allShields
+                            .Where(s => s.GetCustomAttributes(typeof(Prerequisite), false).Count() == 0)
+                            .ToArray();
+            }
+
+            if (shields.Length == 0)
+            {
+                throw new Exception("Unexpected No Shield");
+            }
+
+            var ix = Dice.Throws(new Dice(shields.Length)) - 1;
+
+            var abstractGeneratorType = typeof(ItemGenerator<>).MakeGenericType(new Type[] { shields[ix] });
+            var generatorType = AppDomain.CurrentDomain.GetAssemblies()
+                                                       .SelectMany(s => s.GetTypes())
+                                                       .Where(sg => abstractGeneratorType.IsAssignableFrom(sg)
+                                                               && !sg.IsNestedPrivate
+                                                               && !sg.IsAbstract).FirstOrDefault();
+            if (generatorType == null)
+            {
+                throw new Exception("Unexpected No Shield Generator");
+            }
+
+            return (Shield)((ItemGenerator)Activator.CreateInstance(generatorType)).GenerateRandom(level, position);
+        }
+    }
+
     [Serializable]
+    [RandomGenerable]
     public abstract class Shield : Item
 	{
         public static readonly string DefaultSymbol = "(";
