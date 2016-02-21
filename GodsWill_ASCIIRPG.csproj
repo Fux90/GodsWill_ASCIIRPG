@@ -62,6 +62,8 @@
     <Compile Include="Model\AICharacters\XPPremium.cs" />
     <Compile Include="Model\Allied.cs" />
     <Compile Include="Model\Animation.cs" />
+    <Compile Include="Model\AteEventArgs.cs" />
+    <Compile Include="Model\AttackEventArgs.cs" />
     <Compile Include="Model\BlobsAnimation.cs" />
     <Compile Include="Model\Circle.cs" />
     <Compile Include="Model\Core\TernaryValue.cs" />
@@ -74,6 +76,8 @@
     <Compile Include="Model\Gods\Ares.cs" />
     <Compile Include="Model\Gods\IPrayer.cs" />
     <Compile Include="Model\Gods\OnPrayResults.cs" />
+    <Compile Include="Model\Gods\PrayedEventArgs.cs" />
+    <Compile Include="Model\HpModifyEventArgs.cs" />
     <Compile Include="Model\IAttacker.cs" />
     <Compile Include="Model\IBlockable.cs" />
     <Compile Include="Model\IDamageable.cs" />
@@ -144,6 +148,7 @@
     <Compile Include="Model\Shields\WoodenShield.cs" />
     <Compile Include="Model\Spell.cs" />
     <Compile Include="Model\Spellbook.cs" />
+    <Compile Include="Model\EventArgs\SpellEventArgs.cs" />
     <Compile Include="Model\Spells\BlockSpellcasterFor.cs" />
     <Compile Include="Model\Spells\CureLightWounds.cs" />
     <Compile Include="Model\Spells\Devastation.cs" />
@@ -277,6 +282,7 @@
   <ItemGroup>
     <Content Include="HowTos\HowTo_WriteNewSpell.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>if exist "$(TargetPath).locked" del "$(TargetPath).locked"

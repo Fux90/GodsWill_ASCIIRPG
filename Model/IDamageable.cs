@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    public delegate void HpModify(HpModifyEventArgs e);
+
     public interface IDamageable : IStatsProvided
     {
         int Hp { get; }
@@ -34,5 +36,8 @@ namespace GodsWill_ASCIIRPG.Model
 
         void EmbraceShield(Item shield);
         void DisembraceShield();
+
+        event HpModify Cured;
+        event HpModify Damaged;
     }
 }

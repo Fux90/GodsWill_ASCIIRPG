@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace GodsWill_ASCIIRPG.Model
 {
+    public delegate void SpellCasted(SpellEventArgs e);
+
     public interface ISpellcaster : IStatsProvided, IBlockable
     {
         Spellbook Spellbook { get; }
         void CastSpell(Spell spell, out bool acted);
         bool LearnSpell(SpellBuilder spell, int percentageOfSuccess = 100);
         void ForgetSpell(SpellBuilder spell);
+
+        event SpellCasted SpellCasted;
     }
 }

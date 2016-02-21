@@ -108,6 +108,18 @@ namespace GodsWill_ASCIIRPG
         const string spellbookSerializationName = "spellbook";
         #endregion
 
+        #region EVENTS
+        public event SpellCasted SpellCasted;
+
+        protected void OnSpellCasted(SpellEventArgs e)
+        {
+            if(SpellCasted != null)
+            {
+                SpellCasted(e);
+            }
+        }
+        #endregion
+
         public enum Level
         {
             Novice,

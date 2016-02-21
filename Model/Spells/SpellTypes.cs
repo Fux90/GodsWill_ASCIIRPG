@@ -93,6 +93,9 @@ namespace GodsWill_ASCIIRPG.Model.Spells
             public int MaxHp { get; }
             public Stats Stats { get; }
 
+            public event HpModify Cured;
+            public event HpModify Damaged;
+
             public void DecreaseMaxHp(int deltaHp) { }
             public void Die(IFighter killer) { }
             public void DisembraceShield() { }

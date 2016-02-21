@@ -45,6 +45,55 @@ namespace GodsWill_ASCIIRPG
         const string alliedToSerializableName = "alliedTo";
         #endregion
 
+        #region  EVENTS
+        public event Attacked Attacked;
+        public event HpModify Cured;
+        public event HpModify Damaged;
+        public event Ate Ate;
+        public event Prayed Prayed;
+        
+        protected void OnCured(HpModifyEventArgs e)
+        {
+            if(Cured != null)
+            {
+                Cured(e);
+            }
+        }
+
+        protected void OnDamaged(HpModifyEventArgs e)
+        {
+            if(Damaged != null)
+            {
+                Damaged(e);
+            }
+        }
+
+        protected void OnAttacked(AttackEventArgs e)
+        {
+            if(Attacked != null)
+            {
+                Attacked(e);
+            }
+        }
+
+        protected void OnAte(AteEventArgs e)
+        {
+            if(Ate != null)
+            {
+                Ate(e);
+            }
+        }
+
+        protected void OnPrayed(PrayedEventArgs e)
+        {
+            if(Prayed != null)
+            {
+                Prayed(e);
+            }
+        }
+
+        #endregion
+
         private const int baseCA = 10;
         private const int minCA = 1;
 
