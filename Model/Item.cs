@@ -14,7 +14,7 @@ using System.Reflection;
 namespace GodsWill_ASCIIRPG
 {
     [Serializable]
-    abstract public class Item : Atom, Descriptionable
+    abstract public class Item : Atom, Descriptionable, IIdentifiable
     {
         public const int _UnlimitedUses = -1;
 
@@ -44,19 +44,12 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
-        public bool IsStackable
-        {
-            get
-            {
-                //return this.GetType().GetCustomAttributes(typeof(Stackable), false).Length > 0;
-                return this.Attributes(typeof(Stackable), false).Count > 0;
-            }
-        }
+        
 
         public abstract string FullDescription { get; }
 
         private Stackable stackable;
-        private Stackable Stackable
+        protected virtual Stackable Stackable
         {
             get
             {
@@ -70,7 +63,15 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
-        public int MaxPerStack
+        public virtual bool IsStackable
+        {
+            get
+            {
+                return this.Attributes(typeof(Stackable), false).Count > 0;
+            }
+        }
+
+        public virtual int MaxPerStack
         {
             get
             {
@@ -82,7 +83,7 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
-        public bool HasStackLimit
+        public virtual bool HasStackLimit
         {
             get
             {
@@ -106,12 +107,20 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
+        public virtual bool IsIdentified
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public Item(string name = "Generic Item",
                     string symbol = "i",
                     Color color = new Color(),
                     bool walkable = true,
                     bool blockVision = false,
-                    string description = "Base element of the game",
+                    string description = "Base item of the game",
                     Coord position = new Coord(),
                     int cost = 0,
                     int weight = 0,
@@ -189,6 +198,111 @@ namespace GodsWill_ASCIIRPG
 
             var generator = (ItemGenerator)Activator.CreateInstance(itemGeneratorClasses[ix]);
             return generator.GenerateRandom(level, position);
+        }
+
+        public virtual void Identify(Atom identifier, int throwToIdentify)
+        {
+            // By default an object is already identified
+        }
+    }
+
+    [Serializable]
+    abstract public class IdentifiableItem : Item
+    {
+        int cd;
+        private int CD
+        {
+            get
+            {
+                if(cd == -1)
+                {
+                    cd = ((Identifiable)this.Attributes(typeof(Identifiable))[0]).CD;
+                }
+                return cd;
+            }
+        }
+        private IdentifiableItemInfo.ItemInfo randomInfo;
+        protected IdentifiableItemInfo.ItemInfo RandomInfo
+        {
+            get
+            {
+                if(randomInfo == null)
+                {
+                    randomInfo = IdentifiableItemInfo.InfosOfType(this.Type);
+                }
+                return randomInfo;
+            }
+        }
+
+        public override bool IsIdentified
+        {
+            get
+            {
+                return IdentifiableItemInfo.IsIdentified(this.Type);
+            }
+        }
+
+        public override Color Color
+        {
+            get
+            {
+                return RandomInfo.Color;
+            }
+        }
+
+        public override string Name
+        {
+            get
+            {
+                return IsIdentified ? base.Name : RandomInfo.RandomName;
+            }
+        }
+
+        public IdentifiableItem(string name = "Generic Identifiable Item",
+                                string symbol = "i",
+                                Color color = new Color(),
+                                bool walkable = true,
+                                bool blockVision = false,
+                                string description = "Base identifiable item of the game",
+                                Coord position = new Coord(),
+                                int cost = 0,
+                                int weight = 0,
+                                int uses = _UnlimitedUses)
+            : base(name, symbol, color, walkable, blockVision, description, position)
+        {
+            
+        }
+
+        public IdentifiableItem(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+
+        }
+
+        public override void ActiveUse(Character user)
+        {
+            Identify(user, int.MaxValue);
+        }
+
+        public override void Identify(Atom identifier, int throwToIdentify)
+        {
+            if(throwToIdentify >= CD)
+            {
+                IdentifiableItemInfo.Identify(this.Type);
+                identifier.NotifyListeners(String.Format("Identified {0}", this.Name));
+            }
+            else
+            {
+                identifier.NotifyListeners(String.Format("{0} not identified...", this.ItemTypeName));
+            }
+        }
+
+        public override string ItemTypeName
+        {
+            get
+            {
+                return ((Identifiable)this.Attributes(typeof(Identifiable))[0]).MacroType.Name;
+            }
         }
     }
 }

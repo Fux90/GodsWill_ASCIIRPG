@@ -58,7 +58,12 @@ namespace GodsWill_ASCIIRPG.Model
                     currStack = (ItemStack)stacks.ElementAtOrDefault(ix);
                     ix++;
                 }
-                while (currStack != null && item.HasStackLimit && currStack.Count == item.MaxPerStack);
+                while ( (currStack != null 
+                        && item.HasStackLimit 
+                        && currStack.Count == item.MaxPerStack)
+                        ||
+                        (currStack != null
+                         && currStack.Containing != item.Type));
 
                 if (currStack == null)
                 {

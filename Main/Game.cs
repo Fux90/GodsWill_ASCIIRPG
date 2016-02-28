@@ -12,6 +12,7 @@ using GodsWill_ASCIIRPG.Model.Core;
 using GodsWill_ASCIIRPG.Model.Edibles;
 using GodsWill_ASCIIRPG.Model.Gods;
 using GodsWill_ASCIIRPG.Model.Items;
+using GodsWill_ASCIIRPG.Model.Items.Potions;
 using GodsWill_ASCIIRPG.Model.Menus;
 using GodsWill_ASCIIRPG.Model.SceneryItems;
 using GodsWill_ASCIIRPG.Model.Shields;
@@ -217,13 +218,20 @@ namespace GodsWill_ASCIIRPG
                 {
                     for (int j = 4; j < 14; j++)
                     {
-                        if (i % 2 == 0)
+                        switch(i % 4)
                         {
+                            case 0:
                             MapBuilder.AddAtom(new LongSword(position: new Coord() { X = i, Y = j }));
-                        }
-                        else
-                        {
-                            MapBuilder.AddAtom(new FlamingLongSword(position: new Coord() { X = i, Y = j }));
+                                break;
+                            case 1:
+                                MapBuilder.AddAtom(new FlamingLongSword(position: new Coord() { X = i, Y = j }));
+                                break;
+                            case 2:
+                                MapBuilder.AddAtom(new PotionCureLightWounds(position: new Coord() { X = i, Y = j }));
+                                break;
+                            case 3:
+                                MapBuilder.AddAtom(new PotionDivineStrength(position: new Coord() { X = i, Y = j }));
+                                break;
                         }
                     }
                 }

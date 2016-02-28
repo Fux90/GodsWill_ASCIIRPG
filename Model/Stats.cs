@@ -46,6 +46,20 @@ namespace GodsWill_ASCIIRPG
             }
             return stats;
         }
+
+        public static Stats BuildStats(Dictionary<StatsType, int> values)
+        {
+            var stats = new int[Stats.AllStats.Length];
+            if (values == null)
+            {
+                throw new Exception("Modifier can't be null");
+            }
+            foreach (StatsType stat in values.Keys)
+            {
+                stats[(int)stat] = values[stat];
+            }
+            return new Stats(stats);
+        }
     }
 
     [Serializable]

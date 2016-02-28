@@ -89,8 +89,14 @@
     <Compile Include="Model\ISpellcaster.cs" />
     <Compile Include="Model\IStatsProvided.cs" />
     <Compile Include="Model\Items\Gold.cs" />
+    <Compile Include="Model\Items\Identifiable.cs" />
+    <Compile Include="Model\Items\IdentifiableItemInfo.cs" />
+    <Compile Include="Model\Items\IIdentifiable.cs" />
     <Compile Include="Model\Items\ItemGenerator.cs" />
     <Compile Include="Model\Items\ItemStack.cs" />
+    <Compile Include="Model\Items\Potions\Potion.cs" />
+    <Compile Include="Model\Items\Potions\PotionCureLightWounds.cs" />
+    <Compile Include="Model\Items\Potions\PotionDivineStrengthcs.cs" />
     <Compile Include="Model\Items\PrayerBook.cs" />
     <Compile Include="Model\Items\RandomGenerable.cs" />
     <Compile Include="Model\Items\Stackable.cs" />
