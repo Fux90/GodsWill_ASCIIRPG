@@ -117,7 +117,6 @@ namespace GodsWill_ASCIIRPG
             base.OnActivated(e);
 
             Game.Current.InitialMenu();
-
             //Game.Current.GameInitialization(mapViewControl, 
             //                                mapViewControl, 
             //                                mapViewControl,

@@ -230,6 +230,7 @@ namespace GodsWill_ASCIIRPG.UIControls
         {
             this.Show();
             this.BringToFront();
+            this.Focus();
 
             var frm = this.Parent;
             while(frm != null && frm.GetType() != typeof(GameForm))

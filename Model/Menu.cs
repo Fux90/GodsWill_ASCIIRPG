@@ -124,7 +124,7 @@ namespace GodsWill_ASCIIRPG
 
         public void Open()
         {
-            if(menuViewers.Count > 0)
+            if (menuViewers.Count > 0)
             {
                 menuViewers[0].UpmostBring();
             }
