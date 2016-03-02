@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,23 @@ namespace GodsWill_ASCIIRPG.Model.Items
         {
             public Color Color {get;set;}
             public string RandomName { get; set; }
+
+            public ItemInfo()
+            {
+
+            }
+
+            public ItemInfo(BinaryReader bR)
+            {
+                Color = Color.FromArgb(bR.ReadInt32());
+                RandomName = bR.ReadString();
+            }
+
+            public void Save(BinaryWriter bW)
+            {
+                bW.Write(Color.ToArgb());
+                bW.Write(RandomName);
+            }
         }
 
         static Dictionary<Type, ItemInfo> randomInfos;
@@ -98,6 +116,32 @@ namespace GodsWill_ASCIIRPG.Model.Items
         public static void Identify(Type type)
         {
             identified[type] = true;
+        }
+
+        public static void Save(BinaryWriter bW)
+        {
+            bW.Write(randomInfos.Count);
+            foreach (var key in randomInfos.Keys)
+            {
+                bW.Write(key.ToString());
+                randomInfos[key].Save(bW);
+                bW.Write(identified[key]);
+            }
+        }
+
+        public static void Load(BinaryReader bR)
+        {
+            var count = bR.ReadInt32();
+
+            randomInfos = new Dictionary<Type, ItemInfo>();
+            identified = new Dictionary<Type, bool>();
+
+            for (int i = 0; i < count; i++)
+            {
+                var type = Type.GetType(bR.ReadString());
+                randomInfos[type] = new ItemInfo(bR);
+                identified[type] = bR.ReadBoolean();
+            }
         }
     }
 

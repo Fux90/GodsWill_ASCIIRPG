@@ -281,7 +281,10 @@ namespace GodsWill_ASCIIRPG
 
         public override void ActiveUse(Character user)
         {
-            Identify(user, int.MaxValue);
+            if (!IdentifiableItemInfo.IsIdentified(this.GetType()))
+            {
+                Identify(user, int.MaxValue);
+            }
         }
 
         public override void Identify(Atom identifier, int throwToIdentify)

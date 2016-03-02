@@ -539,6 +539,8 @@ namespace GodsWill_ASCIIRPG
                                 sa.SaveMessages(outputStream);
                             }
                         }
+
+                        IdentifiableItemInfo.Save(bW);
                     }
                 }
             }
@@ -571,6 +573,8 @@ namespace GodsWill_ASCIIRPG
                         atomListeners.Where(aL => aL.GetType().Name == listenerType)
                                     .ToList().ForEach(sal => ((ISaveableAtomListener)sal).LoadMessages(inputStream));
 
+
+                        IdentifiableItemInfo.Load(bR);
                     }
                 }
             }
