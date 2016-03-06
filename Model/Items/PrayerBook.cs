@@ -11,7 +11,7 @@ namespace GodsWill_ASCIIRPG.Model.Items
 {
     public class PrayerBookBuilder : ItemGenerator<PrayerBook>
     {
-        public override PrayerBook GenerateTypedRandom(Pg.Level casterLevel, Coord position)
+        public override PrayerBook GenerateTypedRandom(Pg.Level casterLevel, Coord position, RarenessValue rareness)
         {
             var allSpells = Spell.All;
 
@@ -119,11 +119,26 @@ namespace GodsWill_ASCIIRPG.Model.Items
 
             var ix = Dice.Throws(spellSetFromWhichToChoose.Count) - 1;
 
+            var moneyMod = 1.0;
+            switch(rareness)
+            {
+                case RarenessValue.Uncommon:
+                    moneyMod = 1.5;
+                    break;
+                case RarenessValue.Rare:
+                    moneyMod = 2.0;
+                    break;
+                case RarenessValue.Common:
+                default:
+                    moneyMod = 1.0;
+                    break;
+            }
+
             var spellB = (SpellBuilder)Activator.CreateInstance(spellSetFromWhichToChoose[ix]);
             var pl = spellSetFromWhichToChoose[ix].GetCustomAttributes(typeof(PercentageOfSuccess), false);
             var percentageOfSuccess = pl.Length == 0 ? 100 : ((PercentageOfSuccess)pl[0]).Percentage;
             return new PrayerBook(  spellB,
-                                    cost: spellB.MoneyValue,
+                                    cost: (int)Math.Round(spellB.MoneyValue * moneyMod, MidpointRounding.AwayFromZero),
                                     percOfSuccess: percentageOfSuccess,
                                     position: position);
         }

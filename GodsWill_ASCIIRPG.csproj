@@ -88,6 +88,8 @@
     <Compile Include="Model\IMerchant.cs" />
     <Compile Include="Model\ISpellcaster.cs" />
     <Compile Include="Model\IStatsProvided.cs" />
+    <Compile Include="Model\Items\Artifact.cs" />
+    <Compile Include="Model\Items\ArtifactItemInfo.cs" />
     <Compile Include="Model\Items\Gold.cs" />
     <Compile Include="Model\Items\Identifiable.cs" />
     <Compile Include="Model\Items\IdentifiableItemInfo.cs" />
@@ -99,6 +101,7 @@
     <Compile Include="Model\Items\Potions\PotionDivineStrengthcs.cs" />
     <Compile Include="Model\Items\PrayerBook.cs" />
     <Compile Include="Model\Items\RandomGenerable.cs" />
+    <Compile Include="Model\Items\Rareness.cs" />
     <Compile Include="Model\Items\Stackable.cs" />
     <Compile Include="Model\Items\StackItemTest.cs" />
     <Compile Include="Model\ITriggerable.cs" />

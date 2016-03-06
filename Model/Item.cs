@@ -115,6 +115,41 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
+        bool? isArtifact = null;
+        public bool IsArtifact
+        {
+            get
+            {
+                if(isArtifact == null)
+                {
+                    isArtifact = this.Attributes(typeof(Artifact), false).Count > 0;
+                }
+
+                return (bool)isArtifact;
+            }
+        }
+
+        int? howManyExemplars;
+        public int HowManyExemplars
+        {
+            get
+            {
+                if(howManyExemplars == null)
+                {
+                    if(IsArtifact)
+                    {
+                        howManyExemplars = ((Artifact)this.Attributes(typeof(Artifact), false)[0]).Count;
+                    }
+                    else
+                    {
+                        howManyExemplars = -1;
+                    }
+                }
+
+                return (int)howManyExemplars;
+            }
+        }
+
         public Item(string name = "Generic Item",
                     string symbol = "i",
                     Color color = new Color(),
@@ -196,13 +231,31 @@ namespace GodsWill_ASCIIRPG
                 actualLevel = actualLevel.Next();
             }
 
+            var rareness = Item.Rareness();
+
             var generator = (ItemGenerator)Activator.CreateInstance(itemGeneratorClasses[ix]);
-            return generator.GenerateRandom(level, position);
+            return generator.GenerateRandom(level, position, rareness);
         }
 
         public virtual void Identify(Atom identifier, int throwToIdentify)
         {
             // By default an object is already identified
+        }
+
+        public static RarenessValue Rareness()
+        {
+            var luck = Dice.Throws(new Dice(100));
+            var rareness = RarenessValue.Common;
+            if (luck > 68)
+            {
+                rareness = RarenessValue.Uncommon;
+            }
+            else if (luck > 90)
+            {
+                rareness = RarenessValue.Rare;
+            }
+
+            return rareness;
         }
     }
 

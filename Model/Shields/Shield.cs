@@ -12,7 +12,7 @@ namespace GodsWill_ASCIIRPG
 {
     public class ShieldBuilder : ItemGenerator<Shield>
     {
-        public override Shield GenerateTypedRandom(Pg.Level level, Coord position)
+        public override Shield GenerateTypedRandom(Pg.Level level, Coord position, RarenessValue rareness)
         {
             var shieldType = typeof(Shield);
 
@@ -26,7 +26,11 @@ namespace GodsWill_ASCIIRPG
             var shields = allShields.Where(w =>
             {
                 var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
-                return attribute != null && ((Prerequisite)attribute).MinimumLevel == level;
+                var sRareness = w.GetCustomAttributes(typeof(RarenessValue), false).FirstOrDefault();
+                
+                return attribute != null && ((Prerequisite)attribute).MinimumLevel == level
+                        && sRareness != null && ((Rareness)sRareness).Value == rareness
+                        && w.IsGenerable();
             })
             .ToArray();
 
@@ -37,7 +41,11 @@ namespace GodsWill_ASCIIRPG
                             .Where(s =>
                             {
                                 var attribute = s.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
-                                return attribute != null && ((Prerequisite)attribute).MinimumLevel < level;
+                                var sRareness = s.GetCustomAttributes(typeof(RarenessValue), false).FirstOrDefault();
+                                        
+                                return attribute != null && ((Prerequisite)attribute).MinimumLevel < level
+                                        && sRareness != null && ((Rareness)sRareness).Value <= rareness
+                                        && s.IsGenerable(); ;
                             })
                             .ToArray();
             }
@@ -45,7 +53,13 @@ namespace GodsWill_ASCIIRPG
             if (shields.Length == 0)
             {
                 shields = allShields
-                            .Where(s => s.GetCustomAttributes(typeof(Prerequisite), false).Count() == 0)
+                            .Where(s => {
+                                var wRareness = s.GetCustomAttributes(typeof(RarenessValue), false).FirstOrDefault();
+                                        
+                                return s.GetCustomAttributes(typeof(Prerequisite), false).Count() == 0
+                                        && (wRareness == null || ((Rareness)wRareness).Value <= rareness)
+                                        && s.IsGenerable();
+                            })
                             .ToArray();
             }
 
@@ -67,7 +81,8 @@ namespace GodsWill_ASCIIRPG
                 throw new Exception("Unexpected No Shield Generator");
             }
 
-            return (Shield)((ItemGenerator)Activator.CreateInstance(generatorType)).GenerateRandom(level, position);
+            var shieldSpecificRareness = Item.Rareness();
+            return (Shield)((ItemGenerator)Activator.CreateInstance(generatorType)).GenerateRandom(level, position, shieldSpecificRareness);
         }
     }
 

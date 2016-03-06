@@ -8,16 +8,16 @@ namespace GodsWill_ASCIIRPG.Model.Items
 {
     public abstract class ItemGenerator
     {
-        public abstract Item GenerateRandom(Pg.Level level, Coord position);
+        public abstract Item GenerateRandom(Pg.Level level, Coord position, RarenessValue rareness);
         public abstract Type GeneratedType();
     }
 
     public abstract class ItemGenerator<T> : ItemGenerator
         where T : Item
     {
-        public override Item GenerateRandom(Pg.Level level, Coord position)
+        public override Item GenerateRandom(Pg.Level level, Coord position, RarenessValue rareness = RarenessValue.Common)
         {
-            return (Item)GenerateTypedRandom(level, position);
+            return (Item)GenerateTypedRandom(level, position, rareness);
         }
 
         public override Type GeneratedType()
@@ -25,7 +25,7 @@ namespace GodsWill_ASCIIRPG.Model.Items
             return typeof(T);
         }
 
-        public abstract T GenerateTypedRandom(Pg.Level level, Coord position);
+        public abstract T GenerateTypedRandom(Pg.Level level, Coord position, RarenessValue rareness);
     }
 
     public static class ItemGenerators
@@ -67,13 +67,14 @@ namespace GodsWill_ASCIIRPG.Model.Items
             }
         }
 
-        public static Item GenerateByBuilderType(  Type type, 
-                                            Pg.Level level = Pg.Level.Novice, 
-                                            Coord position = new Coord())
+        public static Item GenerateByBuilderType(   Type type, 
+                                                    Pg.Level level = Pg.Level.Novice, 
+                                                    Coord position = new Coord(),
+                                                    RarenessValue rareness = RarenessValue.Common)
         {
 
             return Generators.ContainsKey(type)
-                ? Generators[type].GenerateRandom(level, position)
+                ? Generators[type].GenerateRandom(level, position, rareness)
                 : null;
         }
     }

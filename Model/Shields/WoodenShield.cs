@@ -11,7 +11,7 @@ namespace GodsWill_ASCIIRPG.Model.Shields
 {
     public class WoodenShieldBuilder : ItemGenerator<WoodenShield>
     {
-        public override WoodenShield GenerateTypedRandom(Pg.Level level, Coord position)
+        public override WoodenShield GenerateTypedRandom(Pg.Level level, Coord position, RarenessValue rareness)
         {
             return new WoodenShield(position: position);
         }

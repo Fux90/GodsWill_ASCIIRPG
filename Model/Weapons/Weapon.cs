@@ -13,7 +13,7 @@ namespace GodsWill_ASCIIRPG
 {
     public class WeaponBuilder : ItemGenerator<Weapon>
     {
-        public override Weapon GenerateTypedRandom(Pg.Level level, Coord position)
+        public override Weapon GenerateTypedRandom(Pg.Level level, Coord position, RarenessValue rareness)
         {
             var weaponsType = typeof(Weapon);
 
@@ -23,16 +23,15 @@ namespace GodsWill_ASCIIRPG
                             .Where(w => weaponsType.IsAssignableFrom(w)
                                     && !w.IsNestedPrivate
                                     && !w.IsAbstract)
-                            //.Where(w =>
-                            //{
-                            //    var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
-                            //    return attribute != null && ((Prerequisite)attribute).MinimumLevel == level;
-                            //})
                             .ToArray();
             var weapons = allWeapons.Where(w => 
                                     {
                                         var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
-                                        return attribute != null && ((Prerequisite)attribute).MinimumLevel == level;
+                                        var wRareness = w.GetCustomAttributes(typeof(RarenessValue), false).FirstOrDefault();
+
+                                        return attribute != null && ((Prerequisite)attribute).MinimumLevel == level
+                                                && wRareness != null && ((Rareness)wRareness).Value == rareness
+                                                && w.IsGenerable();
                                     })
                                     .ToArray();
 
@@ -43,7 +42,10 @@ namespace GodsWill_ASCIIRPG
                             .Where(w =>
                             {
                                 var attribute = w.GetCustomAttributes(typeof(Prerequisite), false).FirstOrDefault();
-                                return attribute != null && ((Prerequisite)attribute).MinimumLevel < level;
+                                var wRareness = w.GetCustomAttributes(typeof(RarenessValue), false).FirstOrDefault();
+                                return attribute != null && ((Prerequisite)attribute).MinimumLevel < level
+                                        && wRareness != null && ((Rareness)wRareness).Value <= rareness
+                                        && w.IsGenerable();
                             })
                             .ToArray();
             }
@@ -51,7 +53,14 @@ namespace GodsWill_ASCIIRPG
             if (weapons.Length == 0)
             {
                 weapons =   allWeapons
-                            .Where(w => w.GetCustomAttributes(typeof(Prerequisite), false).Count() == 0)
+                            .Where(w => 
+                            {
+                                var wRareness = w.GetCustomAttributes(typeof(RarenessValue), false).FirstOrDefault();
+
+                                return w.GetCustomAttributes(typeof(Prerequisite), false).Count() == 0
+                                        && (wRareness == null || ((Rareness)wRareness).Value <= rareness)
+                                        && w.IsGenerable();
+                            })
                             .ToArray();
             }
 
@@ -73,7 +82,8 @@ namespace GodsWill_ASCIIRPG
                 throw new Exception("Unexpected No Weapon Generator");
             }
 
-            return (Weapon)((ItemGenerator)Activator.CreateInstance(generatorType)).GenerateRandom(level, position);
+            var weaponSpecificRareness = Item.Rareness();
+            return (Weapon)((ItemGenerator)Activator.CreateInstance(generatorType)).GenerateRandom(level, position, weaponSpecificRareness);
         }
     }
 

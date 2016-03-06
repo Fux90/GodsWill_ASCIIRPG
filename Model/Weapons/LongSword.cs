@@ -12,7 +12,7 @@ namespace GodsWill_ASCIIRPG.Model.Weapons
 {
     public class LongSwordBuilder : ItemGenerator<LongSword>
     {
-        public override LongSword GenerateTypedRandom(Pg.Level level, Coord position)
+        public override LongSword GenerateTypedRandom(Pg.Level level, Coord position, RarenessValue rareness)
         {
             return new LongSword(position: position);
         }

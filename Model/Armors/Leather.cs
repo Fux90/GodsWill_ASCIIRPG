@@ -11,7 +11,7 @@ namespace GodsWill_ASCIIRPG.Model.Armors
 {
     public class LeatherBuilder : ItemGenerator<Leather>
     {
-        public override Leather GenerateTypedRandom(Pg.Level level, Coord position)
+        public override Leather GenerateTypedRandom(Pg.Level level, Coord position, RarenessValue rareness)
         {
             return new Leather(position: position);
         }

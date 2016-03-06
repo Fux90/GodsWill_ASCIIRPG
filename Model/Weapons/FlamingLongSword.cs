@@ -11,7 +11,7 @@ namespace GodsWill_ASCIIRPG.Model.Weapons
 {
     public class FlamingLongSwordBuilder : ItemGenerator<FlamingLongSword>
     {
-        public override FlamingLongSword GenerateTypedRandom(Pg.Level level, Coord position)
+        public override FlamingLongSword GenerateTypedRandom(Pg.Level level, Coord position, RarenessValue rareness)
         {
             return new FlamingLongSword(position: position);
         }
