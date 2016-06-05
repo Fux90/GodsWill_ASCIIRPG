@@ -30,6 +30,15 @@ namespace GodsWill_ASCIIRPG
 
         #endregion
 
+        #region STATIC MEMBERS
+        static Dictionary<Pg.Level, int> minimumNumberOfItemPerLevelPerRoom;
+        static Dictionary<Pg.Level, int> maximumNumberOfItemPerLevelPerRoom;
+        static Dictionary<Pg.Level, int> minimumNumberOfEnemiesPerLevelPerRoom;
+        static Dictionary<Pg.Level, int> maximumNumberOfEnemiesPerLevelPerRoom;
+        static Dictionary<Pg.Level, double> roomsWithItemsPerLevelPerc;
+        static Dictionary<Pg.Level, double> roomsWithEnemiesPerLevelPerc;
+        #endregion
+
         #region PRIVATE_MEMBERS
         List<IMapViewer> views;
         List<IAtomListener> singleMsgListeners;
@@ -48,6 +57,52 @@ namespace GodsWill_ASCIIRPG
         public Pg PgReadFromFile { get { return pgFromFile; } }
         public FileStream MapStream { get; set; }
         #endregion
+
+        static MapBuilder()
+        {
+            minimumNumberOfItemPerLevelPerRoom = new Dictionary<Pg.Level, int>()
+            {
+                { Pg.Level.Novice, 1},
+                { Pg.Level.Cleric, 1},
+                { Pg.Level.Master, 2},
+                { Pg.Level.GrandMaster, 3},
+            };
+            maximumNumberOfItemPerLevelPerRoom = new Dictionary<Pg.Level, int>()
+            {
+                { Pg.Level.Novice, 1},
+                { Pg.Level.Cleric, 2},
+                { Pg.Level.Master, 3},
+                { Pg.Level.GrandMaster, 3},
+            };
+            minimumNumberOfEnemiesPerLevelPerRoom = new Dictionary<Pg.Level, int>()
+            {
+                { Pg.Level.Novice, 0},
+                { Pg.Level.Cleric, 1},
+                { Pg.Level.Master, 2},
+                { Pg.Level.GrandMaster, 3},
+            };
+            maximumNumberOfEnemiesPerLevelPerRoom = new Dictionary<Pg.Level, int>()
+            {
+                { Pg.Level.Novice, 2},
+                { Pg.Level.Cleric, 3},
+                { Pg.Level.Master, 4},
+                { Pg.Level.GrandMaster, 4},
+            };
+            roomsWithItemsPerLevelPerc = new Dictionary<Pg.Level, double>()
+            {
+                { Pg.Level.Novice, 0.3},
+                { Pg.Level.Cleric, 0.4},
+                { Pg.Level.Master, 0.5},
+                { Pg.Level.GrandMaster, 0.6},
+            };
+            roomsWithEnemiesPerLevelPerc = new Dictionary<Pg.Level, double>()
+            {
+                { Pg.Level.Novice, 0.6},
+                { Pg.Level.Cleric, 0.7},
+                { Pg.Level.Master, 0.7},
+                { Pg.Level.GrandMaster, 0.8},
+            };
+        }
 
         public MapBuilder()
             : this(null)
@@ -113,26 +168,6 @@ namespace GodsWill_ASCIIRPG
             elements.AddOnce(a);
         }
 
-
-        //def place_objects_all_rooms(con, map, objects):
-        //    for room in rooms:
-        //        place_objects(con, map, room, objects)
-
-        //def place_objects(con, map, room, objects):
-
-        //    num_monsters = libt.random_get_int(0,0,MAX_ROOM_MONSTERS)
-        //    for i in range(num_monsters):
-        //        x = libt.random_get_int(0, room.x1, room.x2)
-        //        y = libt.random_get_int(0, room.y1, room.y2)
-
-        //        if not tile.is_blocked(x, y, map, objects):
-        //            if libt.random_get_int(0,0,100) < 80: #80% di possibilita di pupparsi un orco
-        //                monster = Object(con, x, y,'o','Orc', libt.desaturated_green, blocks = True)
-        //            else:
-        //                monster = Object(con, x, y,'T','Troll', libt.darker_green, blocks = True)
-        //            objects.append(monster)
-        //            monster.insertInMap(map)
-
         private void createHorizontalTunnel(BidimensionalArray<Atom> table,
                                      int x1,
                                      int x2,
@@ -155,7 +190,7 @@ namespace GodsWill_ASCIIRPG
             }
         }
 
-        private void createRoom(Rectangle room, BidimensionalArray<Atom> map)
+        private void createRoom(Rectangle room/*, BidimensionalArray<Atom> map*/)
         {
             for (int x = room.Left + 1; x < room.Right; x++)
 			{
@@ -166,10 +201,111 @@ namespace GodsWill_ASCIIRPG
 			}
         }
 
+        private void createRandomItems(List<Rectangle> rooms, Pg.Level level)
+        {
+            var minItems = minimumNumberOfItemPerLevelPerRoom[level];
+            var maxItems = maximumNumberOfItemPerLevelPerRoom[level];
+            var numRoomsWithItems = (int)Math.Round(roomsWithItemsPerLevelPerc[level] * rooms.Count,
+                                                    MidpointRounding.AwayFromZero);
+
+            var usedIx = new bool[rooms.Count];
+            var ixs = new List<int>();
+            while(ixs.Count < numRoomsWithItems)
+            {
+                var ix = Dice.Throws(rooms.Count) - 1;
+                if(usedIx[ix])
+                {
+                    continue;
+                }
+
+                usedIx[ix] = true;
+                ixs.Add(ix);
+            }
+
+            //foreach (var room in rooms)
+            foreach(var ix in ixs)
+            {
+                var room = rooms[ix];
+                var nItems = Dice.Throws(maxItems - minItems) + minItems;
+
+                for (int i = 0; i < nItems; i++)
+                {
+                    var xPos = Dice.Throws(room.Width - 1) + room.X;
+                    var yPos = Dice.Throws(room.Width - 1) + room.X;
+                    var pos = new Coord(xPos, yPos);
+
+                    var atom = elements.Where(a => a.Position == pos).FirstOrDefault(); //.SingleOrDefault();
+                    
+                    while (atom == null || !atom.Type.IsAssignableFrom(typeof(Floor)))
+                    {
+                        xPos = Dice.Throws(room.Width - 1) + room.X;
+                        yPos = Dice.Throws(room.Height - 1) + room.Y;
+                        pos = new Coord(xPos, yPos);
+
+                        atom = elements.Where(a => a.Position == pos).FirstOrDefault();
+                    }
+
+                    AddAtom(Item.GenerateRandom(level, pos));
+                }
+                
+            }
+        }
+
+        private void createRandomEnemies(List<Rectangle> rooms, Pg.Level level)
+        {
+            var minEnemies = minimumNumberOfEnemiesPerLevelPerRoom[level];
+            var maxEnemies = maximumNumberOfEnemiesPerLevelPerRoom[level];
+            var numRoomsWithEnemiess = (int)Math.Round(roomsWithEnemiesPerLevelPerc[level] * rooms.Count,
+                                                    MidpointRounding.AwayFromZero);
+
+            var usedIx = new bool[rooms.Count];
+            var ixs = new List<int>();
+            while (ixs.Count < numRoomsWithEnemiess)
+            {
+                var ix = Dice.Throws(rooms.Count) - 1;
+                if (usedIx[ix])
+                {
+                    continue;
+                }
+
+                usedIx[ix] = true;
+                ixs.Add(ix);
+            }
+
+            //foreach (var room in rooms)
+            foreach (var ix in ixs)
+            {
+                var room = rooms[ix];
+                var nItems = Dice.Throws(maxEnemies - minEnemies) + minEnemies;
+
+                for (int i = 0; i < nItems; i++)
+                {
+                    var xPos = Dice.Throws(room.Width - 1) + room.X;
+                    var yPos = Dice.Throws(room.Width - 1) + room.X;
+                    var pos = new Coord(xPos, yPos);
+
+                    var atom = elements.Where(a => a.Position == pos).FirstOrDefault(); //.SingleOrDefault();
+
+                    while (atom == null || !atom.Type.IsAssignableFrom(typeof(Floor)))
+                    {
+                        xPos = Dice.Throws(room.Width - 1) + room.X;
+                        yPos = Dice.Throws(room.Height - 1) + room.Y;
+                        pos = new Coord(xPos, yPos);
+
+                        atom = elements.Where(a => a.Position == pos).FirstOrDefault();
+                    }
+
+                    AddAtom((Atom)AICharacter.GenerateRandom(level, pos) ?? new Floor(pos));
+                }
+
+            }
+        }
+
         private void makeMap(  out BidimensionalArray<Atom> map,
                                 int MAX_ROOMS = 20,
                                 int ROOM_MIN_SIZE = 3,
-                                int ROOM_MAX_SIZE = 10)
+                                int ROOM_MAX_SIZE = 10,
+                                Pg.Level level = Pg.Level.Novice)
         {
             map = new BidimensionalArray<Atom>(Height, Width, () => new Wall());
             List<Rectangle> rooms = new List<Rectangle>(MAX_ROOMS);
@@ -201,7 +337,7 @@ namespace GodsWill_ASCIIRPG
 
                 if (!failed)
                 {
-                    createRoom(new_room, map);
+                    createRoom(new_room/*, map*/);
                     var newCoord = new_room.Center();
 
                     if (num_rooms == 0)
@@ -228,6 +364,9 @@ namespace GodsWill_ASCIIRPG
                     num_rooms++;
                 }
             }
+
+            createRandomItems(rooms, level);
+            createRandomEnemies(rooms, level);
         }
 
         private void createEmptyTable(out BidimensionalArray<Atom> table)
@@ -262,7 +401,10 @@ namespace GodsWill_ASCIIRPG
                     table = null;
                     break;
                 case TableCreationMode.Random:
-                    makeMap(out table);
+                    makeMap(out table, 
+                            level: PgReadFromFile == null 
+                                    ? Pg.Level.Novice 
+                                    : PgReadFromFile.CurrentLevel);
                     break;
                 case TableCreationMode.Empty:
                 default:

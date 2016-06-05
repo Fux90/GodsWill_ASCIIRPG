@@ -251,5 +251,62 @@ namespace GodsWill_ASCIIRPG
         {
             NotifyListeners("*bla bla bla*");
         }
+
+        public static AICharacter GenerateRandom(Pg.Level level, Coord position)
+        {
+            var generableEnemyBuilders = AppDomain.CurrentDomain.GetAssemblies()
+                                                .SelectMany(s => s.GetTypes())
+                                                .Where(p =>
+                                                {
+                                                    var res = p.GetCustomAttributes(typeof(RandomEnemyGenerable), false).Count() == 1
+                                                                && p.GetCustomAttributes(typeof(Enemy), false).Count() == 1;
+
+                                                    if (res)
+                                                    {
+                                                        var prerequisite = p.GetCustomAttributes(typeof(Prerequisite), false);
+
+                                                        if(prerequisite.Count() == 0)
+                                                        {
+                                                            return res;
+                                                        }
+                                                        else
+                                                        {
+                                                            return ((Prerequisite)prerequisite[0]).MinimumLevel <= level;
+                                                        }
+                                                    }
+                                                    return res;
+                                                })
+                                                .ToArray();
+#if FIXED_OBJECT_TYPE
+            var ixBuilder = 0;
+#else
+            var ixBuilder = Dice.Throws(new Dice(generableEnemyBuilders.Length)) - 1;
+#endif
+
+            if (generableEnemyBuilders.Length > 0)
+            {
+                var enemyBuilder = generableEnemyBuilders[ixBuilder];
+
+                var luck = Dice.Throws(new Dice(20));
+                var actualLevel = level;
+
+                if (luck < 3)
+                {
+                    actualLevel = actualLevel.Previous();
+                }
+                if (luck > 18)
+                {
+                    actualLevel = actualLevel.Next();
+                }
+
+                var builder = (AICharacterBuilder)Activator.CreateInstance(enemyBuilder);
+
+                var enemy = builder.Build(actualLevel);
+                enemy.Position = position;
+                return enemy;
+            }
+
+            return null;
+        }
     }
 }

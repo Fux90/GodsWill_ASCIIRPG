@@ -59,6 +59,7 @@
     <Compile Include="Control\PgController.cs" />
     <Compile Include="Control\SpellbookController.cs" />
     <Compile Include="Model\AICharacters\EquivalentLevel.cs" />
+    <Compile Include="Model\AICharacters\RandomEnemyGenerable.cs" />
     <Compile Include="Model\AICharacters\XPPremium.cs" />
     <Compile Include="Model\Allied.cs" />
     <Compile Include="Model\Animation.cs" />

@@ -134,6 +134,13 @@ namespace GodsWill_ASCIIRPG.UIControls
                         null,
                         "Confirm single/multiple selection")
                 },
+                new CommandLine()
+                {
+                    Keys = new Keys[]{ Keys.Home },
+                    Mods = new ModifierCommands(
+                        null,
+                        "Back to Main Menu")
+                },
             };
 
         private List<CommandLineString> CommandStrings;

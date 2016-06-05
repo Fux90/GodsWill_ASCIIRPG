@@ -11,6 +11,9 @@ using GodsWill_ASCIIRPG.Model.Gods;
 
 namespace GodsWill_ASCIIRPG.Model.AICharacters
 {
+    [RandomEnemyGenerable]
+    [Enemy]
+    [Prerequisite(/*MinimumLevel = */Pg.Level.Novice)]
     public class OrcBuilder : AICharacterBuilder
     {
         protected override AICharacter RandomBuild(Pg.Level level)
